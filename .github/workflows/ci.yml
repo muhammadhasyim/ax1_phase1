@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gfortran make cmake
+
+      - name: Build (Make)
+        run: |
+          make
+        working-directory: ./
+
+      - name: Run (sample deck)
+        run: |
+          ./ax1 input/sample_phase1.deck | head -n 20
+
+      - name: Smoke test
+        run: |
+          bash tests/smoke_test.sh
+
+      - name: Clean
+        run: make clean
+
+      - name: Build (CMake)
+        run: |
+          mkdir -p build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          cmake --build . -j
+      - name: Run (CMake build)
+        run: |
+          ./build/ax1 input/sample_phase1.deck | head -n 20
