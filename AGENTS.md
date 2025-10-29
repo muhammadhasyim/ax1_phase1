@@ -44,7 +44,7 @@ cmake --build . -j
 ## Run
 
 ```bash
-./ax1 input/sample_phase1.deck
+./ax1 inputs/sample_phase1.deck
 ```
 
 ## Run Tests

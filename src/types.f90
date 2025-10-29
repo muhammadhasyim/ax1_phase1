@@ -29,8 +29,8 @@ module types
      real(rk) :: chi=0._rk
   end type
   type :: Material
-     integer :: G=1
-     type(XSecGroup) :: g(GMAX)
+     integer :: num_groups=1
+     type(XSecGroup) :: groups(GMAX)
      real(rk) :: sig_s(GMAX, GMAX) = 0._rk  ! from g'->g
      ! delayed neutrons:
      real(rk) :: beta(DGRP) = 0._rk

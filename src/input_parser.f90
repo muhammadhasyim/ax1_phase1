@@ -3,7 +3,7 @@ module input_parser
   use types
   use utils, only: shell_volume
   use eos_table
-  use thermo, only: attach_tables
+  use thermo, only: attach_tables, tbl
   implicit none
 contains
   subroutine load_deck(filename, st, ctrl)
@@ -13,8 +13,11 @@ contains
 
     integer :: iu, ios
     character(len=512) :: line, key, section
-    character(len=256) :: sval
+    character(len=256) :: sval, p2, deckdir, abs_path
+    integer :: kpos
     integer :: ival, i, g, gp, imat, j
+    integer :: idx, idx2, idx3, matid, rc
+    real(rk) :: a, b, c, Acv, Bcv, r_out, rho0, T0
 
     open(newunit=iu, file=filename, status='old', action='read', iostat=ios)
     if (ios/=0) stop "Cannot open deck file."
@@ -56,10 +59,10 @@ contains
 
       case ("[material]")
         read(line,*) imat
-        st%mat(imat)%G = st%G
+        st%mat(imat)%num_groups = st%G
 
       case ("[xs_group]")
-        read(line,*) imat, g, st%mat(imat)%g(g)%sig_t, st%mat(imat)%g(g)%nu_sig_f, st%mat(imat)%g(g)%chi
+        read(line,*) imat, g, st%mat(imat)%groups(g)%sig_t, st%mat(imat)%groups(g)%nu_sig_f, st%mat(imat)%groups(g)%chi
 
       case ("[scatter]")
         read(line,*) imat, gp, g, st%mat(imat)%sig_s(gp,g)
@@ -70,23 +73,37 @@ contains
 
       case ("[eos]")
         if (.not. allocated(st%eos)) allocate(st%eos(max(st%Nshell,1)))
-        integer :: idx; real(rk):: a,b,c,Acv,Bcv; character(len=256):: path
         read(line,*) idx, a, b, c, Acv, Bcv
         st%eos(idx)%a=a; st%eos(idx)%b=b; st%eos(idx)%c=c; st%eos(idx)%Acv=Acv; st%eos(idx)%Bcv=Bcv
 
       case ("[eos_table]")
-        ! i, path
-        integer :: idx2, rc
-        character(len=256) :: p2
-        read(line,*) idx2, p2
+        ! i, path (path may contain '/') -> avoid list-directed parsing for character
+        read(line,*) idx2
+        kpos = index(line, ' ')
+        if (kpos<=0) cycle
+        p2 = adjustl(line(kpos+1:))
+        if (.not. allocated(st%eos)) allocate(st%eos(max(st%Nshell,1)))
+        if (idx2<1 .or. idx2>max(1, size(st%eos))) cycle
         st%eos(idx2)%tabular = .true.
-        st%eos(idx2)%table_path = trim(p2)
+        ! resolve relative to deck directory
+        deckdir = filename
+        kpos = 0
+        do kpos = len_trim(deckdir), 1, -1
+          if (deckdir(kpos:kpos) == '/') then
+            deckdir = deckdir(1:kpos-1)
+            exit
+          end if
+        end do
+        if (index(trim(p2), '/') == 0) then
+          abs_path = trim(deckdir)//'/'//trim(p2)
+        else
+          abs_path = trim(p2)
+        end if
+        st%eos(idx2)%table_path = trim(abs_path)
 
       case ("[shells]")
         if (.not. allocated(st%sh)) allocate(st%sh(st%Nshell))
         if (.not. allocated(st%mat_of_shell)) allocate(st%mat_of_shell(st%Nshell))
-        integer :: idx3, matid
-        real(rk) :: r_out, rho0, T0
         read(line,*) idx3, r_out, matid, rho0, T0
         st%mat_of_shell(idx3)=matid
         st%sh(idx3)%r_out = r_out
@@ -117,7 +134,6 @@ contains
     call attach_tables(st%Nshell)
     do i=1, st%Nshell
       if (st%eos(i)%tabular) then
-        integer :: rc
         call read_eos_csv(st%eos(i)%table_path, tbl(i), rc)
         if (rc/=0) stop "Failed to read EOS table"
       end if

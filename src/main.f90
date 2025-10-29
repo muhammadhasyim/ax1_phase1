@@ -11,7 +11,7 @@ program ax1
 
   type(State)   :: st
   type(Control) :: ctrl
-  integer :: step, i, nh
+  integer :: step, i, j, nh
   real(rk) :: alpha_prev=0._rk, power_prev=0._rk
   real(rk) :: dtE, dE_spec, W, c_vp
   real(rk) :: k, alpha
@@ -20,7 +20,7 @@ program ax1
   if (command_argument_count()>=1) then
     call get_command_argument(1, deck)
   else
-    deck = "input/sample_phase1.deck"
+    deck = "inputs/sample_phase1.deck"
   end if
 
   call banner()
@@ -50,9 +50,8 @@ program ax1
     nh = ctrl%hydro_per_neut
     dtE = st%total_power * ctrl%dt
     do i=1, nh
-       integer :: j
        ! update delayed precursors
-       call update_precursors(st, ctrl, ctrl%dt)
+       call update_precursors(st, ctrl%dt)
        do j=1, st%Nshell
          dE_spec = dtE * st%power_frac(j) / max(st%sh(j)%mass, 1.0e-30_rk)
          call update_thermo(st, j, dE_spec)

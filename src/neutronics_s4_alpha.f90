@@ -24,11 +24,11 @@ contains
     st%C = 0._rk
   end subroutine
 
-  subroutine build_sources(st, k, alpha, prompt_factor)
+  subroutine build_sources(st, k, prompt_factor)
     type(State), intent(inout) :: st
-    real(rk),    intent(in)    :: k, alpha, prompt_factor
+    real(rk),    intent(in)    :: k, prompt_factor
     integer :: i, g, gp, imat, j
-    real(rk) :: sumf
+    real(rk) :: sumf, prompt_scale, beta_tot
 
     st%q_scatter = 0._rk
     st%q_fiss    = 0._rk
@@ -36,18 +36,27 @@ contains
 
     do i=1, st%Nshell
       imat = st%mat_of_shell(i)
+      beta_tot = 0._rk
+      do j=1, DGRP
+        beta_tot = beta_tot + st%mat(imat)%beta(j)
+      end do
+      beta_tot = min(max(beta_tot, 0._rk), 0.9999_rk)
+      ! Only the prompt fraction contributes to the prompt source; the delayed portion is
+      ! emitted through the precursor populations tracked in st%C.
+      prompt_scale = prompt_factor * (1._rk - beta_tot)
+
       do g=1, st%G
         do gp=1, st%G
           st%q_scatter(g,i) = st%q_scatter(g,i) + st%mat(imat)%sig_s(gp,g) * st%phi(gp,i)
         end do
         sumf = 0._rk
         do gp=1, st%G
-          sumf = sumf + st%mat(imat)%g(gp)%nu_sig_f * st%phi(gp,i)
+          sumf = sumf + st%mat(imat)%groups(gp)%nu_sig_f * st%phi(gp,i)
         end do
-        st%q_fiss(g,i) = prompt_factor * st%mat(imat)%g(g)%chi * sumf / max(k, 1.0e-30_rk)
+        st%q_fiss(g,i) = prompt_scale * st%mat(imat)%groups(g)%chi * sumf / max(k, 1.0e-30_rk)
         ! delayed source: χ_d ≈ χ * sum_j λ_j C_j,g
         do j=1, DGRP
-          st%q_delay(g,i) = st%q_delay(g,i) + st%mat(imat)%g(g)%chi * st%mat(imat)%lambda(j) * st%C(j,g,i)
+          st%q_delay(g,i) = st%q_delay(g,i) + st%mat(imat)%groups(g)%chi * st%mat(imat)%lambda(j) * st%C(j,g,i)
         end do
       end do
     end do
@@ -63,9 +72,9 @@ contains
     real(rk) :: mu, wmu, rin, rout, dx, sig_t, tau, Sg, psi_in, psi_out
     real(rk) :: prod_old, prod_new, w_i
 
+    prod_old = 1.0_rk
     do it=1, itmax
-      call build_sources(st, k, alpha, prompt_factor=1.0_rk)  ! prompt only for k
-      prod_old = 1.0_rk
+      call build_sources(st, k, prompt_factor=1.0_rk)  ! prompt only for k
       prod_new = 0._rk
       st%phi = 0._rk
 
@@ -76,7 +85,8 @@ contains
           psi_in = 0._rk
           do i=1, st%Nshell
             imat = st%mat_of_shell(i)
-            sig_t = st%mat(imat)%g(g)%sig_t + alpha/max(st%vbar,1.0e-30_rk)
+            sig_t = st%mat(imat)%groups(g)%sig_t + alpha/max(st%vbar,1.0e-30_rk)
+            sig_t = max(sig_t, 1.0e-8_rk)
             rin = st%sh(i)%r_in; rout = st%sh(i)%r_out
             dx = max(rout - rin, 1.0e-12_rk)
             Sg = 0.5_rk*( st%q_scatter(g,i) + st%q_fiss(g,i) )  ! no delayed in k
@@ -91,7 +101,8 @@ contains
           psi_in = 0._rk
           do i=st%Nshell,1,-1
             imat = st%mat_of_shell(i)
-            sig_t = st%mat(imat)%g(g)%sig_t + alpha/max(st%vbar,1.0e-30_rk)
+            sig_t = st%mat(imat)%groups(g)%sig_t + alpha/max(st%vbar,1.0e-30_rk)
+            sig_t = max(sig_t, 1.0e-8_rk)
             rin = st%sh(i)%r_in; rout = st%sh(i)%r_out
             dx = max(rout - rin, 1.0e-12_rk)
             Sg = 0.5_rk*( st%q_scatter(g,i) + st%q_fiss(g,i) )
@@ -107,11 +118,16 @@ contains
       do i=1, st%Nshell
         do g=1, st%G
           w_i = (st%sh(i)%r_out - st%sh(i)%r_in)
-          prod_new = prod_new + st%mat(st%mat_of_shell(i))%g(g)%nu_sig_f * st%phi(g,i) * w_i
+          prod_new = prod_new + st%mat(st%mat_of_shell(i))%groups(g)%nu_sig_f * st%phi(g,i) * w_i
         end do
       end do
       if (abs(prod_new-1._rk) < tol) exit
-      k = k * prod_new    ! rescale k
+      if (prod_old > 0._rk) then
+        k = k * (prod_new / prod_old)
+      else
+        k = k * prod_new
+      end if
+      prod_old = prod_new
     end do
   end subroutine
 
@@ -144,42 +160,55 @@ contains
     real(rk),    intent(in)    :: k
     logical,     intent(in)    :: include_delayed
     integer :: i, g, imat
-    real(rk) :: prod_tot, flux_tot, vol_i, norm
+    real(rk) :: prompt_tot, delay_tot, vol_i, norm
+    real(rk) :: shell_power, delayed_shell, total_fission
     st%k_eff = k
     if (.not. allocated(st%power_frac)) allocate(st%power_frac(st%Nshell))
-    prod_tot = 0._rk; flux_tot = 0._rk; norm = 0._rk
+    prompt_tot = 0._rk; delay_tot = 0._rk; norm = 0._rk
     do i=1, st%Nshell
       vol_i = max(st%sh(i)%r_out - st%sh(i)%r_in, 1.0e-12_rk)
       st%power_frac(i) = 0._rk
+      total_fission = 0._rk
+      delayed_shell = 0._rk
+      imat = st%mat_of_shell(i)
       do g=1, st%G
-        imat = st%mat_of_shell(i)
-        st%power_frac(i) = st%power_frac(i) + st%mat(imat)%g(g)%nu_sig_f * st%phi(g,i) * vol_i
-        prod_tot = prod_tot + st%mat(imat)%g(g)%nu_sig_f * st%phi(g,i) * vol_i
-        flux_tot = flux_tot + st%phi(g,i) * vol_i
+        total_fission = total_fission + st%mat(imat)%groups(g)%nu_sig_f * st%phi(g,i) * vol_i
+        delayed_shell = delayed_shell + st%q_delay(g,i) * vol_i
       end do
-      norm = norm + st%power_frac(i)
+      delayed_shell = min(max(delayed_shell, 0._rk), total_fission)
+      shell_power = max(total_fission - delayed_shell, 0._rk)
+      prompt_tot = prompt_tot + shell_power
+      if (include_delayed) then
+        shell_power = shell_power + delayed_shell
+        delay_tot = delay_tot + delayed_shell
+      end if
+      st%power_frac(i) = shell_power
+      norm = norm + shell_power
     end do
     if (norm>0._rk) then
       st%power_frac = st%power_frac / norm
     else
       st%power_frac = 1._rk/real(st%Nshell,rk)
     end if
-    st%total_power = 1._rk
+    if (include_delayed) then
+      st%total_power = prompt_tot + delay_tot
+    else
+      st%total_power = prompt_tot
+    end if
     ! alpha is set externally in alpha mode; in k-mode we can compute via Λ if desired
   end subroutine
 
-  subroutine update_precursors(st, ctrl, dt)
+  subroutine update_precursors(st, dt)
     type(State), intent(inout) :: st
-    type(Control), intent(in)  :: ctrl
     real(rk), intent(in) :: dt
     integer :: i, g, j, imat
-    real(rk) :: source_g
+    real(rk) :: f_rate
     do i=1, st%Nshell
       imat = st%mat_of_shell(i)
+      f_rate = sum_fission_rate(st, i)
       do g=1, st%G
-        source_g = 0._rk
         do j=1, DGRP
-          st%C(j,g,i) = st%C(j,g,i) + dt * ( st%mat(imat)%beta(j) * sum_fission_rate(st,i) - st%mat(imat)%lambda(j)*st%C(j,g,i) )
+          st%C(j,g,i) = st%C(j,g,i) + dt * ( st%mat(imat)%beta(j) * f_rate - st%mat(imat)%lambda(j)*st%C(j,g,i) )
         end do
       end do
     end do
@@ -192,7 +221,7 @@ contains
       Fi = 0._rk
       imat = st%mat_of_shell(i)
       do gp=1, st%G
-        Fi = Fi + st%mat(imat)%g(gp)%nu_sig_f * st%phi(gp,i)
+        Fi = Fi + st%mat(imat)%groups(gp)%nu_sig_f * st%phi(gp,i)
       end do
     end function
   end subroutine

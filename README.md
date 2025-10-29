@@ -11,7 +11,7 @@ This release implements **Phase 1** toward real‑world usefulness:
 ## Build & Run
 ```bash
 make
-./ax1 input/sample_phase1.deck
+./ax1 inputs/sample_phase1.deck
 ```
 
 For α‑eigen runs, set `eigmode alpha` in the deck (see samples). For EOS tables, supply `eos_table <path>`.

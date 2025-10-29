@@ -12,22 +12,81 @@ contains
     type(EOSTable),   intent(inout) :: tbl
     integer,          intent(out) :: ios
     integer :: iu, i, j, nr, nt
+    character(len=512) :: line
     ios = 0
     open(newunit=iu, file=path, status='old', action='read', iostat=ios)
     if (ios/=0) return
-    read(iu,*) nr, nt
+    ! read NR NT from first non-comment, non-blank line
+    do
+      read(iu,'(A)', iostat=ios) line
+      if (ios/=0) then
+        close(iu); return
+      end if
+      if (len_trim(line)==0) cycle
+      if (line(1:1) == '#') cycle
+      read(line,*, iostat=ios) nr, nt
+      if (ios==0) exit
+    end do
     allocate(tbl%rho(nr), tbl%temp(nt), tbl%P(nr,nt), tbl%Cv(nr,nt))
-    do i=1, nr
-      read(iu,*) tbl%rho(i)
+    ! read NR rho values
+    i = 0
+    do while (i < nr)
+      read(iu,'(A)', iostat=ios) line
+      if (ios/=0) then
+        close(iu); ios= -1; return
+      end if
+      if (len_trim(line)==0) cycle
+      if (line(1:1) == '#') cycle
+      i = i + 1
+      read(line,*, iostat=ios) tbl%rho(i)
+      if (ios/=0) then
+        close(iu); return
+      end if
     end do
-    do j=1, nt
-      read(iu,*) tbl%temp(j)
+    ! read NT temp values
+    j = 0
+    do while (j < nt)
+      read(iu,'(A)', iostat=ios) line
+      if (ios/=0) then
+        close(iu); ios = -2; return
+      end if
+      if (len_trim(line)==0) cycle
+      if (line(1:1) == '#') cycle
+      j = j + 1
+      read(line,*, iostat=ios) tbl%temp(j)
+      if (ios/=0) then
+        close(iu); return
+      end if
     end do
-    do i=1, nr
-      read(iu,*) tbl%P(i,1:nt)
+    ! read NR rows of P
+    i = 0
+    do while (i < nr)
+      read(iu,'(A)', iostat=ios) line
+      if (ios/=0) then
+        close(iu); ios = -3; return
+      end if
+      if (len_trim(line)==0) cycle
+      if (line(1:1) == '#') cycle
+      i = i + 1
+      read(line,*, iostat=ios) tbl%P(i,1:nt)
+      if (ios/=0) then
+        close(iu); return
+      end if
     end do
-    do i=1, nr
-      read(iu,*) tbl%Cv(i,1:nt)
+    ! read NR rows of Cv
+    i = 0
+    do while (i < nr)
+      read(iu,'(A)', iostat=ios) line
+      if (ios/=0) then
+        close(iu); ios = -4; return
+      end if
+      if (len_trim(line)==0) cycle
+      if (line(1:1) == '#') cycle
+      i = i + 1
+      read(line,*, iostat=ios) tbl%Cv(i,1:nt)
+      if (ios/=0) then
+        close(iu); return
+      end if
     end do
     close(iu)
   end subroutine
