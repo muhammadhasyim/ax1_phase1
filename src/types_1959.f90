@@ -92,15 +92,20 @@ module types_1959
      ! -----------------------------------------------------------------------
      real(rk) :: CSC = 2.0_rk       ! Courant stability constant ≈ γ(γ-1)
      real(rk) :: CVP = 1.7_rk       ! Viscous pressure coefficient (typically 1.5-2.0)
+     real(rk) :: W_LIMIT = 0.3_rk   ! Maximum allowed W stability function
+     real(rk) :: ALPHA_DELTA_LIMIT = 0.2_rk  ! Maximum α·Δt for stability
+     real(rk) :: POWER_DELTA_LIMIT = 0.2_rk  ! Maximum power change per step
      
      ! -----------------------------------------------------------------------
      ! Time control
      ! -----------------------------------------------------------------------
      real(rk) :: DELT = 1.0e-3_rk   ! Time step (μsec)
      real(rk) :: DELTP = 1.0e-3_rk  ! Previous time step for velocity
+     real(rk) :: DT_MAX = 0.1_rk    ! Maximum time step (μsec)
+     real(rk) :: T_END = 1.0_rk     ! Simulation end time (μsec)
+     real(rk) :: R_MAX_DISASSEMBLY = 100.0_rk  ! Max radius for termination (cm)
      real(rk) :: DELT_min = 1.0e-8_rk  ! Minimum time step
      real(rk) :: DELT_max = 1.0_rk     ! Maximum time step
-     real(rk) :: t_end = 1.0_rk        ! End time (μsec)
      
      ! -----------------------------------------------------------------------
      ! Neutronics frequency control (ANL-5977 Order numbers ~9014-9050)
@@ -108,6 +113,8 @@ module types_1959
      integer :: NS4 = 1             ! Hydro cycles per neutronics calculation
      integer :: NS4R = 0            ! Hydro cycle counter
      integer :: NLMax = 10          ! Max hydro cycles before DELT doubling
+     integer :: HYDRO_PER_NEUT = 1  ! Hydro steps per neutron step
+     integer :: HYDRO_PER_NEUT_MAX = 200  ! Maximum NS4
      
      ! -----------------------------------------------------------------------
      ! VJ-OK-1 test parameters (ANL-5977 Appendix A)
@@ -128,6 +135,7 @@ module types_1959
      integer :: output_freq = 1     ! Output every N neutronics cycles
      character(len=256) :: output_file = "ax1_1959.out"
      logical :: print_input = .true.  ! Print input echo
+     logical :: verbose = .false.     ! Verbose output for debugging
   end type Control_1959
 
   ! ===========================================================================
@@ -186,6 +194,8 @@ module types_1959
      real(rk) :: AKEFF = 1._rk      ! k-effective
      real(rk) :: AK(4) = 1._rk      ! k-eff iteration array
      real(rk) :: POWER = 0._rk      ! Power (arbitrary units)
+     real(rk) :: TOTAL_POWER = 0._rk  ! Total system power
+     real(rk) :: POWER_PREV = 0._rk   ! Previous power for change detection
      real(rk) :: Q = 0._rk          ! Total energy (10¹² ergs, lacking 4π/3)
      real(rk) :: QPRIME = 0._rk     ! Previous Q
      
@@ -208,6 +218,7 @@ module types_1959
      real(rk) :: W = 0._rk          ! Stability function
      real(rk) :: ERRLCL = 0._rk     ! Local energy error
      real(rk) :: CHECK = 0._rk      ! Energy balance check
+     real(rk) :: FLAG1 = 0._rk      ! Power termination flag
      
      ! -----------------------------------------------------------------------
      ! Iteration counters
