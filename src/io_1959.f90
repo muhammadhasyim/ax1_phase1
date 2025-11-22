@@ -75,30 +75,29 @@ contains
     type(Control_1959), intent(inout) :: ctrl
     
     character(len=256) :: line
-    character(len=32) :: keyword
-    integer :: ios
     
-    read(unit, '(A)') line  ! Skip header
+    read(unit, '(A)') line  ! Skip header "CONTROL"
     
-    ! Eigenvalue mode
-    read(unit, *) keyword, ctrl%eigmode
+    ! Eigenvalue mode (string)
+    read(unit, '(A)') ctrl%eigmode
+    ctrl%eigmode = trim(adjustl(ctrl%eigmode))
     
     ! Time parameters
-    read(unit, *) keyword, ctrl%DELT
-    read(unit, *) keyword, ctrl%DT_MAX
-    read(unit, *) keyword, ctrl%T_END
+    read(unit, *) ctrl%DELT
+    read(unit, *) ctrl%DT_MAX
+    read(unit, *) ctrl%T_END
     
     ! Stability parameters
-    read(unit, *) keyword, ctrl%CSC
-    read(unit, *) keyword, ctrl%CVP
-    read(unit, *) keyword, ctrl%W_LIMIT
+    read(unit, *) ctrl%CSC
+    read(unit, *) ctrl%CVP
+    read(unit, *) ctrl%W_LIMIT
     
     ! Convergence
-    read(unit, *) keyword, ctrl%EPSA
-    read(unit, *) keyword, ctrl%EPSK
+    read(unit, *) ctrl%EPSA
+    read(unit, *) ctrl%EPSK
     
     ! Hydro subcycling
-    read(unit, *) keyword, ctrl%HYDRO_PER_NEUT
+    read(unit, *) ctrl%HYDRO_PER_NEUT
     ctrl%NS4 = ctrl%HYDRO_PER_NEUT
     
     print *, "Control parameters read."
