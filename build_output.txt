@@ -1,0 +1,149 @@
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/kinds.f90 -o src/kinds.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/constants.f90 -o src/constants.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/types.f90 -o src/types.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/eos_table.f90 -o src/eos_table.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/utils.f90 -o src/utils.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/thermo.f90 -o src/thermo.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/xs_lib.f90 -o src/xs_lib.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/controls.f90 -o src/controls.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/temperature_xs.f90 -o src/temperature_xs.o
+src/temperature_xs.f90:36:22:
+
+   36 |     integer :: imat, g, gp
+      |                      1
+Warning: Unused variable ‘g’ declared at (1) [-Wunused-variable]
+src/temperature_xs.f90:36:26:
+
+   36 |     integer :: imat, g, gp
+      |                          1
+Warning: Unused variable ‘gp’ declared at (1) [-Wunused-variable]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/hydro.f90 -o src/hydro.o
+src/hydro.f90:7:38:
+
+    7 |   subroutine hydro_step(st, ctrl, c_vp)
+      |                                      1
+Warning: Unused dummy argument ‘c_vp’ at (1) [-Wunused-dummy-argument]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/neutronics_s4_alpha.f90 -o src/neutronics_s4_alpha.o
+src/neutronics_s4_alpha.f90:19:16:
+
+   19 |     integer :: m
+      |                1
+Warning: Unused variable ‘m’ declared at (1) [-Wunused-variable]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/reactivity_feedback.f90 -o src/reactivity_feedback.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/history_mod.f90 -o src/history_mod.o
+src/history_mod.f90:44:36:
+
+   44 |   subroutine record_history(st, ctrl)
+      |                                    1
+Warning: Unused dummy argument ‘ctrl’ at (1) [-Wunused-dummy-argument]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/checkpoint_mod.f90 -o src/checkpoint_mod.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/io_mod.f90 -o src/io_mod.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/input_parser.f90 -o src/input_parser.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/simulation_mod.f90 -o src/simulation_mod.o
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/uq_mod.f90 -o src/uq_mod.o
+src/uq_mod.f90:118:24:
+
+  118 |     real(rk) :: k, alpha
+      |                        1
+Warning: Unused variable ‘alpha’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:41:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                         1
+Warning: Unused variable ‘alpha_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:52:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                    1
+Warning: Unused variable ‘alpha_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:127:30:
+
+  127 |     type(Control) :: ctrl_base, ctrl_work
+      |                              1
+Warning: Unused variable ‘ctrl_base’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:22:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                      1
+Warning: Unused variable ‘k_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:29:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                             1
+Warning: Unused variable ‘k_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:64:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                                1
+Warning: Unused variable ‘power_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:75:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                                           1
+Warning: Unused variable ‘power_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:126:26:
+
+  126 |     type(State) :: st_base
+      |                          1
+Warning: Unused variable ‘st_base’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:132:49:
+
+  132 |     real(rk), allocatable :: power_samples_t(:,:)  ! (n_samples, n_time_points)
+      |                                                 ^
+Warning: ‘power_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:132:49: Warning: ‘power_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:134:48:
+
+  134 |     real(rk), allocatable :: keff_samples_t(:,:)   ! (n_samples, n_time_points)
+      |                                                ^
+Warning: ‘keff_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:134:48: Warning: ‘keff_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:133:49:
+
+  133 |     real(rk), allocatable :: alpha_samples_t(:,:)  ! (n_samples, n_time_points)
+      |                                                 ^
+Warning: ‘alpha_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:133:49: Warning: ‘alpha_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:44:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                            ^
+Warning: ‘orig_sig_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:44: Warning: ‘orig_sig_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                                                                   ^
+Warning: ‘orig_sig_s.dim[2].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83: Warning: ‘orig_sig_s.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83: Warning: ‘orig_sig_s.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:64:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                                                ^
+Warning: ‘orig_nu_sig_f.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:64: Warning: ‘orig_nu_sig_f.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:123:43:
+
+  123 |     real(rk), allocatable :: orig_beta(:,:)
+      |                                           ^
+Warning: ‘orig_beta.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:123:43: Warning: ‘orig_beta.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/sensitivity_mod.f90 -o src/sensitivity_mod.o
+src/sensitivity_mod.f90:48:35:
+
+   48 |     real(rk) :: delta_xs, delta_eos, delta_beta
+      |                                   1
+Warning: Unused variable ‘delta_eos’ declared at (1) [-Wunused-variable]
+src/sensitivity_mod.f90:47:33:
+
+   47 |     real(rk) :: xs_orig, eos_orig, beta_orig
+      |                                 1
+Warning: Unused variable ‘eos_orig’ declared at (1) [-Wunused-variable]
+src/sensitivity_mod.f90:43:16:
+
+   43 |     integer :: i, g, j, imat, it
+      |                1
+Warning: Unused variable ‘i’ declared at (1) [-Wunused-variable]
+gfortran  -O2 -Wall -Wextra -std=f2008 -c src/main.f90 -o src/main.o
+gfortran  -O2 -Wall -Wextra -std=f2008  -o ax1 src/kinds.o src/constants.o src/types.o src/eos_table.o src/utils.o src/thermo.o src/xs_lib.o src/controls.o src/temperature_xs.o src/hydro.o src/neutronics_s4_alpha.o src/reactivity_feedback.o src/history_mod.o src/checkpoint_mod.o src/io_mod.o src/input_parser.o src/simulation_mod.o src/uq_mod.o src/sensitivity_mod.o src/main.o

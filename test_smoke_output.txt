@@ -1,0 +1,137 @@
+src/temperature_xs.f90:36:22:
+
+   36 |     integer :: imat, g, gp
+      |                      1
+Warning: Unused variable ‘g’ declared at (1) [-Wunused-variable]
+src/temperature_xs.f90:36:26:
+
+   36 |     integer :: imat, g, gp
+      |                          1
+Warning: Unused variable ‘gp’ declared at (1) [-Wunused-variable]
+src/hydro.f90:7:38:
+
+    7 |   subroutine hydro_step(st, ctrl, c_vp)
+      |                                      1
+Warning: Unused dummy argument ‘c_vp’ at (1) [-Wunused-dummy-argument]
+src/neutronics_s4_alpha.f90:19:16:
+
+   19 |     integer :: m
+      |                1
+Warning: Unused variable ‘m’ declared at (1) [-Wunused-variable]
+src/history_mod.f90:44:36:
+
+   44 |   subroutine record_history(st, ctrl)
+      |                                    1
+Warning: Unused dummy argument ‘ctrl’ at (1) [-Wunused-dummy-argument]
+src/uq_mod.f90:118:24:
+
+  118 |     real(rk) :: k, alpha
+      |                        1
+Warning: Unused variable ‘alpha’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:41:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                         1
+Warning: Unused variable ‘alpha_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:52:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                    1
+Warning: Unused variable ‘alpha_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:127:30:
+
+  127 |     type(Control) :: ctrl_base, ctrl_work
+      |                              1
+Warning: Unused variable ‘ctrl_base’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:22:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                      1
+Warning: Unused variable ‘k_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:29:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                             1
+Warning: Unused variable ‘k_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:64:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                                1
+Warning: Unused variable ‘power_mean’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:120:75:
+
+  120 |     real(rk) :: k_mean, k_std, alpha_mean, alpha_std, power_mean, power_std
+      |                                                                           1
+Warning: Unused variable ‘power_std’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:126:26:
+
+  126 |     type(State) :: st_base
+      |                          1
+Warning: Unused variable ‘st_base’ declared at (1) [-Wunused-variable]
+src/uq_mod.f90:132:49:
+
+  132 |     real(rk), allocatable :: power_samples_t(:,:)  ! (n_samples, n_time_points)
+      |                                                 ^
+Warning: ‘power_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:132:49: Warning: ‘power_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:134:48:
+
+  134 |     real(rk), allocatable :: keff_samples_t(:,:)   ! (n_samples, n_time_points)
+      |                                                ^
+Warning: ‘keff_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:134:48: Warning: ‘keff_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:133:49:
+
+  133 |     real(rk), allocatable :: alpha_samples_t(:,:)  ! (n_samples, n_time_points)
+      |                                                 ^
+Warning: ‘alpha_samples_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:133:49: Warning: ‘alpha_samples_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:44:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                            ^
+Warning: ‘orig_sig_t.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:44: Warning: ‘orig_sig_t.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                                                                   ^
+Warning: ‘orig_sig_s.dim[2].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83: Warning: ‘orig_sig_s.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:83: Warning: ‘orig_sig_s.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:64:
+
+  122 |     real(rk), allocatable :: orig_sig_t(:,:), orig_nu_sig_f(:,:), orig_sig_s(:,:,:)
+      |                                                                ^
+Warning: ‘orig_nu_sig_f.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:122:64: Warning: ‘orig_nu_sig_f.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:123:43:
+
+  123 |     real(rk), allocatable :: orig_beta(:,:)
+      |                                           ^
+Warning: ‘orig_beta.dim[1].stride’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/uq_mod.f90:123:43: Warning: ‘orig_beta.offset’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+src/sensitivity_mod.f90:48:35:
+
+   48 |     real(rk) :: delta_xs, delta_eos, delta_beta
+      |                                   1
+Warning: Unused variable ‘delta_eos’ declared at (1) [-Wunused-variable]
+src/sensitivity_mod.f90:47:33:
+
+   47 |     real(rk) :: xs_orig, eos_orig, beta_orig
+      |                                 1
+Warning: Unused variable ‘eos_orig’ declared at (1) [-Wunused-variable]
+src/sensitivity_mod.f90:43:16:
+
+   43 |     integer :: i, g, j, imat, it
+      |                1
+Warning: Unused variable ‘i’ declared at (1) [-Wunused-variable]
+ AX-1 Phase 2 — S_n, alpha-eigen, delayed, EOS tables, CFL+W, DSA
+t=  0.00000  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  1  [neutronics]
+t=  0.00100  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  1  [hydro]
+t=  0.00100  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  2  [neutronics]
+t=  0.00200  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  2  [hydro]
+t=  0.00300  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  2  [hydro]
+t=  0.00300  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  3  [neutronics]
+t=  0.00400  alpha= 1.00000E+00  keff= 2.23635E-02  H/neu=  3  [hydro]
+Smoke test OK.

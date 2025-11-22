@@ -1,0 +1,3692 @@
+% This LaTeX document needs to be compiled with XeLaTeX.
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{ucharclasses}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan,}
+\urlstyle{same}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage[fallback]{xeCJK}
+\usepackage{polyglossia}
+\usepackage{fontspec}
+\usepackage{newunicodechar}
+\IfFontExistsTF{Noto Serif CJK JP}
+{\setCJKmainfont{Noto Serif CJK JP}}
+{\IfFontExistsTF{STSong}
+  {\setCJKmainfont{STSong}}
+  {\IfFontExistsTF{Droid Sans Fallback}
+    {\setCJKmainfont{Droid Sans Fallback}}
+    {\setCJKmainfont{SimSun}}
+}}
+\IfFontExistsTF{Noto Serif CJK KR}
+{\setCJKfallbackfamilyfont{\CJKrmdefault}{Noto Serif CJK KR}}
+{\IfFontExistsTF{Apple SD Gothic Neo}
+  {\setCJKfallbackfamilyfont{\CJKrmdefault}{Apple SD Gothic Neo}}
+  {\IfFontExistsTF{UnDotum}
+    {\setCJKfallbackfamilyfont{\CJKrmdefault}{UnDotum}}
+    {\setCJKfallbackfamilyfont{\CJKrmdefault}{Malgun Gothic}}
+}}
+
+\setmainlanguage{english}
+\setotherlanguages{tamil, arabic, hindi}
+\IfFontExistsTF{Noto Serif Tamil}
+{\newfontfamily\tamilfont{Noto Serif Tamil}}
+{\IfFontExistsTF{Tamil MN}
+  {\newfontfamily\tamilfont{Tamil MN}}
+  {\IfFontExistsTF{Lohit Tamil}
+    {\newfontfamily\tamilfont{Lohit Tamil}}
+    {\IfFontExistsTF{FreeSerif}
+      {\newfontfamily\tamilfont{FreeSerif}}
+      {\newfontfamily\tamilfont{Latha}}
+}}}
+\IfFontExistsTF{Noto Naskh Arabic}
+{\newfontfamily\arabicfont{Noto Naskh Arabic}}
+{\IfFontExistsTF{Al Bayan}
+  {\newfontfamily\arabicfont{Al Bayan}}
+  {\IfFontExistsTF{FreeSerif}
+    {\newfontfamily\arabicfont{FreeSerif}}
+    {\IfFontExistsTF{DejaVu Sans}
+      {\newfontfamily\arabicfont{DejaVu Sans}}
+      {\IfFontExistsTF{Tahoma}
+        {\newfontfamily\arabicfont{Tahoma}}
+        {\newfontfamily\arabicfont{Arial Unicode MS}}
+}}}}
+\IfFontExistsTF{Noto Serif Devanagari}
+{\newfontfamily\hindifont{Noto Serif Devanagari}}
+{\IfFontExistsTF{Kohinoor Devanagari}
+  {\newfontfamily\hindifont{Kohinoor Devanagari}}
+  {\IfFontExistsTF{Devanagari MT}
+    {\newfontfamily\hindifont{Devanagari MT}}
+    {\IfFontExistsTF{Lohit Devanagari}
+      {\newfontfamily\hindifont{Lohit Devanagari}}
+      {\IfFontExistsTF{FreeSerif}
+        {\newfontfamily\hindifont{FreeSerif}}
+        {\newfontfamily\hindifont{Arial Unicode MS}}
+}}}}
+\IfFontExistsTF{Noto Serif Gujarati}
+{\newfontfamily\gujaratifont{Noto Serif Gujarati}}
+{\IfFontExistsTF{Kohinoor Gujarati}
+  {\newfontfamily\gujaratifont{Kohinoor Gujarati}}
+  {\IfFontExistsTF{Gujarati MT}
+    {\newfontfamily\gujaratifont{Gujarati MT}}
+    {\IfFontExistsTF{Lohit Gujarati}
+      {\newfontfamily\gujaratifont{Lohit Gujarati}}
+      {\IfFontExistsTF{FreeSerif}
+        {\newfontfamily\gujaratifont{FreeSerif}}
+        {\newfontfamily\gujaratifont{Arial Unicode MS}}
+}}}}
+\IfFontExistsTF{CMU Serif}
+{\newfontfamily\lgcfont{CMU Serif}}
+{\IfFontExistsTF{DejaVu Sans}
+  {\newfontfamily\lgcfont{DejaVu Sans}}
+  {\newfontfamily\lgcfont{Georgia}}
+}
+\setDefaultTransitions{\lgcfont}{}
+\setTransitionsFor{Tamil}{\tamilfont}{\lgcfont}
+\setTransitionsFor{Arabic}{\arabicfont}{\lgcfont}
+\setTransitionsForDevanagari{\hindifont}{\rmfamily}
+\setTransitionsFor{Gujarati}{\gujaratifont}{\rmfamily}
+
+\title{ARGONNE NATIONAL LABORATORY P. O. Box 299 }
+
+\author{D. Okrent, J. M. Cook and D. Satkus of Argonne National Laboratory and\\
+R. B. Lazarus and M. B. Wells of Los Alamos Scientific Laboratory}
+\date{}
+
+
+%New command to display footnote whose markers will always be hidden
+\let\svthefootnote\thefootnote
+\newcommand\blfootnotetext[1]{%
+  \let\thefootnote\relax\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \let\thefootnote\svthefootnote%
+}
+
+%Overriding the \footnotetext command to hide the marker if its value is `0`
+\let\svfootnotetext\footnotetext
+\renewcommand\footnotetext[2][?]{%
+  \if\relax#1\relax%
+    \ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+  \else%
+    \if?#1\ifnum\value{footnote}=0\blfootnotetext{#2}\else\svfootnotetext{#2}\fi%
+    \else\svfootnotetext[#1]{#2}\fi%
+  \fi
+}
+
+\newunicodechar{⋯}{\ifmmode\cdots\else{$\cdots$}\fi}
+\newunicodechar{←}{\ifmmode\leftarrow\else{$\leftarrow$}\fi}
+\newunicodechar{σ}{\ifmmode\sigma\else{$\sigma$}\fi}
+
+\begin{document}
+\maketitle
+\captionsetup{singlelinecheck=false}
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-001}
+\end{center}
+
+\section*{Public Domain, Google-digitized}
+We have determined this work to be in the public domain, meaning that it is not subject to copyright. Users are free to copy, use, and redistribute the work in part or in whole. It is possible that current copyright holders, heirs or the estate of the authors of individual portions of the work, such as illustrations or photographs, assert copyrights over these portions. Depending on the nature of subsequent use that is made, additional rights may need to be obtained independently of anything we can address. The digital images and OCR of this work were produced by Google, Inc. (indicated by a watermark on each page in the PageTurner). Google requests that the images and OCR not be re-hosted, redistributed or used commercially. The images are provided for educational, scholarly, non-commercial purposes.
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+Argonne Mational Laboratoru
+
+D.Okrent, J.M.Cook, D.Satkus, R.B.Lazarus, and M.B.Wells
+
+\section*{LEGAL NOTICE}
+This report was prepared as an account of Government sponsored work. Neither the United States, nor the Commission, nor any person acting on behalf of the Commission:\\
+A. Makes any warranty or representation, expressed or implied,\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized with respect to the accuracy, completeness, or usefulness of the information contained in this report, or that the use of any information, apparatus, method, or process disclosed in this report may not infringe privately owned rights; or\\
+B. Assumes any liabilities with respect to the use of, or for damages resulting from the use of any information, apparatus, method, or process disclosed in this report.
+
+As used in the above, "person acting on behalf of the Commission" includes any employee or contractor of the Commission, or employee of such contractor, to the extent that such employee or contractor of the Commission, or employee of such contractor prepares, disseminates, or provides access to, any information pursuant to his employment or contract with the Commission, or his employment with such contractor.
+
+Price $\$ 2.50$. Available from the Office of Technical Services, Department of Commerce, Washington 25, D.C.
+
+Lemont, Illinois
+
+\section*{Ax-1, A COMPUTING PROGRAM FOR COUPLED NEUTRONICS-HYDRODYNAMICS CALCULATIONS ON THE IBM-704 }
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+May, 1959
+
+Operated by The University of Chicago\\
+under\\
+Contract W-31-109-eng-38\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\section*{TABLE OF CONTENTS}
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+I. INTRODUCTION ..... 3\\
+II. GENERAL DESCRIPTION OF THE PROGRAM ..... 5\\
+III. LIST OF SYMBOLS AND DEFINITION OF TERMS ..... 8\\
+IV. DISCUSSION OF CONTROLS OF THE PROGRAM ..... 22\\
+V. DETAILED FLOW DIAGRAM AND EXPLANATORY NOTES ..... 28\\
+VI. FORTRAN LISTING OF PROGRAM ..... 48\\
+VII. ROLE OF SENSE SWITCHES, SENSE LIGHTS AND FLAGS ..... 65\\
+VIII. LIST OF PAUSES AND STOPS ..... 67\\
+IX. OPERATING INSTRUCTIONS ..... 69\\
+X. SAMPLE PROBLEM ..... 71\\
+A. Input Data ..... 81\\
+B. Results ..... 85\\
+APPENDIX A: Details of the VJ-OKl Test ..... 101\\
+APPENDIX B: The Time Scale ..... 103\\
+APPENDIX C: Discussion of Hydrodynamic Stability Criteria and Shock Wave Treatment ..... 105\\
+APPENDIX D: Thermodynamic Considerations ..... 106\\
+APPENDIX E: Possible Variations in Program $A x-1^{\prime}$ ..... 108\\
+APPENDIX F: The Ax-1 Tape Dump and Recall Routine ..... 110\\
+REFERENCES ..... 114\\
+ACKNOWLEDGEMENTS ..... 115\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\section*{$A x-1$, A COMPUTING PROGRAM FOR COUPLED NEUTRONICS-HYDRODYNAMICS CALCULATIONS ON THE IBM-704 }
+
+
+\section*{I. INTRODUCTION}
+In connection with studies in the safety of fast reactors, it is necessary to calculate the energy yield and explosive force of a variety of hypothetical nuclear accidents. $(1,2)$ A valuable analytical technique for calculating such incidents was developed by Bethe and Tait, (3) and since modified by Jankus. $(1,2)$ To achieve an analytic solution, however, various simplifications and approximations were required, with consequent reduction of accuracy and applicability. A numerical solution, employing high speed digital computers, was needed to improve upon the accuracy available from the analytic solution and to provide a more flexible computational method. To gain this end most efficiently, the Argonne National Laboratory asked for and was granted the full cooperation of the Los Alamos Scientific Laboratory. R. B. Lazarus, assisted by M. B. Wells, drew upon Los Alamos experience in the field of coupled neutronicshydrodynamics calculations to devise a program reasonably well suited to Argonne's needs. They collaborated closely with J. M. Cook, D. Okrent, and D. Satkus of ANL in the debugging of the original program. As operating experience was gained at ANL, some refinements in the sensitive control apparatus of the program were introduced at ANL, to provide improved accuracy and more efficient use of the computing machine. The program has not been fully optimized in every sense, however, and a reworking should make possible further increases in efficiency. The utilization and a very rough outline of a similar computing program have been given by Stratton, Colvin, and Lazarus, ${ }^{(4)}$ but no details of the code were presented.
+
+Modification of Ax-1 to permit the use of other equations of state is under study. A special version designed to permit a study of the errors introduced by certain assumptions in the analytic technique is described in Appendix E, as Ax-1'.
+
+The presentation to follow includes a very general outline of the program, a semi-detailed flow diagram which emphasizes the physics and control aspects of the calculation, and then a detailed flow diagram and listing of the program (which is written in Fortran). Explanatory notes accompany the diagrams.
+
+Following the notes on the program, master lists detailing the roles of the sense switches, sense lights, pauses, and stops are presented. The operating instructions are then given, followed by a sample problem., including detailed information on input data.
+
+The theoretical discussion has been kept primarily in the appendices, and is generally in outline form with references, rather than in full exposition.
+
+\section*{II. GENERAL DESCRIPTION OF THE PROGRAM}
+Given a spherically symmetric, super-prompt critical system, the program computes the variation in time and space of the specific energy, temperature, pressure, density, and velocity. As a function of time it computes the reactivity (in the form of alpha, the inverse period), the power, the total energy, and the position of the boundaries of the various shells into which the system has been subdivided. All delayed neutron effects are ignored, and no allowance is made for transfer of heat by conduction or radiation. The input information includes the initial reactivity or geometry, the initial velocities and temperatures of the mass points, the composition and disposition of materials, the appropriate equation of state constants, and the microscopic neutron cross sections.
+
+For calculational purposes the spherical assembly is divided into a number of hypothetical spherical shells or mass points. The neutronics of this system is calculated in conventional fashion, using the $S_{n}$ method, $(5,6,7)$ thereby providing a power distribution across the radial network, as well as the alpha of the system.
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+From the neutronics calculation one goes to the thermodynamics and hydrodynamics portion to calculate the variation of power, temperature, pressure, density, and velocity with time. One may characterize the overall arrangement by means of the following block diagram.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-010}
+
+The calculation proceeds initially like the usual $S_{n}$ calculation. After computing average cross sections for each of the spherical shells, in the mixture code, the program proceeds either to a calculation of alpha $\left(=\frac{k_{e x}}{\ell}\right)$ for the specified configuration, or to a scaling of the reactor radii to provide the alpha originally specified. Before proceeding to the hydrodynamics the code also computes $\mathrm{k}_{\text {eff }}$ for the initially converged configuration, if so requested.
+
+The neutronics portion of the program is always done in the $\mathrm{S}_{4}$ approximation. It supplies to the succeeding portions of the program the alpha corresponding to that specific configuration. It also supplies a relative power distribution, to be used in assigning the increase in energy within each spherical shell or mass point, while this configuration remains a reasonable approximation.
+
+The program proceeds into the hydrodynamic and thermodynamic portions. For one or more short time intervals, $\Delta t$, alpha is considered to remain constant while the power varies as $e^{\alpha \Delta t}$. From the pressure gradients in the system the average accelerations of the mass points are computed and, hence, the new velocities at the end of a time interval. These, in turn, lead to the new radial positions of each shell boundary at the end of a time interval. The solution is performed in a Lagrangian coordinate system, i.e., the mesh is embedded in the material, and follows it along throughout its motion.
+
+During the time interval energy is added to the system (the average power times $\Delta t$ ) and this is distributed among the shells in accord with the previously calculated fission distribution. By allowing for the work done by or on a shell in expansion or compression, the net change in internal energy is computed, and from the internal energy a new pressure and temperature are obtained. In the $A x-1$ program, the relation between pressure and temperature has been taken to be linear, namely
+
+$$
+\mathrm{P}_{\mathrm{H}}=\alpha \rho+\beta \theta+\tau
+$$
+
+while the specific heat at constant volume is given by
+
+$$
+\left(\frac{\partial E}{\partial \theta}\right)_{V}=A_{c v}+B_{c v} \theta
+$$
+
+where
+
+$$
+\begin{aligned}
+P_{H} & =\text { pressure } \\
+\rho & =\text { density } \\
+\theta & =\text { temperature } \\
+E & =\text { internal energy }
+\end{aligned}
+$$
+
+The various coefficients are allowed to vary from shell to shell, but no provision is made for mixing several substances within a shell to generate average values of these coefficients, as with cross sections.
+
+The thermodynamic equations are solved using an iterative procedure, guessing the new pressure at each mass point to be the old pressure for the first iteration. The so-called viscous pressure, a mathematical procedure devised by von Neumann and Richtmyer (see Reference 8 and Appendix C) is included to permit thermodynamic and hydrodynamic calculations in the presence of a steep shock front. Hence, the total pressure is the sum of the hydrodynamic pressure, $\mathrm{P}_{\mathrm{H}}$, and the synthetic viscous pressure, $\mathrm{P}_{\mathrm{V}}$.
+
+When calculation of the thermo- and hydro-dynamic changes during the time interval $\Delta t$ is complete (a hydrocycle), a series of tests are run, and the program either proceeds with another hydrocycle or goes back to the neutronics calculation.
+
+To control the pace of a problem, the code continually examines the magnitude or rate of change of certain crucial parameters, and varies
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp. } 39015078509448 \text { / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+the $\Delta t$ of a hydrocycle or the number of hydrocycles per neutron cycle accordingly. This latter number begins at unity and is allowed to build up gradually if the forces present are not changing alpha too rapidly or modifying the density of a mass point radically. When the power variation in a hydrocycle, or the change in alpha between neutron cycles, gets so large as to damage the accuracy of the solution, the pace of the calculation is slowed automatically - or stopped in extreme cases.
+
+\section*{III. LIST OF SYMBOLS AND DEFINITION OF TERMS}
+The program is written in Fortran, forcing a symbolic notation consistent with the requirements of the Fortran system and not always identical to customary physical usage. Hence, a dual list of symbols follows, that on the left comprising the Fortran symbols in alphabetical order. There is generally an associated physical symbol next to it, together with a translation or definition of the pair. In the explanation which follows, the physical symbol will generally be used.
+
+The system of units used in the calculation is somewhat different from that conventionally used by the reactor physicist, so a brief discussion is given.
+
+The basic choice for mass, length, time, and temperature is as follows:
+
+\begin{verbatim}
+unit of mass = grams
+unit of length = cm
+unit of time = μsec
+unit of temperature = kev
+\end{verbatim}
+
+Then, it follows that
+
+$$
+\begin{aligned}
+& \text { the unit of velocity }=\mathrm{cm} / \mu \mathrm{sec} \\
+& \text { the unit of acceleration }=\mathrm{cm} / \mu \mathrm{sec}^{2} \\
+& \text { the unit of force }=\mathrm{gm} \mathrm{~cm} / \mu \mathrm{sec}^{2}\left(=10^{12} \mathrm{dynes}\right) \\
+& \text { the unit of energy }=\mathrm{gm} \mathrm{~cm}{ }^{2} / \mu \mathrm{sec}^{2}\left(=10^{12} \mathrm{ergs}\right) \\
+& \text { the unit of power }=\mathrm{gm} \mathrm{~cm}{ }^{2} / \mu \mathrm{sec}^{3}\left(=10^{12} \mathrm{ergs} / \mu \mathrm{sec}\right) \\
+& \text { the unit of pressure }=\frac{\mathrm{g}}{\mu \mathrm{sec}^{2 \cdot} \mathrm{~cm}^{12}}\left(=10^{12} \frac{\mathrm{~cm}^{2}}{\mathrm{gm} \mathrm{~cm}^{2}}\right. \\
+& \text { the unit of specific heat }=\frac{\mathrm{gm}^{2}}{\mu \mathrm{sec}^{2} \cdot \mathrm{kev}}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+ACV(M) & $\mathrm{A}_{\mathrm{cv}}(\mathrm{M})$ & $\frac{\mathrm{cm}^{2}}{\mu \mathrm{sec}^{2} \mathrm{kev}}$ & Constant in equation $C_{V}=A_{C V}+B_{C V} \theta$ \\
+\hline
+AITCT &  &  & Total number of $\mathrm{S}_{\mathrm{n}}$ iterations completed \\
+\hline
+AK(I) & $\mathrm{K}_{\mathrm{eff}, \mathrm{i}}$ &  & $\mathrm{K}_{\text {eff }}$ from previous iteration \\
+\hline
+AKEFF & $K_{\text {eff }}$ &  & Multiplication factor \\
+\hline
+ALPH(M) & $\alpha(\mathrm{M})$ & $\frac{\mathrm{cm}^{2}}{\mu \mathrm{sec}^{2}}$ & Constant in equation of state \\
+\hline
+ALPHA & $\alpha$ & $\mu \sec ^{-1}$ & Inverse of reactor period = $\frac{\mathrm{K}_{\mathrm{ex}}}{\ell}$ \\
+\hline
+ALPHAO & $\alpha_{0}$ & $\mu \sec ^{-1}$ & Absolute value of alpha at Order No. 6820, the maximum absolute value of alpha at Order No. 9014. \\
+\hline
+ALPHA P & $\alpha^{\prime}$ & $\mu \sec ^{-1}$ & The alpha resulting from the previous converged $\mathrm{S}_{\mathrm{n}}$ calculation \\
+\hline
+AM(1) & M(1) &  &  \\
+\hline
+⋯ & ⋯ &  & $\mathrm{S}_{\mathrm{n}}$ constants \\
+\hline
+AM(5) & M(5) &  &  \\
+\hline
+AMBAR (1) & $\overline{\mathrm{M}}(1)$ &  &  \\
+\hline
+⋯ & ⋯ &  & $\mathrm{S}_{\mathrm{n}}$ constants \\
+\hline
+AMBAR (5) & $\overline{\mathrm{M}}(5)$ &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Fortran Symbol & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+AMBART & $\overline{\mathrm{M}}_{\mathrm{T}}$ &  & $\mathrm{S}_{\mathrm{n}}$ constant \\
+\hline
+AMT & $\mathrm{M}_{\mathrm{T}}$ &  & $\mathrm{S}_{\mathrm{n}}$ constant \\
+\hline
+ANU (IG) & $\nu(\mathrm{g})$ &  & Fraction of fission neutrons born into g'th group \\
+\hline
+ANUSIG (IG, N) & $\left(\nu \sigma_{f}\right) g, N$ & Barns & Microscopic fission cross section times average number of neutrons emitted per fission \\
+\hline
+B(1) & B(1) &  &  \\
+\hline
+… & ⋯ &  & $\mathrm{S}_{\mathrm{n}}$ constants \\
+\hline
+B(5) & B(5) &  &  \\
+\hline
+BCV(M) & $\mathrm{B}_{\mathrm{cv}}(\mathrm{M})$ & $\frac{\mathrm{cm}^{2}}{\mu \mathrm{sec}^{2} \mathrm{kev}^{2}}$ & Constant in equation \( C_{V}=A_{C V}+B_{C V} \theta \) \\
+\hline
+BETA(M) & $\beta$ (M) & \( \frac{\mathrm{g}}{\mathrm{~cm} \mu \mathrm{sec}^{2} \mathrm{kev}} \) & Constant in equation of state \( \left(\mathrm{P}_{\mathrm{H}}=\alpha \rho+\beta \theta+\tau\right) \) \\
+\hline
+BS & $\mathrm{B}_{\mathrm{S}}$ &  & Intermediate term in $\mathrm{S}_{\mathrm{n}}$ \\
+\hline
+BT & $\mathrm{B}_{\mathrm{T}}$ &  & $\mathrm{S}_{\mathrm{n}}$ constant \\
+\hline
+CHECK &  &  & Fractional difference in total energy as computed in two different ways. \\
+\hline
+\multirow[t]{2}{*}{CSC} & $\mathrm{C}_{\mathrm{sc}}$ &  & Courant stability constant. Is largest estimate for \\
+\hline
+ &  &  & $\gamma(\gamma-1) \approx\left(\frac{\partial \mathrm{p}}{\partial \rho}\right)_{\mathrm{s}} / \mathrm{E}_{\text {int }}=\frac{\mathrm{C}^{2}}{\mathrm{E}_{\text {int }}}$ \\
+\hline
+CVP & $\mathrm{C}_{\mathrm{vp}}$ &  & Viscous pressure coefficient for shock smearing (See Appendix C) \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} &  &  &  \\
+\hline
+ & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+DELE & $\Delta \mathrm{E}$ & $10^{12} \mathrm{ergs}$ g & Increment in specific internal energy during hydrocycle. \\
+\hline
+DELQ & $\Delta Q$ & $\frac{10^{12} \mathrm{ergs}}{\mathrm{g}}$ & Energy per gram added to mass point I during hydrocycle. \\
+\hline
+DELR & $\Delta \mathrm{R}$ & cm & $=R(I)-R(I-1)$, outer radius of mass point I less inner radius. Is negative in event of radii crossing. \\
+\hline
+DELT & $\Delta \mathrm{T}$ & $\mu$ sec & Time increment between hydrocycles in successive stages in the calculation \\
+\hline
+DELTA(I) & $\Delta(\mathrm{I})$ & cm & $\overline{\mathrm{R}}(\mathrm{I})$ - R(I-I) \\
+\hline
+DELTP & $\Delta t^{\prime}$ & $\mu \mathbf{s e c}$ & The time interval appropriate to calculations of changes in velocity or power (See Appen$\operatorname{dix} B$ ). Equals $\Delta t$ except when $\Delta \mathrm{t}$ is halved or doubled. \\
+\hline
+DELV & $\Delta \mathrm{V}$ & $\mathrm{cm}^{3} / \mathrm{g}$ & $=\frac{1}{\rho_{\mathrm{Hyd}}^{\mathrm{T}}}-\frac{1}{\rho_{\mathrm{Hyd}}(\mathrm{I})}$, the change in specific volume during hydrocycle \\
+\hline
+DTMAX & $\Delta t_{\text {max }}$ & $\mu \mathbf{s e c}$ & Largest $\Delta \mathrm{t}$ allowed \\
+\hline
+E(I) & E(I) &  & $=\rho_{\text {neut }}(\mathrm{I}) \sum_{\mathrm{g}} \sigma_{\mathrm{gg}}, \mathrm{K}(\mathrm{I}) \cdot \mathrm{N}_{\mathrm{g}}(\mathrm{I})$, the elastic collision density for new $S_{n}$ calculation \\
+\hline
+EN(IG, I) & $\mathrm{N}_{\mathrm{g}}$ (I) &  & Total flux in group g at $\overline{\mathrm{R}}(\mathrm{I})$ \\
+\hline
+ENN(I, J) & $N\left(I, \mu_{j}\right)$ &  & Flux in direction $J$ at $R$ (I) for current group or last group calculated \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} & \multicolumn{3}{|c|}{Physical or} \\
+\hline
+ & Mathematical Symbol & Units & Definition \\
+\hline
+ENNN(I) & N(I) &  & \( \begin{aligned} & =\sum_{g} \frac{\mathrm{~N}_{\mathrm{g}}(\mathrm{I})}{\mathrm{V}_{\mathrm{g}}} \text {, average inverse } \\ & \text { neutron velocity at mass } \\ & \text { point I } \end{aligned} \) \\
+\hline
+EPS & $\epsilon$ &  & Internal parameter set equal to EPSA, EPSR, or EPSK in accordance with current calculations. \\
+\hline
+EPSI & $\epsilon_{1}$ & megabars & Largest negligible pressure, needed in test for convergence of hydrodynamic pressure when pressure is small. \\
+\hline
+EPSA & $\epsilon_{\mathrm{A}}$ & $\mu \sec ^{-1}$ & Convergence criterion on calculation of alpha. \\
+\hline
+EPSK & $\epsilon_{\mathrm{K}}$ &  & Convergence criterion on $\mathrm{K}_{\text {eff }}$ calculation. \\
+\hline
+EPSR & $\epsilon_{\mathrm{R}}$ & cm & Convergence criterion on outer radius when radius is varied to provide specified alpha. \\
+\hline
+ERRLCL & Error Local & $10^{12} \mathrm{ergs}$ g & The maximum difference between the specific internal energy at the various mass points computed in two different ways. (See Appendix D) \\
+\hline
+ETAI & $\eta_{1}$ &  & Convergence criterion for iteration on hydrodynamic pressure in equation of state calculation. \\
+\hline
+ETA 2 & $\eta_{2}$ &  & $1 / 4$ the maximum value for $\alpha \Delta \mathrm{T}$ which is tolerated without halving $\Delta \mathrm{T}$. \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Fortran Symbol & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+ETA 3 & $\eta_{3}$ &  & Tolerance on fractional change in alpha between successive $\mathrm{S}_{\mathrm{n}}$ calculations. If exceeded, $\mathrm{N}_{\mathrm{S}_{4}}$ is reduced. \\
+\hline
+F (I) & F (I) &  & Relative fission density of zone between R (I) and R (I-1). \\
+\hline
+F BAR & $\overline{\mathrm{F}}$ &  & $=\sum_{I} T(I) F(I)$, total fissions in system.* \\
+\hline
+FE BAR & $\overline{F E}$ &  & $=\sum_{\mathrm{I}} \mathrm{WN}(\mathrm{I}) \cdot \mathrm{E}(\mathrm{I})$, the elastic collisions for new $\mathrm{S}_{\mathrm{n}}$ calculation, weighted with the new flux.* \\
+\hline
+FE BAR P & $\overline{F E}^{\prime}$ &  & The elastic collisions for the previous $\mathrm{S}_{\mathrm{n}}$ calculation, weighted with the new flux.* \\
+\hline
+FEN BAR & $\overline{F N}$ &  & $=\sum_{\mathrm{I}} \mathrm{WN}(\mathrm{I}) \cdot \sum_{\mathrm{g}=1}^{\mathrm{G}} \frac{\mathrm{n}_{\mathrm{g}}(\mathrm{I})}{\mathrm{V}_{\mathrm{g}}}$, average inverse velocity weighted with the new flux.* \\
+\hline
+F FAKE &  &  & Internal parameter in convergence test for $S_{n}$ ( $=0$ if converged). \\
+\hline
+FF BAR & $\overline{F F}$ &  & $=\sum_{\mathrm{I}} \mathrm{WN}(\mathrm{I}) \cdot \mathrm{F}(\mathrm{I})$, the fissions for new $\mathrm{S}_{\mathrm{n}}$ calculation, weighted with the new flux.* \\
+\hline
+FF BAR P & $\overline{F F^{\prime}}$ &  & The fissions for the previous $\mathrm{S}_{\mathrm{n}}$ calculation, weighted with the new flux.* \\
+\hline
+\end{tabular}
+\end{center}
+
+\footnotetext{*These quantities lack a factor of $4 \pi$.
+}
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} & \multicolumn{3}{|l|}{Physical or} \\
+\hline
+ & Mathematical Symbol & Units & Definition \\
+\hline
+FLAG 1 &  &  & If $\alpha$ becomes negative having once been positive and if the power falls to zero or less (as determined by the test, is $\mathrm{Q}-\mathrm{Q}^{\prime}>0$ ?), FLAG 1 sets $\mathrm{N}_{\mathrm{S}_{4}}$ equal to 30,000 . \\
+\hline
+H(I) &  &  & $=\Delta(\mathrm{I})\left(\sigma_{\mathrm{g}, \mathrm{n}} \rho(\mathrm{I})+\frac{\alpha}{\mathrm{V}_{\mathrm{g}}}\right)$ for alpha calculation - intermediate term in $\mathrm{S}_{\mathrm{n}}$ calculation proportional to removal cross section \\
+\hline
+HE(I) & $\mathrm{E}_{\text {int }}(\mathrm{I})$ & $\frac{10^{12} \mathrm{ergs}}{\text { gram }}$ & Specific internal energy of mass point I \\
+\hline
+HEO(I) & $\mathrm{E}_{0}(\mathrm{I})$ &  & Constant of integration in equation for internal energy. See Appendix D \\
+\hline
+HMASS(I) & $\mathrm{H}_{\text {mass }}{ }^{\text {(I) }}$ & grams & Mass in region between $R(I)$ and R(I-1) (or mass point I), except for factor of $4 \pi / 3$ \\
+\hline
+HP(I) & $\mathrm{P}_{\mathrm{H}}(\mathrm{I})$ & megabars & Pressure, including viscous pressure, which satisfied last hydrocycle calculation \\
+\hline
+HPBAR & $\overline{\mathrm{P}}_{\mathrm{H}}$ & megabars & Maximum pressure in system \\
+\hline
+HPT & pT H & megabars & Temporary value of $\mathrm{P}_{\mathrm{H}}(\mathrm{I})$ used to begin iteration on pressure each iteration \\
+\hline
+I &  &  & Mass point number \\
+\hline
+ICNTRL & $\alpha$-control &  & Input controlling $\alpha$ to be used (=01 if radii are to be scaled to fit the input $\alpha =00$ if $\alpha$ is to be calculated from the given configuration) \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} & \multicolumn{3}{|c|}{Physical or} \\
+\hline
+ & Mathematical Symbol & Units & Definition \\
+\hline
+IG & g &  & Energy group index \\
+\hline
+IGMAX & G &  & Number of energy groups \\
+\hline
+IH & h &  & Energy group index \\
+\hline
+II &  &  & Dummy variable \\
+\hline
+IMAX & $I_{\text {max }}$ &  & The total number of zones (or real mass points) +1 . $(\mathrm{R}(1)=0)$ \\
+\hline
+IRCNBR &  &  & Number of last memory dump \\
+\hline
+J &  &  & Dummy label used for storage of thermodynamic properties of materials. \\
+\hline
+JMAX & $\mathrm{J}_{\text {max }}$ &  & Largest J to have appeared in the calculation at any time. \\
+\hline
+K(I) & K(I) &  & Material label of I'th mass point \\
+\hline
+KCALC &  &  & Internal parameter used to initiate calculation of $\mathrm{k}_{\text {eff }}$. \\
+\hline
+KCNTRL &  &  & Input parameter for requesting calculation of $\mathrm{k}_{\mathrm{eff}}$ corresponding to initially converged alpha calculation = Ol if calculation is desired $=00$ if calculation is not desired. \\
+\hline
+KP(J) & K'(J) &  & Temporary storage used for keeping track of material labels read in. \\
+\hline
+L &  &  & Dummy variable \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Fortran Symbol & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+LDONT &  &  & A temporary storage which denotes when it is time to print on tape, or both online and on tape. \\
+\hline
+M &  &  & Mixture number \\
+\hline
+MA & $\mathrm{M}_{\mathrm{a}}$ &  & The number of the particular substance being used in the calculation at a given time. \\
+\hline
+MMAX & $\mathrm{M}_{\text {max }}$ &  & Number of mixtures the code is to fabricate. \\
+\hline
+MN(M, IS) & $\mathbf{N}_{\mathbf{M}, \mathbf{i}}$ &  & The I'th substance to appear in the mixture $M$ \\
+\hline
+N &  &  & Dummy variable \\
+\hline
+NDMAX & $\mathrm{ND}_{\text {max }}$ &  & Number of hydrodynamic cycles between memory dumps ( $=64$ ). \\
+\hline
+NDUMP &  &  & NDMAX minus number of hydrodynamic cycles since last memory dump \\
+\hline
+NH &  &  & $\mathrm{NH} \Delta \mathrm{T}=$ total time elapsed. When $\Delta T$ is halved, NH is doubled. Thus it is a hydrodynamic cycle number, after a fashion \\
+\hline
+NIT & $\mathrm{N}_{\mathrm{it}}$ &  & Number of iterations in pressure calculation \\
+\hline
+NITMAX & $\mathrm{N}_{\text {it max }}$ &  & Maximum number of iterations allowed in the pressure calculation. ( $=300$ ). Pause 11 follows if $\mathrm{N}_{\text {it max }}$ is reached. \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Fortran Symbol & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+NL &  &  & $N L_{\text {max }}$ - NL is the number of hydrocycles since $\Delta T$ was doubled. \\
+\hline
+NLMAX & $\mathrm{NL}_{\text {max }}$ &  & Minimum number of hydrocycles between doubling of $\Delta \mathrm{T}(=64)$. \\
+\hline
+NMAX & $\mathrm{N}_{\text {max }}$ &  & Number of substances for which cross sections are to be read in. \\
+\hline
+NP & $\mathrm{N}_{\mathrm{p}}$ &  & Number of hydrodynamic cycles between detailed print-outs on-line. \\
+\hline
+NPOFF & $\mathrm{N}_{\mathrm{p}}$, off &  & Number of hydrodynamic cycles between detailed-outs off-line. \\
+\hline
+NPOFFP & $N_{p}^{\prime}$, off &  & Number of hydrodynamic cycles between detailed prints off-line after VJ-OK test on relative change in alpha due to pressure buildup is passed. \\
+\hline
+NS 4 & $\mathrm{N}_{\mathrm{S} 4}$ &  & Number of hydrodynamics cycles between $S_{n}$ cycles. \\
+\hline
+NS4R & $\mathrm{N}_{\text {S4R }}$ &  & Number of hydrodynamics cycles since last $\mathrm{S}_{\mathrm{n}}$ cycle. \\
+\hline
+OKl &  &  & Test parameter used in VJ-OK test. If OK-l is exceeded, $\mathrm{N}_{\mathrm{S} 4}$ is halved. \\
+\hline
+OK 2 &  &  & Test parameter used in VJ-OK test. If OK-2 is exceeded, $\mathrm{N}_{\mathrm{S}_{4}} \rightarrow 1$. \\
+\hline
+P(M, IS) &  &  & The atom fraction of I'th substance, to appear in the mixture M. \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} & \multirow{2}{*}{Physical or Mathematical Symbol} & \multirow[b]{2}{*}{Units} & \multirow[b]{2}{*}{Definition} \\
+\hline
+ &  &  &  \\
+\hline
+PBAR & $\overline{\mathrm{P}}$ & megabar $\mathrm{cm}^{3}$ & $=\sum_{I} P_{\left.H^{( }\right)}(I) \cdot T(I)$ is $\frac{1}{4 \pi} x$ volume integral of pressure. \\
+\hline
+POWER &  & $\frac{10^{12} \mathrm{ergs}}{\mu \mathrm{sec}}$ & Total energy generated in the reactor per $\mu \mathrm{sec}$. \\
+\hline
+POWNGL &  & $\frac{10^{12} \mathrm{ergs}}{\mu \mathrm{sec}}$ & Power following burst after which negligible change in total energy occurs. \\
+\hline
+PSTAR & P* & megabars & Temporary value of $\mathrm{P}_{\mathrm{H}}(\mathrm{I})$ which results from iteration on pressure. Goes to $\mathrm{P}_{\mathrm{H}}^{\mathrm{T}}$ if not converged, goes to $\mathrm{P}_{\mathrm{H}}(\mathrm{I})$ if converged. \\
+\hline
+PTEST &  & megabars & Maximum local pressure allowed without bothering with VJ-OK test for relative change in alpha. \\
+\hline
+Q & Q & $10^{12} \mathrm{ergs}$ & Total energy (except for factor of $\frac{4 \pi}{3}$ ) at end of present hydrocycle. \\
+\hline
+QBAR & $\overline{\mathrm{Q}}$ &  & Internal parameter in calculation of energy increment during time interval. \\
+\hline
+QP & $\mathbf{Q}_{\mathbf{P}}$ & $10^{12} \mathrm{ergs}$ & Total energy at end of previous hydrocycle. \\
+\hline
+QPRIME & Q' & $10^{12} \mathrm{ergs}$ & Total energy (except for factor of $\frac{4 \pi}{3}$ ) \\
+\hline
+R(I) & R(I) & cm & Outer radius of mass point, I. $(R(I)=0)$ \\
+\hline
+RBAR(I) & $\overline{\mathrm{R}}(\mathrm{I})$ & cm & $\frac{1}{2}[R(I)+R(I-1)]=$ average radius of (I-1)'th region. \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|c|}{Physical} \\
+\hline
+ &  &  &  \\
+\hline
+Fortran Symbol & or Mathematical Symbol & Units & Definition \\
+\hline
+RHO(I) & $\rho_{\text {neut }}(\mathrm{I})$ & $\frac{10^{24} \text { atoms }}{\mathrm{cm}^{3}}$ & Atom density of the region between $R(I)$ and $R(I-1)$. \\
+\hline
+RHOT & T $\rho_{\text {Hyd }}$ & $\mathrm{g} / \mathrm{cm}^{3}$ & Density of mass point I at end of new hydrocycle \\
+\hline
+RIE & \begin{tabular}{l}
+Running \\
+$\mathrm{E}_{\text {Internal }}$ \\
+\end{tabular} & $\frac{10^{12} \mathrm{ergs}}{\text { gram }}$ & Specific internal energy of mass point I computed in alternate fashion for comparison with $E_{\text {internal }}(I)$. (See Appendix D) \\
+\hline
+RKE & \begin{tabular}{l}
+Running \\
+Ekinetic \\
+\end{tabular} & $\frac{10^{12} \mathrm{ergs}}{\text { gram }}$ & Kinetic energy per gram for mass point I \\
+\hline
+RL(I) & $\mathrm{R}_{\mathrm{L}}$ (I) &  & Lagrangian coordinate of mass point $I$, is invariant with time. $\rho_{\text {hyd }} R^{3}=R_{L}^{3}$ \\
+\hline
+RO(I) & $\rho_{\text {Hyd }}$ (I) & $\frac{\mathrm{g}}{\mathrm{cm}^{3}}$ & Density of mass point I at beginning of new hydrocycle. \\
+\hline
+ROLAB(M) & $\rho_{\text {Lab }}(\mathrm{M})$ & $\frac{10^{-24} \mathrm{~g}}{\text { atom }}$ & Conversion factor between atomic density and mass density ( $\left.\rho_{\text {hyd }}=\rho_{\text {lab }} \times \rho_{\text {neut }}\right)$ \\
+\hline
+ROSN(I) & $\mathrm{RO}_{\mathrm{sn}}(\mathrm{I})$ & $\mathrm{g} / \mathrm{cm}^{3}$ & Density of mass point I during $\mathrm{S}_{\mathrm{n}}$ calculation \\
+\hline
+S(I) &  &  & $\frac{\Delta \mathrm{R}(\mathrm{I})}{\mathrm{R}(\overline{\mathrm{I}})}$ \\
+\hline
+SIG(IG,N) & $\sigma_{\mathrm{g}, \mathrm{N}}$ & barns & Microscopic transport cross section for substance N in group g \\
+\hline
+SIGMA (IG, IH, N) & $\sigma_{\text {gh }}$, $N$ & barns & Microscopic scattering cross section from group h to g for substance N \\
+\hline
+SO(I) & $\mathrm{S}_{\mathrm{o}}(\mathrm{I})$ &  & \begin{tabular}{l}
+\( \begin{aligned} &= 4 \Delta(I)\left(\nu_{g} F(I)+\rho_{\text {neut }}(I)\right. \\ &\left.\sum_{h}, N h(I) \sigma_{g} \leftarrow h\right), \end{aligned} \) \\
+the term in $\mathrm{S}_{\mathrm{n}}$ calculation proportional to neutron source. \\
+\end{tabular} \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{Fortran Symbol} & \multicolumn{3}{|c|}{Physical} \\
+\hline
+ & Mathematical Symbol & Units & Definition \\
+\hline
+S4R & $\mathrm{S}_{4 \mathrm{R}}$ &  & Floating point notation for $\mathrm{N}_{\mathrm{S} 4}$ \\
+\hline
+SUM(IH) & $\sum \mathrm{h}$ &  & SUM has no unique definition. \\
+\hline
+SUM 1 & $\Sigma_{1}$ &  & SUM is used to provide storage space for various numbers in the neutron flux calculations. \\
+\hline
+T(I) &  & $\mathrm{cm}^{3}$ & $1 / 3\left[R(I)^{3}-R(I-1)^{3}\right]=\frac{1}{4 \pi} x$ \\
+\hline
+TAU(M) & $\boldsymbol{\tau}(\mathrm{M})$ & megabars & Constant in equation of state $\mathrm{p}=\alpha \rho+\beta \theta+\tau$ \\
+\hline
+THET & $\theta$ & kev & Temporary value of $\theta$ (I) used during iteration on pressure. Goes to $\theta$ (I) at end of hydrocycle when convergence is attained. \\
+\hline
+THETA(I) & $\theta(\mathrm{I})$ & kev & Temperature of zone between $R(I)$ and R (I-1) \\
+\hline
+TOTIEN & $\mathrm{E}_{\text {internal }}$ & $10^{12} \mathrm{ergs}$ & Total internal energy \\
+\hline
+TOTKE & $\mathrm{E}_{\text {kinetic }}$ & $10^{12} \mathrm{ergs}$ & Total kinetic energy \\
+\hline
+U (I) & $\mathrm{U}(\mathrm{I})$ & $\frac{\mathrm{cm}}{\mu \mathrm{sec}}$ & Velocity of i'th boundary \\
+\hline
+V(IG) & $\mathrm{V}_{\mathrm{g}}$ & $\frac{\mathrm{cm}}{\mu \mathrm{sec}}$ & Velocity of neutrons in g 'th energy group \\
+\hline
+VJ &  & $\frac{\mathrm{l}}{\mathrm{g} \mathrm{cm}^{2}}$ & Input parameter for VJ - OK test on relative change in alpha. When limit is exceeded, $\mathrm{N}_{\mathrm{S} 4}$ is reduced. See input sheets and Appendix A for exact definition. \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+Fortran Symbol & Physical or Mathematical Symbol & Units & Definition \\
+\hline
+VP & $\mathrm{P}_{\mathrm{v}}$ & megabars & Viscous pressure (See Appendix C) \( =\mathrm{C}_{\mathrm{vp}} \rho_{\mathrm{Hyd}}^{\mathrm{T}}\left(\rho_{\mathrm{Hyd}}^{\mathrm{T}} \cdot \Delta \mathrm{~V} \cdot \frac{\Delta \mathrm{R}}{\Delta \mathrm{t}}\right)^{2} \) \\
+\hline
+W &  &  & \begin{tabular}{l}
+Criterion for stability of hydrodynamic calculation. (See Appendix C). Is maximum value of $\mathrm{W}_{\mathrm{R}}$ \\
+$\sum_{\mathrm{g}=1}^{\mathrm{G}} \mathrm{N}_{\mathrm{g}}(\mathrm{I}) \cdot \mathrm{T}(\mathrm{I})$, is volume element times flux for region between $\mathrm{R}(\mathrm{I})$ and $\mathrm{R}(\mathrm{I}-1)$ * \\
+\end{tabular} \\
+\hline
+WR &  &  & Criterion for stability of hydrodynamic calculation. (See Appendix C) \\
+\hline
+Z &  &  & Dummy internal parameter \\
+\hline
+\end{tabular}
+\end{center}
+
+\footnotetext{*These quantities lack a factor of $4 \pi$.
+}\section*{IV. DISCUSSION OF CONTROLS OF THE PROGRAM}
+The course of the solution and many of the controls thereon are explained in this section with the aid of a flow diagram. Details of the $S_{n}$ calculation, the mixture code, and various other aspects not directly pertinent to this area of understanding are left for a later section covering the entire program step by step. Order numbers corresponding to various sequences of events are usually indicated in the upper right hand corner of the boxes in the flow diagram. It is cautioned that at times steps have been omitted to simplify an explanation.
+
+The first illustration outlines the steps followed at the start of a problem.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-027}
+
+The $\mathrm{S}_{\mathrm{n}}$ calculation (or Big G Loop) is treated like a black box in this section. It is noted that the problem originator can request the computing machine to scale the radii to provide some initial alpha. Also, the machine will calculate and print the $k_{e f f}$ of the initially converged configuration if so requested, enabling a determination of the neutron lifetime, $\ell=K_{\mathrm{ex}} / \alpha$.
+
+When the $S_{n}$ calculation has converged, the program begins to exercise control on $\Delta t$, the time interval, as follows.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-028}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+Thus, if $\alpha \Delta \mathrm{t}$, the fractional change in power per hydrocycle, is too great in the original specification, $\Delta t$ is reduced. At Order 9014, further controls are exercised following all neutronics calculations except the first.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-028(1)}
+
+In this sequence the last two alphas are compared to see if alpha is changing too slowly or too rapidly between successive $\mathrm{S}_{\mathrm{n}}$ calculations. If the difference is very small, $\mathrm{N}_{\mathrm{S} 4}$, the number of hydrocycles per neutron cycle, is increased by one. This number starts at unity and slowly builds up during a typical burst where a step function of reactivity is inserted at very low power. The program then sends the computation to Order 9050 to begin a hydrocycle. If the difference in alphas, compared to the maximum alpha encountered, exceeds $\eta_{3}$ but not $3 \eta_{3}$, the hydrocycle begins unless the operator had decided, based on observation of the output, that $\mathrm{N}_{\mathrm{S} 4}$ should be reduced. In this case he turns on (or depresses) Sense Switch No. 5, which reduces $\mathrm{N}_{\mathrm{S} 4}$ by one before performing the hydrocycle. If $3 \eta_{3}$ is exceeded, $\mathrm{N}_{\mathrm{S} 4}$ is reduced by one and the comparison is again made, this time with the upper limit, $6 \eta_{3}$. If this is not exceeded, the hydrocycle proceeds. If it is, $\mathrm{N}_{\mathrm{S} 4}$ is set all the way back to unity before the hydrocycle begins. However, if $N_{S} 4$ was already unity when $3 \eta_{3}$ was exceeded, sense light No. 3 is turned on before beginning the hydrocycle. Following the cycle, the time interval $\Delta t$ will be halved, since there is no further recourse to $N_{S 4}$ to control the variation in alpha between successive $S_{n}$ calculations.
+
+We continue from 9050.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-029}
+
+In this last set of steps control is exercised on the density change occurring in any volume element in a single hydrocycle. If it is too great, $\Delta \mathrm{t}$ is halved. Or, if the motion of one radial boundary should be so great as to cross the next boundary, the time interval is also halved. The presence of these serious difficulties in the course of the solution is printed on the output for the benefit of the operator.
+
+The viscous pressure is a mechanism devised to permit calculation without the ordinary difficulties which would accompany the passage of strong shock waves. (See Appendix C).\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-030}
+
+In this sequence a criterion for stability of the calculation is computed which is designed to prevent the generation of excessively high changes in density per hydrocycle. The criterion, $W$, will be examined later in the program. The controls then ask a series of questions designed to exercise a control on the rate of change of alpha per neutronics cycle during the peak of the burst. Not wishing to keep $\mathrm{N}_{\mathrm{S} 4}$ small during the low power portion, a test is installed to reduce $\mathrm{N}_{\mathrm{S} 4}$ when the rate of change of alpha becomes significant. (See Appendix A).
+
+From Order 9210, the program goes on to a pair of checks on the numerical accuracy of the computation. First the internal energy at each mass point is computed in an alternate fashion and compared with the previous calculation. Second, the sum of kinetic and internal energies is computed and compared with $Q$.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-031}
+
+Following the check on numerical accuracy, which is merely printed out for the information of the problem originator, a series of questions are asked to determine whether the time interval $\Delta t$ is appropriate. If $W$, the stability function, is larger than $0.3, \Delta t$ is halved ( 9285 , 9290). If the fractional change of power per cycle, $\alpha \Delta t$, exceeds $4 \eta_{2}, \Delta t$ is halved, assuming the stability test has not already done so $(9284,9290)$. If the problem has gone through $\mathrm{NL}_{\text {Max }}$ hydrocycles since the last doubling of $\Delta \mathrm{t}$, and if W and $\alpha \Delta \mathrm{t}$ are sufficiently small, $\Delta \mathrm{t}$ is doubled.
+
+When the above tests are completed $\mathrm{N}_{\mathrm{S} 4 \mathrm{R}}+1 \rightarrow \mathrm{~N}_{\mathrm{S} 4 \mathrm{R}+1}$ and if $\mathrm{N}_{\mathrm{S} 4 \mathrm{R}}<\mathrm{N}_{\mathrm{S} 4}$, a new hydrocycle is begun at Order 9050. Otherwise, a final series of controls is exercised before sending the problem back to the neutronics cycle (8009).\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-032}
+
+This last series of tests is devised to reduce the number of timeconsuming neutronics calculations after the burst when $\alpha$ has turned negative and the power has fallen to a low value. This can also be taken as a signal to the operator to terminate the problem if there is no desire to study post-burst phenomena.
+
+\section*{V. DETAILED FLOW DIAGRAM AND EXPLANATORY NOTES}
+\section*{Notes on Sheet No. 1}
+Since there are many possible reasons for wishing to rerun a portion of a previous problem, or extending a solution timewise, a provision has been made for starting up a problem anew from a previous dump. Automatic dumping on tape at regular intervals is provided (Order No. 9263) to facilitate such procedures. Sense switch No. 1 provides the operator the opportunity to alter the memory when rerunning a problem from the middle. It also enables one to use the proper precautions when working from a consolidated tape. (The term "on" is used in the flow diagrams to indicate a switch is "depressed.")
+
+\section*{Notes on Sheet No. 2}
+As mentioned previously, the problem originator can specify a configuration and take the starting alpha which accompanies it, or can specify an alpha, guess a configuration, and let the program vary all radii linearly to achieve this alpha before beginning the hydrodynamics solution. If\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized ICNTRL (or $\alpha$-control) is zero, the program proceeds to the usual calculation of alpha, first setting $\alpha_{3}$ slightly different from $\alpha_{4}$ to prevent premature convergence on the first $S_{n}$ calculation. If ICNTRL is unity, the guessed outer radius goes to $\alpha_{4}$; as the calculation progresses, the successively adjusted values of $R$ (IMAX) are compared for the test of convergence, and a special convergence criterion, $\epsilon_{R}$ is used.
+
+A complete on-line print-out of input data is normally obtained at the beginning of a new problem. This can be prevented to save machine time by turning on Sense Switch No. 6. There is no provision for off-line print-out of input data at the present time.
+
+Notes on Sheet No. 3
+
+The following is an elaboration of the procedure for calculating mixtures.
+
+Each of the $\mathrm{N}_{\max }$ substances is assigned a number $\mathrm{N}=1,2, \ldots$, $\mathrm{N}_{\max }$. For each such N a set of cross section tables is read in.
+
+If $M_{\max }=0$, there is no mixing to be performed and the mixture code is by-passed.
+
+Otherwise, for the integers $M=1,2, \ldots, M_{\max }$, in that order, the computer mixes substances numbered $\mathrm{N}_{\mathrm{M}, 1}, \mathrm{~N}_{\mathrm{M}, 2}, \ldots, \mathrm{~N}_{\mathrm{M}, \mathrm{i}_{\mathrm{M}}}$ in the proportions $\mathrm{P}_{\mathrm{M}, 1}, \mathrm{P}_{\mathrm{M}, 2}, \ldots, \mathrm{P}_{\mathrm{M}, \mathrm{i}_{\mathrm{M}}}$ (atom fraction) and assigns this new mixture the number $N_{M, i_{M}+1}$ where $i_{M}$ is the smallest integer such that $N_{M, i_{M}+2}=0$.
+
+Each region is assigned its material label K , that of the material of which it is composed.
+
+Input functions of mixture numbers (ROLAB (N), ALPHA (N), ..., BCV (N); see (7110),) must be (see (7080) to (7120)) read in that order of mixture numbers obtained by starting from the mesh point $I=2$ and recording each $N=K$ (I) as it appears (if it has not appeared before).
+
+\section*{Notes on Sheet No. 4}
+To expedite the preparation of this over-all program an existing $S_{4}$ program in Fortran was borrowed and tied into the over-all calculation. This calculation employs cross sections in barns and uses a material density in atoms/cc. Since the hydrodynamics calculation requires a density in grams/cc, it was necessary to employ more than one definition of density. The method used is as follows:
+
+RO (I) is the hydrodynamic density, $\rho_{\mathrm{Hyd}}(\mathrm{I}), \mathrm{g} / \mathrm{cc}$.\\
+RHO (I) is the neutronic density, $\rho_{\text {neut }}(\mathrm{I})$, atoms $/ \mathrm{ccx} 10^{-24}$
+
+ROLAB $M$ is a conversion factor between the two previous quantities ( $\rho_{\mathrm{Hyd}}=\rho_{\mathrm{lab}} \cdot \rho_{\text {neut }}$ ), and equals the average grams/atom $\times 10^{24}$ for mixture M .
+
+If the problem originator sets KCNTRL equal to unity, he is requesting the value of $k_{e f f}$ corresponding to the original configuration, or alpha. The program is arranged to converge first on alpha, then to set KCALC equal to unity and send the computation back to Order No. 8000 to rebegin the Big G loop. The test for KCALC then routes the solution away from the alpha solution to the convergence test on keff.
+
+The $S_{4}$ calculation itself is conventional $(5,6,7)$ except for a slight variation in the manner of iterating or achieving convergence. This is similar to the approach adopted in reference 6 (pgs. 11, 21) in that the various sums are performed with a semi-empirical weight function, $\mathrm{WN}(\mathrm{I})=\mathrm{T}(\mathrm{I}) \cdot\left(\sum_{\mathrm{g}=1}^{6} \mathrm{~N}_{\mathrm{g}}(\mathrm{I})\right)$ (Order No. 8301) rather than merely a volume term $T(I)$. (See Order No. 301, for example, defining $\overline{F E^{\prime}}$.) The procedure used for calculating the next $\alpha$ is identical to that in reference 6. For the convergence on radius or $k_{e f f}$, however, the sums of weighted fissions and elastic collisions are employed in a somewhat different manner.
+
+Notes on Sheet No. 8
+
+Under Order No. 6801 the initial values of $k_{\text {eff }} 1,2,3,4$ are arranged to insure a minimum of four iterations before convergence of the $k_{e f f}$ calculation.
+
+Under Order No. 6810, when $\mathrm{NH}=0$ the Lagrangian coordinates $\mathrm{R}_{\mathrm{L}}$ (I) are computed. These are time independent and serve throughout the problem when the mass of a mass point is needed to calculate the total value of a quantity at a mass point from the value per gram. They are also used in the calculation of acceleration, at the beginning of the I loop (below Order No. 9066).
+
+\section*{Notes on Sheet No. 9}
+Since the simple linear equation of state is generally not adequate over the entire temperature range, and since one frequently wishes to provide a threshold temperature above which the steep rise in pressure begins, the equation of state may yield negative pressures for low temperatures. In this event Order No. 6833 substitutes zero for the hydrodynamic pressure, $\mathrm{P}_{\mathrm{H}}$.
+
+The constants $\epsilon_{0}$ (I) are discussed in Appendix D. They are utilized in an accuracy check involving an energy balance. Running $\mathrm{E}_{\text {kinetic }}$, $E_{\text {kinetic }}$ and $E_{\text {internal }}$ are normally lacking in the factor $\frac{4 \pi}{3}$ which is sup- plied directly before printout.
+
+The outer boundary of the system is a free surface with zero pressure. This is accomplished mathematically by defining the pressure at the center of the next (fictitious) mass point as the negative of the pressure at the center of the outermost true mass point.
+
+Notes on Sheet No. 10
+
+The three quantities $Q, Q^{\prime}$ and $Q_{p}$ are defined as follows.\\
+At the beginning of a new hydrocycle the energy $Q$ (less a factor $\frac{4 \pi}{3}$ ) is stored as $Q^{\prime}$, the energy after the previous increment in time. The new $Q$ is then calculated by adding in the energy rise during the present time increment. Thus the primed quantity is always the one previous in time. $Q_{p}$ is " $Q$ to be printed," i.e., $Q$ multiplied by the $\frac{4 \pi}{3}$ factor.
+
+\section*{Notes on Sheet No. 11}
+The new hydrocycle begins with a calculation of the new velocity and requires a new acceleration. From Appendix $B$ we see that the velocity at time $(n+1 / 2) \Delta t$ is computed using the acceleration at time $(n) \Delta t$. We may write 9 (Chapt. 10)
+
+$$
+U^{n+\frac{1}{2}}(I)=U^{n-\frac{1}{2}}(I)-\Delta t \frac{1}{\rho_{H y d}} \frac{\partial P_{H}}{\partial R}
+$$
+
+The Lagrangian coordinates, $R_{L}$, are defined by the relation $\rho R^{2} d R=R_{L}^{2} d R_{L}$, so that
+
+$$
+\frac{1}{\rho}=\frac{\mathrm{R}^{2}}{\mathrm{R}_{\mathrm{L}}^{2}} \frac{\partial \mathrm{R}}{\partial \mathrm{R}_{\mathrm{L}}}
+$$
+
+Thus,
+
+$$
+U^{n+\frac{1}{2}}(I)=U^{n-\frac{1}{2}}(I)-\Delta t \frac{R^{2}}{R_{L}^{2}} \frac{\partial P_{H}}{\partial R_{L}}
+$$
+
+or
+
+$$
+U^{n+\frac{1}{2}}(I)=U^{n-\frac{1}{2}}(I)-\frac{\Delta t R^{2}(I)}{R_{L}^{2}(I)} \cdot \frac{P_{H}(I+1)-P_{H}(I)}{\frac{1}{2}\left[R_{L}(I+1)-R_{L}(I-1)\right]}
+$$
+
+On a diagram in space, these variables are located as follows:\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-036}
+
+The calculation of the new density, $\rho_{\text {Hyd }}^{T}$, follows directly from the definition of the Lagrangian coordinates.
+
+Below Order No. 9082, the question "Is $\Delta \mathrm{V}<0$ ?" is asked to determine whether a compression or rarefaction wave is traversing that mass point. For a compression, the viscous pressure is computed and added to the true hydro-pressure, as explained in Appendix C.
+
+An iterative procedure called the modified Euler method is used in the pressure calculation. At Order No. 9124 the previous pressure is guessed to be the answer at the next time interval. The temperature is calculated from energy considerations, and then a new pressure is calculated using the equation of state. This pressure is compared with the first guess, and if sufficiently different is used as the next guess. This subcycle is then repeated. In the convergence test (Order No. 9150) $\epsilon_{1}$ is a small pressure to provide some denominator if $\mathrm{P}_{\mathrm{H}}=0$. It should be negligible compared to PH at the values of interest.
+
+The thermodynamic considerations are presented in Appendix D. A different equation of state could be used with appropriate changes in the program.
+
+\section*{Notes on Sheet No. 12}
+The VJ-OK test, included to provide more frequent calculation of alpha when alpha starts to change rapidly under pressure buildup, is\\
+discussed in Appendix A. With Order No. 9213 the number of hydrocycles between off-line prints can be reduced at this point in the computations, thereby providing more frequent detailed results.
+
+Notes on Sheet No. 13
+
+The error checks are discussed in Appendix D. Briefly, the internal energy of each mass point is computed in an alternate manner and compared to that resulting from the normal procedure. Similarly, the total energy is computed in an alternate fashion and a comparison made.
+
+Notes on Sheet No. 15
+
+The reasons for the different shifts in $\Delta t$ and $\Delta t^{\prime}$ when the time interval is halved or doubled are discussed in Appendix B.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-038}\\
+for $I=2,3, \ldots I_{\max }$\\
+READ: MATERIAL LABEL FOR EACH MASS POINT,\\
+$G, N_{\max }, M_{\max }$\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-038(1)}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-039}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-040}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-041}\\
+next page\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-042}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-043}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-044}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-045}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-046}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-047}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-048}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-049}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-050}
+\end{center}
+
+PRINT ON TAPE $6 \quad t$, $Q_{p}$. POWER, $\alpha, \Delta t, W$\\
+"TOTAL EIERGY, KINETIC ENERGY, CHECK, ERROR LOCAL"\\
+Op, Ekinetic, CHECK, ERRLEL\\
+"DEMSITY, RADIUS, VELOCITY, PRESSURE, INTERNAL ENERGY, TEPPERATURE"\\
+$\rho_{h y d}(I), R(I), U(I), P_{h}(I), E_{\text {int }}(I), \theta(I)$ for $I=2,3, \cdots I_{\text {max }}$\\
+PROBLEM NAVE \& DARE\\
+"TIIE, OP. POWER, ALPIA, DELT. W"\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-051}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-052}
+
+\section*{VI. FORTRAN LISTING OF PROGRAM}
+\begin{verbatim}
+C AX-1 MARCH 19,1959
+    DIMENSION RO(40), R(40), U(40), HP(41), HE(40), THETA(40),
+    l RL(41), K(40), RHO(40), F(40), E(40), RBAR(40),
+    2 EN(7,40), DELTA(40), S(40), T(40), H(40), SO(40),
+    3 ENN(40,5), ROLAB(8), ALPH(8), BETA(8), TAU(8),
+    4 ACV(8), BCV(8), KP(8), V(7), ANU(7), SUM(7),
+    5 WN(40), ANUSIG(7,8), SIG(7,8), SIGMA(7,7,8),
+    6 P(8,8), MN(8,9), A(4), AM(5), AMBAR(5),
+    7 B(5), ENNN(40), HEO(40), HMASS(40), AK(4), ROSN(40)
+9900 FORMAT(54H1PROBLEM NAME 25 DECEMBER 1957
+9910 FORMAT (1P6E12.6)
+9911 FORMAT (1H 1P6E15.6)
+9915 FORMAT (1H 9I6)
+9920 FORMAT (36I2)
+9921 FORMAT (1H 3613)
+9922 FORMAT (1814)
+9930 FORMAT (9F8.7)
+9931 FORMAT (1H 9F11.7)
+9940 FORMAT (918)
+9941 FORMAT (1H 9Il1)
+9942 FORMAT (18H K EFFECTIVE = 1P1E15.6)
+9943 FORMAT (27H TOTAL KINETIC ENERGY = 1P1E15.6, 28H TOTAL INTER
+    1NAL ENERGY = 1PIE15.6)
+9944 FORMAT (29H INITIAL MAXIMUM RADIUS = 1PIE15.6)
+9980 FORMAT (10HOF, EN(IG))
+9981 FORMAT (1P9E13.5)
+9982 FORMAT (6OHO TOTAL ENERGY KINETIC ENERGY CHECK ERROR
+1LOCAL)
+9983 FORMAT 190H0 DENSITY RADIUS VELOCITY PRES
+    ISURE INTERNAL ENERGY TEMPERATURE)
+9984 FORMAT (6H DUMP I2)
+9985 FORMAT (10HOR, ENN(J))
+9986 FORMAT 185H TIME QP POWER ALP
+    1HA DELT W)
+9987 FORMAT (22H TROUBLE. CALLED DUMP I2)
+7000 READ 9900
+7005 READ 9920, IRCNBR
+    IF(IRCNBR) 7020, 7020, 7010
+7010 PAUSE7010
+    PRINT 9900
+    SENSE LIGHT O
+    IF(SENSE SWITCH 1) 7015, 9266
+7015 PAUSE 111
+    GO TO 9266
+7020 READ 9920, ICNTRL
+    READ 9910, ALPHA
+    READ 9910, POWER
+    READ 9920, IMAX
+7025 KCALC = 0
+    R(1)=0.0
+    DO 7030 I =2,IMAX
+7030 READ 9910, R(I), RO(I), F(I), U(I), THETA(I)
+\end{verbatim}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{verbatim}
+    READ 9920, (K(I), I=2,IMAX)
+    READ 9920, IGMAX
+    READ 9920, NMAX, MMAX
+    IF(MMAX) 7050, 7050, 7040
+7040 DO 7045 M=1,MMAX
+    READ 9930, (P(M,IS), IS = 1,8)
+7045 READ 9940, (MN(M,IS), IS=1,9)
+7050 READ 9910, (V(IG), IG=1,IGMAX), (ANU(IG), IG=1,IGMAX)
+7060 DO 7070 N=1,NMAX
+    DO 7070 IG=1,IGMAX
+7070 READ 9910, ANUSIG(IG,N), SIG(IG,N), (SIGMA(IG,IH,N), IH=1,IGMAX)
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-054}
+\end{center}
+
+\begin{verbatim}
+    JMAX = 1
+    DO 717O I=2,IMAX
+    M = K(1)
+    DO 7090 J=1,JMAX
+    IF(M-KP(J)) 7090, 7100, 7090
+7090 CONTINUE
+    JMAX = JMAX+1
+    KP(JMAX)=M
+    GO TO 7110
+7100 IF(I-2) 7120, 7110, 7120
+7110 READ 9910, (ROLAB(M), ALPH(M), BETA(M), TAU(M), ACV(M), BCV(M))
+7120 CONTINUE
+    READ 9910, EPSR, EPSA, EPS1, ETA1, ETA2, ETA3
+    READ 9910, CVP, CSC
+    READ 9910, DELT, DTMAX
+7130 READ 9922, NP, NPOFF, NPOFFP, KCNTRL
+7135 READ 9910, VJ,OK1, OK2, PTEST, EPSK, POWNGL
+    AITCT = 0
+    A(4)=ALPHA
+    EPS = EPSA
+    IF(ICNTRL) 7140, 7150, 7140
+7140 EPS = EPSR
+    A(4) = R(IMAX)
+7150 A(3)=A(4)+10.0*EPS
+    AM(1) =1.0
+    AM(2)=0.6666667
+    AM(3) = 0.1666667
+    AM(4)=0.3333333
+    AM(5)=0.8333333
+    AMBAR(1)=0.0
+    AMBAR(2)=0.8333333
+    AMBAR(3)=0.3333333
+    AMBAR(4) =0.1666667
+    AMBAR(5)=0.6666667
+    B(1)=0.0
+    B(2)=1.6666667
+    B(3)=3.6666667
+    B(4)=3.6666667
+    B(5)=1.6666667
+    PRINT 9900
+\end{verbatim}
+
+IF (SENSE SWITCH 6) 9000, 7155\\
+7155 PRINT 9921,ICNTRL\\
+PRINT 9911, ALPHA\\
+PRINT 9911, POWER\\
+PRINT 9921, IMAX\\
+DO 7160 I $=2$, IMAX\\
+7160 PRINT 9911, R(I), RO(I), F(I), U(I), THETA(I)\\
+PRINT 9921, (K(I), I=2, IMAX)\\
+PRINT 9921, IGMAX\\
+PRINT 9921, NMAX, MMAX\\
+IF (MMAX) 7172, 7172, 7168\\
+7168 DO $7170 \mathrm{M}=1$, MMAX\\
+PRINT 9931, (P (M,IS),I $S=1,8$ )\\
+7170 PRINT 9941, (MN(M,IS), IS=1,9)\\
+7172 PRINT 9911, (V(IG), IG = 1 , IGMAX), (ANU (IG), IG = 1 , IGMAX)\\
+DO $7180 \mathrm{~N}=1$, NMAX\\
+DO 7180 IG $=1$, IGMAX\\
+7180 PRINT 9911, ANUSIG(IG,N), SIG(IG,N), (SIGMA(IG,IH,N), IH=1,IGMAX)\\
+DO $7190 \mathrm{~J}=1$,JMAX\\
+M = KP (J)\\
+7190 PRINT 9911, (ROLAB(M), ALPH(M), BETA(M), TAU(M), ACV(M), BCV(M))\\
+PRINT 9911, EPSR, EPSA, EPS1, ETA1, ETA2, ETA3\\
+PRINT 9911, CVP, CSC\\
+PRINT 9911, DELT, DTMAX\\
+PRINT 9915, NP, NPOFF, NPOFFP, KCNTRL\\
+PRINT 9911, VJ, OK1, OK2, PTEST, EPSK, POWNGL\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+PRINT 9911, VJ, OK1, OK2, PTEST, EPSK, POWNGL\\
+9000 TIME $=0$ •\\
+NH=0\\
+ALPHAP=0.0\\
+SENSE LIGHT O\\
+AKEFF $=1.0$\\
+NITMAX $=300$\\
+FLAG1 $=0.0$\\
+NDMAX $=64$\\
+NLMAX $=64$\\
+NDUMP = NDMAX\\
+DELTP=DELT\\
+IF(SENSE SWITCH 1) 9002, 9003\\
+9002 PAUSE 11111\\
+9003 NS4 $=1$\\
+NS $4 R=0$\\
+C\\
+C MIXTURE CODE\\
+C\\
+208 IF(MMAX) 209,8009,209\\
+209 DO $215 \mathrm{M}=1$, MMAX\\
+DO 215 IG=1,IGMAX\\
+DO 210 IH=IG,IGMAX\\
+$210 \operatorname{SUM}(I H)=0$.\\
+SUM1 $=0$.\\
+SUM2 $=0$.\\
+DO 217 IS $=1,8$
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{verbatim}
+            MA = MN(M,IS)
+            DO 211 IH=IG,IGMAX
+    211 SUM(IH) = SUM(IH) + P(M,IS)*SIGMA(IG,IH,MA)
+            SUM1 = SUM1 + P(M,IS)*ANUSIG(IG,MA)
+        SUM2 = SUM2 + P(M,IS)*SIG(IG,MA)
+    207 IF(MN(M,IS+2)) 212, 213, 212
+    212 CONTINUE
+    213 MA = MN(M,IS+1)
+        DO 214 IH=IG,IGMAX
+    214 SIGMA(IG,IH,MA) = SUM(IH)
+        ANUSIG(IG,MA) = SUMI
+    215 SIG(IG,MA) = SUM2
+C
+C PRELIMINARY CALCULATION
+C
+    8009 DO 8010 I=2,IMAX
+            M=K(I)
+            ROSN(I)=RO(I)
+    8010 RHO(I)=RO(I)/ROLAB(M)
+            9 \text { DO 13 I =2,IMAX}
+                RBAR(I) = (R(I) + R(I-1))/2。
+                DELTA(I) = RBAR(I) - R(I-1)
+                S(I) = DELTA(I)/RBAR(I)
+        1 3 T ( I ) = ( R ( I ) * * 3 - R ( I - 1 ) * * 3 ) / 3 . 0
+C
+C START BIG G LOOP
+C
+8000 IG=IGMAX
+        2 DO 11 I=2,IMAX
+            N = K ( I )
+            IF(KCALC) 5, 5,8
+        5 H(I)=DELTA(I)*(SIG(IG,N)*RHO(I)+ALPHA/V(IG))
+            GO TO 7
+        8 H(I) = DELTA(I)*SIG(IG,N)*RHO(I)
+            IF(H(I)) 14, 15, 15
+        1 4 \text { PAUSE 14}
+            H(I) = 0.
+        1 5 \text { SUM1 = 0.}
+            IF(AITCT) 3, 3, 40
+        4O DO 4 IH=IG,IGMAX
+            SUM1 = SUM1 + EN(IH,I)*SIGMA(IG,IH,N)
+                IF(KCALC) 3, 3, 10
+        10 SO(I) = 4.0*DELTA(I)*(ANU(IG)*F(I)/AKEFF + RHO(I)*SUMI)
+            GO TO 11
+            SO(I) = 4.*DELTA(I)*(ANU(IG)*F(I) + RHO(I)*SUMI)
+        11 CONTINUE
+            DO 30 J=1,3
+        30 ENN(IMAX,J) = 0.
+    1 0 1 \text { DO 110 J=1,5}
+            AMT = AM(J)
+            AMBART = AMBAR(J)
+            BT = R(J)
+\end{verbatim}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{verbatim}
+    120 IF(J - 3) 102, 102, 103
+    IO2 I = IMAX
+        ASSIGN 104 TO ILOOP
+    1 0 4 \mathrm { L } \mathrm { = } \mathrm { I }
+        I I = I
+        I = I - l
+    899 IF(I) 900, 110, 106
+    900 STOP 13571
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-057}
+\end{center}
+
+\begin{verbatim}
+        ENN(1,J) = ENN(1,JK)
+        I = 1
+        ASSIGN 105 TO ILOOP
+    105 L = I
+        I ~ = I ~ + I
+        I I = I
+    107 IF(I - IMAX) 106, 106, 110
+    I06 BS = RT*S(II)
+        ENN(I,J) = (AMT - BS - H(II))*ENN(L,J) + SO(II)/2.
+    902 IF(J - 1) 901, 109, 108
+    9 0 1 \text { STOP 12345}
+    108 ENN(I,J) = ENN(I,J) + (AMBART + BS - H(II))*ENN(L,J-1)
+        - (AMBART - BS + H(II))*ENN(I,J-1) + SO(II)/2.
+    109 ENN(I,J) = ENN(I,J)/(AMT + BS + H(II))
+        IF(ENN(I,J)) 1000, 1001, 1001
+1000 ENN(I,J) = 0
+1001 GO TO ILOOP, (104,105)
+    110 CONTINUE
+C
+C CALCULATE TOTAL NEUTRON FLUX
+C
+    79 DO 84 I =2, I MAX
+        SUM1 = 0.
+        DO 81 J=1,5
+        SUM2 = ENN(I,J) + ENN(1-1,J)
+    9O5 GO TO (80, 81, 81, 81, 80), J
+    SO SUM2 = SUM2/2•
+    81 SUM1 = SUM1 + SUM2
+        SUM1 = SUM1/8.
+    84 EN(IG,I) = SUMl
+    9 1 ~ I G ~ = ~ I G ~ - ~ 1
+    911 IF(IG) 300, 300, 2
+    300 FEBARP = 0.
+        FFBARD = 0.
+        DO 8301 I=2,IMAX
+        SUMI = 0.0
+        ENNN(I) = 0.0
+        DO 8300 IG=1,IGMAX
+        SUMI = SUMl + EN(IG,I)
+8300 ENNN(I) = ENNN(I) + EN(IG,I)/V(IG)
+8301 WN(I) = SUM1*T(I)
+        DO 301 I=2,IMAX
+        FFBARP = FFBARP + WN(I)*F(I)
+\end{verbatim}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{verbatim}
+301 FEBARP = FEBARP + WN(I)*E(I)
+307 DO 30? I=2,IMAX
+    SUM1 = 0.
+    SUM2 = 0.
+    N = K(I)
+    DO 303 IG=1,IGMAX
+    SUM1 = SUM1 + ANUSIG(IG,N)*EN(IG,I)
+303 SUM2 = SUM2 + SIGMA(IG,IG,N)*EN(IG,I)
+    F(I) = SUMI*RHO(I)
+302 E(I) = SUM2*RHO(I)
+    FEBAR = 0.
+    FFBAR = 0.
+    FENBAR = 0.
+    DO 310 I=2,IMAX
+    FEBAR = FEBAR + WN(I)*E(I)
+    FFBAR = FFBAR + WN(I)*F(I)
+310 FENBAR = FENBAR + WN(I)*ENNN(I)
+913 IF(AITCT-3.) 321, 321, 305
+305 IF(KCALC) 319,319,311
+3 1 1 \text { DO 317 I=1,3}
+3 1 2 A K ( I ) = A K ( I + 1 )
+    AKEFF = AKEFF*FFBAR*FEBAR/(FFBARP*FEBARP)
+    AK(4) = AKEFF
+    FFAKE = 0.0
+    DO 313 I = 1,3
+    IF(ABSF(AK(I+1)-AK(I))-EPSK) 313, 315, 315
+315 FFAKE = 1.0
+313 CONTINUE
+    IF(FFAKE) 8000, 8999, 8000
+8999 PRINT 9900
+    WRITE OUTPUT TAPE 6, 9900
+314 PRINT 9942, AKEFF
+306 WRITE OUTPUT TAPE 6, 9942, AKEFF
+    KCNTRL = 0
+    KCALC = 0
+    GO TO 6802
+319 DO 325 I =1,3
+3 2 5 A ( I ) = A ( I + 1 )
+    IF(ICNTRL) 8020, 8015, 8020
+8015 ALPHA = ALPHA + (FFBAR + FEBAR - FFBARP - FEBARP)/FENBAR
+    EPS = EPSA
+    A(4)=ALPHA
+    GO TO 321
+8020 Z = (FFBAR + FEBAR)/(FFBARP + FEBARP)
+    EPS = EPSR
+    DO 8O2I I=2,IMAX
+8021 R(I)=R(I)/Z
+    A(4)=R(IMAX)
+321 AITCT=AITCT+1.0
+    FFAKE = 0.0
+    DO 330 I=1,3
+    IF(ABSF(A(I+1)-A(I))-EPS) 330, 338, 338
+\end{verbatim}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{verbatim}
+    338 FFAKE = 1.0
+    330 CONTINUE
+        IF(FFAKE) 339, 915, 339
+    339 IF(ICNTRL) 9, 8000, 9
+C
+C PRINT ROUTINES
+C
+    915 IF(SENSE SWITCH 4) 331, 503
+    331 PRINT 9900
+        PRINT 9980
+        DO 501 I=2,IMAX
+    501 PRINT 9981, F(I), (EN(IG,I), IG=1,IGMAX)
+    503 IF(SENSE SWITCH 3) 502, 9010
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-059}
+\end{center}
+
+\begin{verbatim}
+        PRINT 9985
+        PRINT 9911, (R(I), (ENN(I,J), J=1,5), I=1,IMAX)
+    9 0 1 0 ~ F B A R ~ = ~ 0 . ~ .
+        DO 9011 I=2,IMAX
+    9 0 1 1 ~ F B A R ~ = ~ F B A R ~ + ~ T ( I ) * F ( I ) ~
+        IF(NH) 6800, 6800, 9014
+    6800 ALPHAO=ABSF(ALPHA)
+        IF(KCNTRL) 6802, 6803, 6801
+    6801 KCALC = 1
+        AKEFF = 1.0
+        AK(1) = 1.0
+        AK(2) = 4.0
+        AK(3) = 1.0
+        AK(4) = 2.0
+        GO TO 8000
+    6803 PRINT 9900
+        WRITE OUTPUT TAPE 6, 9900
+    6802 RL(1) = 0.0
+        DO 6810 I=2,IMAX
+    6 8 1 0 ~ R L ( I ) = C U B E R T F ( R L ( I - 1 ) * * 3 + R O ( I ) * ( R ( I ) * * 3 - R ( I - 1 ) * * 3 ) ) ~
+        RL(IMAX+1)=2.0*RL(IMAX)-RL(IMAX-1)
+    6820 IF(ALPHAO*DELT-4.O*ETA2) 6830, 6822, 6822
+    6822 DELT=0.5*DELT
+    2004 FORMAT(21H HALVE DELT INITIALLY)
+        PRINT 2004
+        WRITE OUTPUT TAPE 6, 2004
+        GO TO 6820
+    6830 DELTP=DELT
+        TOTKE=0.0
+        TOT IEN=0.0
+        DO 6840 I =2,IMAX
+        M=K(I)
+    6833 HP(I)=MAXIF(0.0,(ALPH(M)*RO(I)+BETA(M)*THETA(I)+TAU(M)))
+        HEO(I)=TAU(M)/RO(I) - ALPH(M)*LOGF(RO(I))
+    6835 HE(I)=ACV(M)*THETA(I)+0.5*BCV(M)*THETA(I)**2
+        RKE = 0.25*(U(I)**2 + U(I - 1)**2)
+    6837 HMASS(I)=RL(I)**3 - RL(I-1)**3
+        TOTKE = TOTKE + HMASS(I)*RKE
+\end{verbatim}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{verbatim}
+6840 TOTIEN=TOTIEN + HMASS(I)*HE(I)
+    HP(IMAX+1)=-HP(IMAX)
+    QPRIMF = -1.0
+    Q=TOTKE + TOTIEN
+    TOTKE=4.18879*TOTKE
+    TOTIEN=4.18879*TOTIEN
+    PRINT 9943, TOTKE, TOTIEN
+    WRITE OUTPUT TAPE 6,9943, TOTKE, TOTIEN
+    IF(ICNTRL) 6990, 9050, 6990
+6990 PRINT 9944, R(IMAX)
+    WRITE OUTPUT TAPE 6,9944, R(IMAX)
+    PRINT 9986
+    WRITE OUTPUT TAPE 6, 9986
+    ICNTRL = 0
+    GO TO 9050
+9 0 1 4 \text { ALPHAO = MAXIF(ABSF(ALPHA), ALPHAO)}
+    IF(ALPHA) 9018, 9018, 9017
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-060}
+\end{center}
+
+\begin{verbatim}
+9 0 1 8 ~ z ~ = ~ A R S F ( A L P H A P - A L P H A ) / ( A L P H A O ~ + ~ 3 . 0 * E P S A )
+    IF(Z-FTA3) 9015, 9015, 9020
+9015 IF(SENSE SWITCH 5) 9030, 9016
+9 0 1 6 \text { NS4=NS4+1}
+    GO TO 9050
+9020 IF(3.0*ETA3-Z) 9022, 9022, 9027
+9022 IF(1-NS4) 9023, 9024, 9024
+9 0 2 3 \text { NS4=NS4-1}
+    GO TO 9040
+9024 IF(ALPHA) 9050, 9025, 9025
+9025 SENSE LIGHT 3
+    GO TO 905O
+9027 IF(SENSE SWITCH 5) 9030, 9050
+9030 IF(1-NS4) 9023, 9050, 9050
+9040 IF(6.0*ETA3-Z) 9045, 9045, 9050
+9 0 4 5 \text { NS4=1}
+9050 IF(SENSE SWITCH 6) 9051,9052
+9 0 5 1 ~ P A U S E ~ 6 6 6 6 6 \}
+9 0 5 2 ~ N H = N H + 1 \}
+    IF(NS4R) 9054, 9054, 9056
+9 0 5 4 \text { QP=4.18879*Q}
+    PRINT 9911, TIME, QP, POWER, ALPHA, DELT,W
+    WRITE OUTPUT TAPE 6, 9911, TIME, QP, POWER, ALPHA, DELT, W
+9 0 5 6 \mathrm { W } = 0 . 0
+    TIME=TIME+DELT
+    Z=ALPHA*DELTP
+    POWER=EXPF(Z)*POWER
+9 0 6 0 ~ Q B A R = P O W E R * D E L T / ( 1 2 . 5 6 6 3 7 * F B A R )
+    IF(Q-QPRIME) 9061, 9061, 9066
+9061 IF(ALPHA) 9062, 9066, 9066
+\end{verbatim}
+
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-060(1)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-060(2)}
+
+\begin{verbatim}
+9 0 6 6 ~ Q P R I M F ~ = ~ Q
+C
+\end{verbatim}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{verbatim}
+C ENTER I LOOP
+C
+        DO 9200 I =2,IMAX
+        U(I)=U(I) - DELTP*R(I)**2*(HP(I+1)-HP(I))/
+    X (0.5*RL(I)**2*(RL(I+1)-RL(I-1)))
+        R(I)=R(I)+U(I)*DELT
+        RHOT=HMASS(I)/(R(I)**3-R(I-1)**3)
+        DELV=1.0/RHOT-1.0/RO(I)
+            IF(RHOT*ABSF(DELV)-0.1) 9070, 9070, 9068
+    9068 IRCNBR = IRCNBR
+            PAUSE 50
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-061(2)}
+\end{center}
+
+\begin{verbatim}
+            PRINT 9987, IRCNBR
+            WRITE OUTPUT TAPE 6, 9987, IRCNBR
+    2003 FORMAT(27H HALVE DELT, RHO DELV LARGE)
+            PRINT 2003
+            WRITE OUTPUT TAPE 6, 2003
+            GO TO 929O
+    9 0 7 0 ~ D E L Q = F ( I ) * Q B A R / R O S N ( I ) \} ) \mp@code { ~ }
+            Q = Q + DELQ*HMASS(I)
+            DELR=R(I)-R(I-1)
+            IF(DELR) 9080, 9080, 9082
+    9 0 8 0 ~ P A U S E ~ 6 0 \}
+            GO TO 9068
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-061(3)}
+\end{center}
+
+\begin{verbatim}
+            IF(DELV) 9120, 9124, 9124
+    9120 VP=(VP*RHOT*(RHOT*DELV*DELR/DELT)**2
+    9122 IF(NH-1) 9123, 9123, 9124
+\end{verbatim}
+
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-061(4)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-061}
+
+\begin{verbatim}
+            THET=THETA(I)
+            M=K(I)
+            NIT=0
+    9130 DELE=nELQ-0.5*(HPT+HP(I))*DELV
+            Z=DELF+DELV*(TAU(M)+ALPH(M)*0.5*(RHOT+RO(I)))
+            THET =MAXIF (0.0, (THETA(I)+2.0*Z/(2.0*ACV(M)+
+        X BCV(M)*(THET+THETA(I))))
+    9140 PSTAR=MAXIF(O.O, (ALPH(M)*RHOT+BETA(M)*THET+TAU(M)))+VP
+    9150 IF(ABSF(PSTAR-HPT)/(ABSF(PSTAR)+EPS1)-ETA1)9180,9180,9151
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-061(1)}
+\end{center}
+
+\begin{verbatim}
+            IF(NIT-NITMAX) 9160,9170,9170
+    9 1 6 0 ~ H P T = P S T A R
+            GO TO 9130
+    9 1 7 0 ~ P A U S E ~ 1 1 ~
+    9 1 8 0 ~ H P ( I ) = P S T A R
+            HE(I)=HE(I)+DELE
+            THETA(I)=THET
+    9 1 9 0 W R ~ = ~ C S C * A B S F ( H E ( I ) ) * D E L T * * 2 / D E L R * * 2 + 4 . 0 * C V P * R H O T * A B S F ( D E L V )
+            W = MAXIF(WR,W)
+    9200 RO(I)=RHOT
+C
+C END OF I LOOP
+\end{verbatim}
+
+C
+
+\begin{verbatim}
+    HP(IMAX+1)=-HP(IMAX)
+9201 IF(NS4-1) 9210, 9210, 9202
+9202 IF(ALPHA) 9210, 9210, 9203
+9 2 0 3 ~ H P B A R ~ = ~ 0 . ~ + ~
+    DO 92O4 I=2,IMAX
+9204 HPBAR = MAXIF(HPBAR,HP(I))
+    IF(HPRAR-PTEST) 9210, 9210, 9205
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-062(2)}
+\end{center}
+
+\begin{verbatim}
+    DO 9206 I=2,IMAX
+9 2 0 6 ~ P B A R ~ = ~ P B A R ~ + ~ H P ( I ) * T ( I ) ~ 1 )
+    PBAR = PBAR*12.56637
+    S4R = NS4
+    CONST = VJ*DELT**2*S4R**2*PBAR
+    IF(CONST-OK1) 9210, 9213, 9213
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-062(1)}
+\end{center}
+
+\begin{verbatim}
+9207 IF(CONST-OK2) 9209, 9208, 9208
+9 2 0 8 ~ N S 4 ~ = ~ 1
+    GO TO 9210
+9209 IF(XMODF(NS4,2)) 9211, 9212, 9211
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-062}
+\end{center}
+
+\begin{verbatim}
+    GO TO 9210
+9212 NS4 = NS4/2
+9210 DELTP=DELT
+    IF(SENSE LIGHT 1) 5999,9220
+9220 IF(SENSE LIGHT 2) 9230, 9230
+9230 IF(SENSE SWITCH 1) 5999, 9240
+9240 IF(XMODF(NH,NP)) 5999, 5999, 9241
+9241 IF(XMODF(NH,NPOFF)) 9242, 9242, 9255
+9 2 4 2 \text { LDONT = 7}
+    GO TO 6000
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-062(3)}
+\end{center}
+
+\begin{verbatim}
+6000 TOTKE = 0.0
+    TOT IEN=0.0
+    ERRLCL=0.0
+    DO 6040 I =2,IMAX
+    M=K(I)
+6010 RIE=HFO(I)+ALPH(M)*LOGF(RO(I))-TAU(M)/RO(I)+
+    X ACV(M)*THETA(I)+0.5*BCV(M)*THETA(I)**2
+6020 ERRLCL=MAXIF(ERRLCL, ABSF(RIE-HE(I)))
+6030 RKE = 0.25*(U(I)**2 + U(I-1)**2)
+    TOTKE = TOTKE +HMASS(I)*RKE
+6040 TOTIEN=TOTIEN+HMASS(I)*RIE
+    CHECK = (Q-TOTKE-TOTIEN)/Q
+    QP=4.18879*Q
+    TOTKE=4.18879*TOTKE
+    IF(LDONT) 6055, 6050, 6055
+6050 PRINT 9911, TIME, QP, POWER, ALPHA, DELT, W
+    PRINT 9982
+    PRINT 9911, QP, TOTKE, CHECK, ERRLCL
+    PRINT 9983
+9250 PRINT 9911, (RO(I),R(I),U(I),HP(I),HE(I),THETA(I),I=2,IMAX)
+\end{verbatim}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{verbatim}
+        PRINT 9900
+        PRINT 9986
+6055 WRITE OUTPUT TAPE 6, 9911, TIME, QP, POWER, ALPHA, DELT, W
+        WRITE OUTPUT TAPE 6, 9982
+        WRITE OUTPUT TAPE 6, 9911, QP, TOTKE, CHECK, ERRLCL
+        WRITE OUTPUT TAPE 6, 9983
+        WRITE OUTPUT TAPE 6, 9911, (RO(I),R(I),U(I),HP(I),HE(I),THETA(I),I
+    l=2,IMAX)
+        WRITE OUTPUT TAPE 6, 9900
+        WRITE OUTPUT TAPE 6, 9986
+9255 IF(SENSE LIGHT 31 9283, 9256
+9256 IF(NDUMP) 9257, 9257, 9258
+9 2 5 7 ~ I R C N B R ~ = ~ I R C N B R ~ + ~ 1
+        NDUMP = NDMAX
+        GO TO 9263
+9258 NDUMP = NDUMP-1
+9262 IF(SENSE SWITCH 2) 9264, 9267
+9264 IRCNBR=IRCNBR+1
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-063(1)}
+\end{center}
+
+\begin{verbatim}
+9 2 6 3 \text { PAUSE}
+9266 PRINT 9984, IRCNBR
+        WRITE OUTPUT TAPE 6, 9984, IRCNBR
+9267 IF(W-N.3) 9268, 9285, 9285
+9268 IF(ALPHA*DELT-4.0*ETA2) 9269, 9284, 9284
+9269 IF(W-0.03) 9270, 9310, 9310
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-063}
+\end{center}
+
+\begin{verbatim}
+9272 IF(NL) 9274,9274,9320
+9274 IF(ALPHA*DELT-ETA2) 9278, 9320, 9320
+9278 IF(2.0*DELT-DTMAX) 9280, 9280, 9320
+9280 IF(XMODF(NH,2)) 9320,9281,9320
+9281 SENSE LIGHT 2
+    DELTP = 1.5*DELT
+    DELT=2.0*DELT
+    NH=NH/2
+    NS4=(NS4+1)/2
+9282 FORMAT(12H DOUBLE DELT)
+    PRINT 9282
+    WRITE OUTPUT TAPE 6, 9282
+    GO TO 9310
+2000 FORMAT(29H HALVE DELT, SENSE LIGHT 3 ON)
+9 2 8 3 \text { PRINT 2000}
+    WRITE OUTPUT TAPE 6, 2000
+    GO TO 929O
+2001 FORMAT(28H HALVE DELT, ALPHADELT LARGE)
+9 2 8 4 \text { PRINT 2001}
+    WRITE OUTPUT TAPE 6, 2001
+    GO TO 929O
+2002 FORMAT(20H HALVE DELT, W LARGE)
+9 2 8 5 \text { PRINT 2002}
+    WRITE OUTPUT TAPE 6, 2002
+9290 SENSE LIGHT 1
+    DELTP=0.75*DELT
+\end{verbatim}
+
+\begin{verbatim}
+    DELT=0.5*DELT
+    NH=2*NH
+\end{verbatim}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-064}
+\end{center}
+
+\begin{verbatim}
+9 3 2 0 ~ N S 4 R = N S 4 R + 1
+    IF(NS4R-NS4) 9050,9330,9330
+9 3 3 0 ~ N S 4 R = 0
+    IF(SENSE LIGHT 4) 9331, 9332
+9331 SENSE LIGHT 4
+    GO TO 9337
+9332 IF(ALPHA) 9333, 9337, 9337
+9333 IF(NH-50) 9337, 9334, 9334
+9334 IF(ALDHA-ALPHAP+EPSA) 9335, 9337, 9337
+9335 IF(POWER-POWNGL) 9336, 9337, 9337
+9 3 3 6 \text { ETA3 = 10.0*ETA3}
+    NS4 = NS4+4
+2005 FORMAT(19H POWER SMALL NS4 UP)
+    PRINT 2005
+    WRITE OUTPUT TAPE 6, 2005
+    SENSE LIGHT 4
+9 3 3 7 ~ A L P H A P ~ = ~ A L P H A \}
+    GO TO 8009
+\end{verbatim}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-066}
+\end{center}
+
+In the preparation of this report certain superfluous material was inadvertently included as pages 62,63 , and 64 . This has been deleted, but the page numbers from 65 on have been maintained to expedite publication.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\section*{VII. ROLE OF SENSE SWITCHES, SENSE LIGHTS AND FLAGS}
+\section*{Sense Switch No. 1}
+At Order No. 7010, this switch, if on (depressed), calls for Pause 111 to allow time for modifications in a problem being rerun from a dump. Again at Order 9000, depressing this switch produces Pause 11111 after the print-out of input data and before the beginning of the mixture code. Finally, at Order 9230, if this switch is depressed, an on-line and off-line print-out of $t, Q_{p}$, power, alpha, etc., is provided independent of whether $N H \equiv 0 \bmod N_{p}$.
+
+\section*{Sense Switch No. 2}
+At Order No. 9262, depressing this switch produces a dump of the memory on Tape 6.
+
+\section*{Sense Switch No. 3}
+At Order No. 503, following Order No. 915, depressing this switch provides an on-line print-out of the radii and of ENN(I,J), the angular flux distribution for Group 1, the lowest energy group (or, in a one-group problem, the only group).
+
+\section*{Sense Switch No. 4}
+At Order No. 915, depressing this switch provides an on-line printout of $F(I)$, the fission source, for all mass points and of $E N(I G, I)$, the flux, for all groups and mass points.
+
+\section*{Sense Switch No. 5}
+At Order No. 9015, depressing this switch sends the computation to Order No. 9023 where $\mathrm{N}_{\mathrm{S} 4}$ is reduced by one if it is not already unity.
+
+\section*{Sense Switch No. 6}
+At Order No. 7150, this switch bypasses the normal on-line printout of input data if depressed. At Order No. 9050, this switch, if depressed, produces Pause 66666 before beginning the next series of hydrocycles.
+
+\section*{Sense Light No. 1}
+At Order No. 9210, if this sense light is on, an energy balance is made and an on-line and off-line print-out of $t, Q_{p}$, power, $\alpha, \Delta t$, etc. is provided, independent of whether $\mathrm{NH}=0 \bmod \mathrm{~N}_{\mathrm{p}}$. This light is lit at Order No. 9290 where $\Delta t$ is halved.
+
+\section*{Sense Light No. 2}
+At Order No. 9281, if the course of the problem permits a doubling of $\Delta t$, this sense light is lit. It is automatically turned off at Order No. 9220 following the next hydrocycle.
+
+\section*{Sense Light No. 3}
+At Order No. 9255, this sense light, if on, sends the computation to Order Nos. 9283 and 9290 where $\Delta t$ will be halved. The light will be turned on at Order No. 9025 if the fractional change in alpha between the last two $\mathrm{S}_{4}$ calculations exceeds $3 \eta_{3}$.
+
+\section*{Sense Light No. 4}
+At Order No. 2005, if the burst has gone through its peak and has reached a condition of negative alpha and low power, sense light No. 4 is lit and the fact that this condition has been attained is printed.
+
+\section*{Flag 1}
+If alpha becomes negative after having been positive, and if the tal energy shows no change or a net decrease during the hydrocycle, this flag sends $\mathrm{N}_{\mathrm{S} 4}$ to 30,000 (Order Nos. 9017, 9062, 9065) terminating any further $S_{n}$ calculations. At this condition the burst is over, the power is essentially zero. The total energy may therefore actually not change (within limits of accuracy), and approximations in the solution might even produce a slight wavering in an essentially constant quantity.
+
+\section*{VIII. LIST OF PAUSES AND STOPS}
+Order No.
+
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+7010 & Pause 7010 & This is a dummy pause to provide an address in memory where a transfer to the tape recall routine must be placed. If the problem is being run from restart, the dump numbered ICRNBR is read from tape into memory at this time. \\
+\hline
+7015 & Pause 111 & Optional pause (Sense Switch No. 1) to allow modification of memory or any other steps when beginning problem from a dump. \\
+\hline
+9002 & Pause 11111 & Optional pause (Sense Switch No. 2) following print-out of input data. \\
+\hline
+14 & Pause 14 & If $H(I)$ should be negative, this pause results. When problem is continued, $H(I)$ is set equal to zero. \\
+\hline
+900 & Stop 13571 & The problem is stopped if I < 0 results somehow. \\
+\hline
+901 & Stop 12345 & The problem is stopped if $\mathrm{J}=0$, falling outside the proper range $1-5$. \\
+\hline
+9051 & Pause 66666 & This is an optional pause (Sense Switch No. 6) at the beginning of the hydrocycle. \\
+\hline
+9068 & Pause 50 & This pause occurs after continuing from Pause 60, or if excessive change occurs in $\rho \underset{\mathrm{Hyd}}{\mathrm{T}}|\Delta \mathrm{V}|$, both serious troubles. Continuing the problem leads to dummy pause 9069. \\
+\hline
+9069 & Dummy Pause & If the problem is continued after Pause 50, Order No. 9069 institutes a dummy pause to provide an address in memory where a transfer to the tape recall routine must be placed. The latest dump of the problem is read from tape into memory at this time. The problem then continues with $\Delta t$ halved. \\
+\hline
+9080 & Pause 60 & This pause indicates radii crossing. Continuing the problem leads to Pause 50. \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Order No.}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+9170 & Pause 11 & If the hydrocycle calculation of the new pressure, an iterative process, does not converge as requested in 300 cycles, (Nit Max) Pause 11 results. On continuing the problem, the last calculated pressure is accepted as correct. \\
+\hline
+9265 & Pause 22222 & This pause follows Order No. 9262, where if Sense Switch No. 2 is on, a dump of the memory is called for, even though $\mathrm{N}_{\text {dump }}>0$. \\
+\hline
+9263 & Dummy Pause & This is a dummy pause to provide the address in memory where a transfer to the tape dump routine must be placed. The contents of the memory are written on Tape 5 at this time. \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\section*{IX. OPERATING INSTRUCTIONS}
+Deck Composition:
+
+\begin{enumerate}
+  \item The FORTRAN compiled binary deck with the transfer card removed and $170_{8}$ punched in row 12 L of the fourth card instead of the usual $140_{8}$ - 255 cards.
+  \item The "Tape Dump and Recall Routine" - 1 card. (See Appendix F.1)
+  \item Binary correction cards (transfers to the "Tape Dump and Recall Routine") - 3 cards.
+  \item Transfer card $170_{8}-1$ card.
+  \item Input data cards.
+\end{enumerate}
+
+Reader: 72-72 board.
+
+Punch: Not used.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+Printer: SHARE board No. 2.
+
+Tapes: No. 5 should be blank for routine memory dumps and No. 6 should be blank for output.
+
+Sense Switch Settings: Normally all switches are up. See the section on Sense Switches for details.
+
+Underflow Switch: On
+
+Running Procedure:
+
+\begin{enumerate}
+  \item Ready the card deck in the reader.
+  \item Ready the printer.
+  \item Mount and ready tapes No. 5 and 6.
+  \item Clear and load cards.
+\end{enumerate}
+
+Program Stops:\\
+$51_{8}$ This occurs if memory and tape transmission differ in the Tape Dump and Recall Routine portion of the program. Continuing will cause the tape unit to backspace one record and come to stop 52.
+
+528 This occurs after the tape has been backspaced one record. Continuing will cause another attempt to execute the "Tape Dump and Recall Routine."
+
+Since this is a FORTRAN compiled program the stops listed under the section "Error Stops in Object Program" of the FORTRAN Preliminary Operator's Manual are applicable. For additional stops see the section on Pauses.
+
+Problem Termination:
+
+The program does not terminate itself. Unless one wishes to observe post-burst pheonomena, the appearance of "Power Small NS4 Up" on the on-line output indicates a good stopping point. Tape No. 6 should be printed off-line under program control. Tape No. 5 should be saved if restarting the problem from a dump is anticipated (see Appendix F.2). Neither tape has an end-of-file on it.
+
+Restart Procedure:
+
+To restart a problem from a dump, follow the same procedure as for a new problem with the following exceptions:
+
+\begin{enumerate}
+  \item Tape No. 5 should contain the dump.
+  \item Input data consist only of a title card and an IRCNBR card containing the number of the dump from which restart is desired.
+\end{enumerate}
+
+Running Time:
+
+The sample problem ran for 40 minutes before being terminated.
+
+\section*{X. SAMPLE PROBLEM}
+\section*{A. Input Data}
+The specification of the problem will be made here in three different forms, all equivalent. First, a set of notes, as might be prepared by a physicist will be presented. The same problem will then be shown on the standard input sheets in slightly more cryptic fashion. Finally, the same data will be listed on the input sheet used by the card puncher in a form similar to that in which it is printed out.
+
+A few general comments precede this presentation. It is first noted that the mass point $I=$ unity is always reserved for the central point, $R=0$, and the first real mass point and the first non-zero radius corresponds to $I=2$.
+
+It is noted that cross sections are stored in barns, necessitating the use of different "densities" in the neutronics and hydrodynamics equations, as was discussed previously in the section "Detailed Flow Diagram and Explanatory Notes." It is also necessary that mixtures be
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+specified as atomic fractions, $P_{i}$, where $\sum_{i} P_{i}=1$.
+
+It is noted that in the section "Properties of Materials" a material should be listed only once, even if it reappears as one moves outward radially.
+
+The size of the various convergence and comparison criteria specified herein are subject to revision in accordance with the needs and peculiarities of the problem. They generally represent a compromise between the need for accuracy and the desire to minimize the machine time consumed.
+
+EPSR, EPSA, and EPSK are the convergence criteria for the various types of $S_{n}$ calculations. Running time will be particularly sensitive to EPSA, since this number controls the oft-repeated alpha calculation. ETA 2 limits the maximum fractional change in power per hydrocycle. Once set, it implies an inverse relationship between the initial alpha and the initial $\Delta t$. Unless conditions dictate otherwise, it is reasonable to choose the largest initial $\Delta \mathrm{t}$ which satisfies the ETA 2 test.\\
+$\triangle \mathrm{t}_{\text {Max }}$, NP, NPOFF, and NPOFFP do not directly affect accuracy and, hence, are somewhat arbitrary, depending on the wishes of the problem initiator. ETA l and ETA 3 control the accuracy of the solution and, hence, must represent a balance between accuracy and machine time. As with many of the other control criteria, experience and subjective judgment play a major role in fixing these parameters. The numbers used in the test problem have been satisfactory for studies on accidents in fast reactors.
+
+\begin{enumerate}
+  \item Physicist's Specifications
+\end{enumerate}
+
+Problem: Geneve 10 Rerun March 20, 1959. Ax-1\\
+Specify initial alpha $=0.013084 \mu \mathrm{sec}^{-1}$. Vary radii to fit.\\
+Two region problem (Spherical core surrounded by concentric blanket).
+
+\begin{center}
+\begin{tabular}{ll}
+Core radius & 23.75 cm \\
+Blanket radius & 44.70 cm \\
+Core Density & $7.92 \mathrm{~g} / \mathrm{cc}$ \\
+Blanket Density & $15.83 \mathrm{~g} / \mathrm{cc}$ \\
+Core composition &  \\
+$\quad$ (atomic fraction) & 0.36 Substance 1 \\
+ & 0.64 Substance 2 \\
+Blanket composition & 1.0 Substance 3 \\
+\end{tabular}
+\end{center}
+
+Use 25 uniformly spaced mass points in core, 14 mass points in blanket.\\
+All mass points initially at rest.\\
+Core temp. $=10^{-4} \mathrm{kev}$.\\
+Blanket temp. $=5 \times 10^{-5} \mathrm{kev}$.\\
+No fission in blanket. Guess smooth flux curve in core with edge to center ratio $=0.4$. Initial power $=10^{12} \mathrm{ergs} / \mu \mathrm{sec}$.\\
+Use 1 group cross sections\\
+$\mathrm{Vg}=1.695 \times 10^{2} \mathrm{~cm} / \mu \mathrm{sec}$.\\
+Substance $1=\mathrm{U}^{235}$\\
+Substance $2=\mathrm{U}^{238}$\\
+Substance $3=\mathrm{U}^{238}$ with no fission allowed.\\
+Equation of State Parameters
+
+$$
+\begin{aligned}
+& \mathrm{P}=\alpha \rho+\beta \theta+\tau \\
+& \alpha=.02873 \mathrm{~cm}^{2} / \mu \mathrm{sec}^{2} \\
+& \beta=278.46 \mathrm{~g} / \mathrm{cm} \mu \mathrm{sec}^{2}
+\end{aligned}
+$$
+
+For core, set $\tau=-0.3946$. Then the pressure calculated from equation of state will be negative for the original density until $\theta=6 \times 10^{-4}$ kev. Program will keep pressure zero until this threshold temperature is reached.
+
+For blanket, set $\tau=-0.4687189$, so that pressure initially is exactly zero from the equation of state.
+
+Specific heat parameters:
+
+$$
+\begin{aligned}
+& \frac{\partial E}{\partial \theta}=A_{C V}+B_{C V} \theta \\
+& A_{C V}=12.163 \mathrm{~cm}^{2} / \mu \mathrm{sec}^{2} \mathrm{kev} \\
+& B_{C V}=5.78 \times 10^{3} \mathrm{~cm}^{2} / \mu \mathrm{sec}^{2} \mathrm{kev}^{2}
+\end{aligned}
+$$
+
+Accuracy Criteria
+
+EPSR\\
+EPSA\\
+EPSI\\
+ETA1\\
+ETA2\\
+ETA3\\
+CVP\\
+CSC\\
+$3 \times 10^{-6} \mathrm{~cm}$\\
+$5 \times 10^{-5} \mu \mathrm{sec}^{-1}$\\
+$10^{-4} \mathrm{gm} / \mathrm{cm} \mu \mathrm{sec}^{2}$\\
+$10^{-3}$\\
+$1.5 \times 10^{-2}$\\
+$3 \times 10^{-2}$\\
+2\\
+3 (An estimate of the maximum value of $\gamma(\gamma-1)$ reached during the burst for the equation of state parameters used.)\\
+$\Delta \mathrm{t}$\\
+$\Delta \mathrm{t}_{\text {Max }}$\\
+NP\\
+NPOFF\\
+NPOFFP\\
+KCNTRL\\
+VJ
+
+OK1\\
+OK2\\
+PTEST\\
+EPSK\\
+POWNGL\\
+$2 \mu \mathrm{sec}$\\
+$16 \mu \mathrm{sec}$\\
+100\\
+15\\
+3\\
+01\\
+$6.6 \times 10^{-7}$ (This was guessed from a previous problem and may not conform exactly to present specifications.)\\
+0.01\\
+0.04\\
+$10^{-4}$\\
+$5 \times 10^{-6}$\\
+1
+
+\section*{2. Formal Presentation of Specifications}
+\section*{INPUT SHEETS - Ax I}
+Problem Name and Date $\_\_\_\_$ Geneve 10 Rerun March 20, 1959\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Record Number (choose one) $\quad\left\{\begin{array}{l}00 \text { if beginning new problem } \\ >0 \text { if restarting from tape, omit rest of form }\end{array}\right.$ & 00 \\
+\hline
+$\boldsymbol{\alpha}$ Control (choose one) & 01 \\
+\hline
+$\alpha\left(\mu \sec ^{-1}\right)$ & $1.3084 \times 10^{-2}$ $\_\_\_\_$ \\
+\hline
+Power ( $10^{12} \mathrm{ergs} / \mu \mathrm{sec}$ ) & 1 $\_\_\_\_$ \\
+\hline
+I Max $=$ Total Number of Zones +1 (I Max $\leq 40$ ) & 40 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{ZONE DATA}
+The following must be filled out for each $i \quad(2 \leq i \leq I$ Max)
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+ & RADIUS (cm) & DENSITY $\left(\mathrm{gm} / \mathrm{cm}^{3}\right)$ & RELATIVE FISSION DENSITY & VELOCITY ( $\mathrm{cm} / \mu \mathrm{sec}$ ) & TEMPERATURE (kev) \\
+\hline
+$\mathrm{i}=2$ & . 95 & 7.92 & 1 & 0 & 10-4 \\
+\hline
+$\mathrm{i}=3$ & 1.90 & 7.92 & 1 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=4$ & 2.85 & 7.92 & . 99 & 0 & 10-4 \\
+\hline
+$\mathrm{i}=5$ & 3.80 & 7.92 & . 98 & 0 & 10-4 \\
+\hline
+$i=6$ & 4.75 & 7.92 & . 97 & 0 & 10-4 \\
+\hline
+$\mathrm{i}=7$ & 5.70 & 7.92 & . 95 & 0 & 10-4 \\
+\hline
+$\mathrm{i}=8$ & 6.65 & 7.92 & . 93 & 0 & 10-4 \\
+\hline
+$i=9$ & 7.60 & 7.92 & . 91 & 0 & 10-4 \\
+\hline
+$\mathrm{i}=10$ & 8.55 & 7.92 & . 89 & 0 & $10^{-4}$ \\
+\hline
+$i=11$ & 9.50 & 7.92 & . 87 & 0 & 10-4 \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+ & RADIUS (cm) & DENSITY $\left(\mathrm{gm} / \mathrm{cm}^{3}\right)$ & REL ATIVE FISSION DENSITY & VELOCITY ( $\mathrm{cm} / \mu \mathrm{sec}$ ) & TEMPERATURE (kev) \\
+\hline
+$\mathrm{i}=12$ & 10.45 & 7.92 & . 85 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=13$ & 11.40 & 7.92 & . 82 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=14$ & 12.35 & 7.92 & . 79 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=15$ & 13.30 & 7.92 & . 76 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=16$ & 14.25 & 7.92 & . 73 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=17$ & 15.20 & 7.92 & . 70 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=18$ & 16.15 & 7.92 & . 67 & 0 & $10^{-4}$ \\
+\hline
+$i=19$ & 17.10 & 7.92 & . 64 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=20$ & 18.05 & 7.92 & . 61 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=21$ & 19.00 & 7.92 & . 58 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=22$ & 19.95 & 7.92 & . 55 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=23$ & 20.90 & 7.92 & . 52 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=24$ & 21.85 & 7.92 & . 48 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=25$ & 22.80 & 7.92 & . 44 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=26$ & 23.75 & 7.92 & . 40 & 0 & $10^{-4}$ \\
+\hline
+$\mathrm{i}=27$ & 24.70 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=28$ & 25.65 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=29$ & 26.60 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=30$ & 27.55 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=31$ & 28.50 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=32$ & 30.30 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=33$ & 32.10 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=34$ & 33.90 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=35$ & 35.70 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=36$ & 37.50 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$i=37$ & 39.30 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=38$ & 41.10 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=39$ & 42.90 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+$\mathrm{i}=40$ & 44.70 & 15.83 & 0 & 0 & $5 \times 10^{-5}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{COMPOSITION}
+\section*{Definitions ;}
+A Substance has its own cross section cards.\\
+A Mixture is made by the code out of substances.\\
+Materials are those mixtures and/or substances that make up the actual system.
+
+Write material label for each mass point:
+
+$$
+\begin{aligned}
+& \frac{4}{2} \quad \frac{4}{3} \quad \frac{4}{4} \quad \frac{4}{5} \quad \frac{4}{6} \quad \frac{4}{7} \quad \frac{4}{8} \quad \frac{4}{9} \quad \frac{4}{10} \quad \frac{4}{11} \quad \frac{4}{12} \quad \frac{4}{13} \quad \frac{4}{14} \quad \frac{4}{15} \quad \frac{4}{16} \quad \frac{4}{17} \quad \frac{4}{18} \quad \frac{4}{19} \quad \frac{4}{20} \\
+& \frac{4}{21} \quad \frac{4}{22} \quad \frac{4}{23} \quad \frac{4}{24} \quad \frac{4}{25} \quad \frac{4}{26} \quad \frac{3}{27} \quad \frac{3}{28} \quad \frac{3}{29} \quad \frac{3}{30} \quad \frac{3}{31} \quad \frac{3}{32} \quad \frac{3}{33} \quad \frac{3}{34} \quad \frac{3}{35} \quad \frac{3}{36} \quad \frac{3}{37} \quad \frac{3}{38} \quad \frac{3}{39} \quad \frac{3}{40}
+\end{aligned}
+$$
+
+G Max = number of energy groups $(\leq 7) \quad 1$\\
+$N M a x \quad 3 \quad M M a x \quad 1$\\
+N Max $=$ number of different substances for which cross sections are to be read in $(\leq 8)$\\
+M Max = number of mixtures ( $\leq 8$ )\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+Label the substances with the integers 1, 2, … … Max\\
+Label the mixtures with the integers $N \operatorname{Max}+1, N \operatorname{Max}+2, N \operatorname{Max}+M \operatorname{Max}$\\
+If N Max +M Max > 8, some mixtures must be stored at positions previously occupied by substances, wiping out all knowledge of those substances at the time the mixtures are stored therein. The maximum number of materials is 8 .
+
+The proportions, $\mathrm{P}(\mathrm{M}, \mathrm{IS})$, are stated as atomic fractions, and add up to unity for each mixture.
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+Proportions: & \begin{tabular}{l}
+□ \\
+. 36 \\
+\end{tabular} &  & . 64 $\_\_\_\_$ & \multicolumn{2}{|r|}{$\_\_\_\_$
+$\_\_\_\_$} & $\_\_\_\_$ &  \\
+\hline
+Substance Label: & \begin{tabular}{l}
+$\_\_\_\_$ \\
+1 \\
+\end{tabular} & 2 $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & 4 $\_\_\_\_$ \\
+\hline
+ &  &  &  &  &  &  & Mixture \\
+\hline
+Proportions: & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ & $\_\_\_\_$ \\
+\hline
+Substance Label: & $\_\_\_\_$ &  &  &  &  & $\_\_\_\_$ & $\_\_\_\_$ \\
+\hline
+ &  &  &  &  &  &  &  \\
+\hline
+Proportions: &  & $\_\_\_\_$ &  &  &  &  & □ \\
+\hline
+ &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Proportions:}
+Substance Label: $\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$
+
+Proportions: $\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+Substance Label: $\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$
+
+Proportions: $\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+Substance Label: $\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$
+
+\begin{table}[h]
+\begin{center}
+\captionsetup{labelformat=empty}
+\caption{NEUTRON CONSTANTS}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{7}{|c|}{Average Neutron Velocity ( $\mathrm{cm} / \mu \mathrm{sec}$ )} & \multicolumn{7}{|c|}{Relative Fission Spectrum $\nu_{\mathbf{g}}\left(\Sigma \nu_{\mathbf{g}}=1\right)$} \\
+\hline
+\multicolumn{7}{|l|}{\multirow[b]{2}{*}{\begin{tabular}{l}
+169.5 \\
+$\mathrm{v}_{\mathrm{g}}>\mathrm{v}_{\mathrm{g}-1}$ \\
+\end{tabular}}} &  &  &  & 1 & \multicolumn{3}{|c|}{} \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=1$ & $\mathrm{g}=2$ & $\mathrm{g}=3$ & $\mathrm{g}=4$ & $\mathrm{g}=5$ & $\mathrm{g}=6$ & $\mathrm{g}=7$ & $\frac{1}{g=1}$ & $\mathrm{g}=2$ & $\mathrm{g}=3$ & $\mathrm{g}=4$ & $\mathrm{g}=5$ & $\mathrm{g}=6$ & $\mathrm{g}=7$ \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+Cross Sections (barns)\\
+Note: $\nu=$ average number of neutrons emitted per fission\\
+$\sigma_{\mathrm{tr}}=\sigma_{\mathrm{f}}+\sigma_{\text {cap }}++\sigma_{\text {ol. scat }}+\sigma_{\text {inel. scat }}=\sigma_{\text {total }}$ (if scattering is isotropic)\\
+Substance 1
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+ & $\left(\nu \sigma_{f}\right)_{g}$ & $\left(\sigma_{\mathbf{t r}}\right)_{\mathbf{g}}$ & ( $\sigma_{\text {scat }}$ ) $g-1$ & ( $\sigma_{\text {scat }}$ ) $g-2$ & ( $\sigma_{s c a t}$ ) $g-3$ & ( $\sigma_{\text {scat }}$ ) $\mathrm{g}-4$ & ( $\sigma_{\text {scat }}$ ) $g \leftarrow 5$ & ( $\sigma_{\text {scat }}$ ) $\mathrm{g}-6$ & ( $\sigma_{\text {scat }}$ ) $g-7$ \\
+\hline
+$g=1$ & 3.75 & 7.0 & 5.3 &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=2$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=3$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=4$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=5$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=6$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=7$ &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Substance 2}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multirow{2}{*}{} & $\left(\nu \sigma_{f}\right)_{g}$ & $\left(\sigma_{t r}\right)_{g}$ & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {seat }}$ ) \\
+\hline
+ &  &  & $\mathrm{g}-1$ & g-2 & $\mathrm{g}-3$ & g - 4 & $\mathrm{g}-5$ & $9-6$ & g - 7 \\
+\hline
+$\mathrm{g}=1$ & . 25 & 7.0 & 6.7 &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=2$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=3$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=4$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=5$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=6$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=7$ &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Substance 3}
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{2}{|r|}{\multirow[t]{2}{*}{$\left(\nu \sigma_{f}\right)_{g}$}} & $\left(\sigma_{t r}\right)_{g}$ & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {seat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {seat }}$ ) \\
+\hline
+ &  &  & $9-1$ & g ← 2 & $\mathrm{g}-3$ & $\mathrm{g}-4$ & $\mathrm{g}-5$ & $\mathrm{g}-6$ & $\mathrm{g}-7$ \\
+\hline
+$\mathrm{g}=1$ & 0 & 7.0 & 6.8 &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=-2$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=3$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=4$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=5$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=6$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=7$ &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{Substance 4}
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multirow{2}{*}{} & $\left(\nu \sigma_{f}\right)_{g}$ & $\left(\sigma_{\mathrm{tr}}\right)_{\mathrm{g}}$ & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) & ( $\sigma_{\text {scat }}$ ) \\
+\hline
+ &  &  & $\mathrm{g}-1$ & $\mathrm{g} \leftarrow 2$ & $\mathrm{g}-3$ & g- 4 & $\mathrm{g}-5$ & $\mathrm{g}-6$ & $\mathrm{g}-7$ \\
+\hline
+$\mathrm{g}=1$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=2$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=3$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=4$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=5$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=6$ &  &  &  &  &  &  &  &  &  \\
+\hline
+$\mathrm{g}=7$ &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{PROPERTIES OF MATERIALS}
+For each material in order from center outward:
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+ & $\mathrm{P}_{\text {Lab }}$ ( $10^{-24} \mathrm{~g} /$ atom $)$ & $\alpha\left(\mathrm{cm}^{2} /\right. \mu \sec ^{2}$ ) & $\beta(\mathrm{g} / \mathrm{cm} \mu$ sec $^{2}$ kev) & $\tau(\mathrm{g} / \mathrm{cm} \mu \sec ^{2}$ ) & $\mathrm{A}_{\mathrm{cv}}\left(\mathrm{cm}^{2} /\right. \mu \sec ^{2} \mathrm{kev}$ ) & $B_{c v}\left(\mathrm{~cm}^{2} /\right. \mu \sec ^{2} \mathrm{kev}^{2}$ ) \\
+\hline
+Innermost Material & 396 & . 02873 & 278.46 & - . 3946 & 12.163 & 5780 \\
+\hline
+Next New Material & 396 & . 02873 & 278.46 & - . 4687189 & 12.163 & 5780 \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent\rule{\textwidth}{0.5pt}
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+$\_\_\_\_$\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+\section*{ACCURACY CRITERIA}
+Definitions:\\
+EPSR Tolerance for outer radius when $\alpha$ - control $\neq 0$\\
+EPSA Tolerance in $\alpha$ 's found by $S_{4}$\\
+EPS1 Largest negligible pressure for equation of state iteration convergence.\\
+ETA1 Fractional pressure tolerance for equation of state iteration convergence.\\
+ETA2 1/4 the maximum tolerated value of $\alpha \Delta t$\\
+ETA3 Tolerance for the change in $\alpha$ between successive $\mathrm{S}_{4}$ cycles
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+EPSR (cm) & EPSA ( $\mu \mathbf{s e c}^{-1}$ ) & EPSI ( $\mathbf{g} \boldsymbol{/} \mathbf{c m} \mu \mathbf{s e c}^{\mathbf{2}}$ ) & ETAI & ETA2 & ETA3 \\
+\hline
+$3 \times 10^{-6}$ & $5 \times 10^{-5}$ & $10^{-4}$ & $10^{-3}$ & $1.5 \times 10^{-2}$ & $3 \times 10^{-2}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+$\mathrm{C}_{\mathrm{vp}}$ Viscuous pressure coefficient \_ \_ \_ \_\\
+for shock smearing\\
+$\Delta t \quad(\mu \mathrm{sec}) \quad 2$
+
+Courant stability constant 3\\
+equals high estimate for $\gamma(\gamma-1)$\\
+$\Delta t \max (\mu \mathrm{sec}) \quad 16$
+
+NP Number of hydrodynamic cycles between detailed print on primary output.\\
+NPOFF Number of hydrodynamic cycles between detailed print offline.\\
+NPOFFP Revised number of hydrodynamic cycles between detailed print offline; effective when VJ limit on pressure is reached.
+
+KCNTRL 01 if calculation of $k_{e f f}$ is desired\\
+00 if calculation of $k_{\text {eff }}$ is not desired
+
+$\frac{100}{\text { NP }} \frac{15}{\text { NPOFF }} \frac{3}{\text { NPOFFP }} \frac{1}{\text { KCNTRL }}$
+
+Limits on alpha change between $\mathrm{S}_{4}$ calculations\\
+$\mathrm{VJ} \approx\left(\frac{\sqrt{q}}{b}\right)^{5} \times \frac{1}{a_{\text {max }} \ell \rho}$, in units of $\mathrm{g}^{-1} \mathrm{~cm}^{-2}$\\
+where $1-q=\frac{\text { flux at core edge }}{\text { flux at center }}$\\
+b = core radius, cm\\
+$\ell=$ neutron lifetime\\
+$\rho=$ density, $\mathbf{g} / \mathbf{c m}^{\mathbf{3}}$
+
+OK1 = dimensionless test parameter ( $\approx .01$ )\\
+OK2 $=$ dimensionless test parameter ( $\approx .04$ )\\
+PTEST = maximum local pressure allowed without testing for $\frac{d^{2} \text { (alpha) }}{d t^{2}}$, in megabars\\
+EPSK Convergence criterion on k calculation\\
+POWNGL Power following burst after which negligible change in total energy occurs.
+
+$\frac{6.6 \times 10^{-7}}{\text { VJ }} \frac{10^{-2}}{\text { OK1 }} \frac{4 \times 10^{-2}}{\text { OK2 }} \frac{10^{-4}}{\text { PTEST }} \frac{5 \times 10^{-6}}{\text { EPSK }} \frac{1}{\text { POWNGL }}$
+
+For Ax-1', do not fill in POWNGL ; state Ax-1' is to be used.
+
+RE-28 (12-58)
+
+\section*{B. Results}
+The on-line print-out for the complete problem is included herein. First, a complete reproduction of the input data is printed, in exactly the same array as it is presented to the card punchers. Since a calculation of $k_{\text {eff }}$ was requested, this number is printed, followed by the initial total kinetic energy, total internal energy and initial maximum radius.
+
+At time equal to zero, a short print-out is made, consisting of Time, Qp , Power, Alpha, $\Delta \mathrm{t}$ and W . As the calculation progresses, similar short prints are repeated following each $\mathrm{S}_{\mathrm{n}}$ calculation. Dumps are noted as they occur during the process.
+
+When a "long" print-out is in order ( $\mathrm{NH} \equiv 0 \bmod \mathrm{~Np}$ ) first the total energy, the kinetic energy and the checks on the energy computation are printed. This is followed by a detailed listing of the density, radius, velocity, pressure, internal energy and temperature of each mass point. This latter print-out is time-consuming, hence, the program was revised to permit infrequent on-line, long prints, coupled with frequent off-line, long prints. The latter are dumped on tape and are available for off-line print-out on separate equipment, if needed.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-089(1)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-089}
+
+\begin{center}
+\begin{tabular}{|l|}
+ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-089(2)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{14}{|l|}{GENEVE 10 RERUN MARCH 201959} \\
+\hline
+\multicolumn{14}{|c|}{1.003243E 00} \\
+\hline
+\multicolumn{14}{|c|}{\begin{tabular}{l}
+TOTAL INTERNAL ENERGY $=3.484515 E 03$ \\
+TOTAL KINETIC ENERGY = 0. \\
+\end{tabular}} \\
+\hline
+\multicolumn{14}{|c|}{4.400910E 01} \\
+\hline
+ &  &  &  &  &  & POWER &  & ALPHA &  & DELT &  &  & W \\
+\hline
+ & 0. &  &  & 3.484515E & 03 & 1.000000E & 00 & 1.308400E-02 &  & 2.000000E & 00 & $0 \bullet$ &  \\
+\hline
+ & 2.000000E & 00 &  & 3.486570E & 03 & 1.026513E & 00 & 1.306381E-02 &  & 2.000000E & 00 &  & 1.717759E-02 \\
+\hline
+ & 6.000000E & 00 &  & 3.490840E & 03 & 1.081580E & 00 & 1.306669E-02 &  & 2.000000E & 00 &  & 1.737788E-02 \\
+\hline
+ & 1.200000E & 01 &  & 3.497678E & 03 & 1.169789E & 00 & 1.306910E-02 &  & 2.000000E & 00 &  & 1.769934E-02 \\
+\hline
+ & 2.000000E & 01 &  & 3.507671E & 03 & 1.298716E & 00 & 1.307150E-02 &  & 2.000000E & 00 &  & 1.816912E-02 \\
+\hline
+ & 3.000000E & 01 &  & 3.521725E & 03 & 1.480072E & 00 & 1.307318E-02 &  & 2.000000E & 00 &  & 1.882985E-02 \\
+\hline
+ & 4.200000E & 01 &  & 3.541205E & 03 & 1.731467E & 00 & 1.307486E-02 &  & 2.000000E & 00 &  & 1.974568E-02 \\
+\hline
+ & 5.600000E & 01 &  & 3.568153E & 03 & 2.079270E & 00 & 1.307654E-02 &  & 2.000000E & 00 &  & 2.101261E-02 \\
+\hline
+ & 7.200000E & 01 &  & 3.605640E & 03 & 2.563162E & 00 & 1.307702E-02 &  & 2.000000E & 00 &  & 2.277511E-02 \\
+\hline
+ & 9.000000E & 01 &  & 3.658339E & 03 & 3.243418E & 00 & 1.307847E-02 &  & 2.000000E & 00 &  & 2.525282E-02 \\
+\hline
+ & 1.100000E & 02 &  & 3.733451E & 03 & 4.213092E & 00 & 1.307943E-02 &  & 2•000000E & 00 &  & 2.878439E-02 \\
+\hline
+\multicolumn{14}{|c|}{DUMP 1} \\
+\hline
+ & 1.320000E & 02 &  & 3.842258E & 03 & 5.617822E & 00 & 1.307967E-02 &  & 2.000000E & 00 &  & 3.390018E-02 \\
+\hline
+ & 1.560000E & 02 &  & 4.002723E & 03 & 7.689500E & 00 & 1.308039E-02 &  & 2.000000E & 00 &  & 4.144491E-02 \\
+\hline
+1 & .820000E & 02 &  & 4.243975E & 03 & 1.080431E & 01 & 1.308087E-02 &  & 2.000000E & 00 &  & 5.278815E-02 \\
+\hline
+2 & .000000E & 02 &  & 4.466130E & 03 & 1.367270E & 01 & 1•308087E-02 &  & 2•000000E & 00 &  & 6.323373E-02 \\
+\hline
+ & TOTAL ENERGY &  &  & KINETIC ENERGY &  & CHECK &  & ERROR LOCAL &  &  &  &  &  \\
+\hline
+ & 4.466130E 03 &  & $0 \bullet$ &  &  & -1.378316E-04 &  & 2.656016E-06 &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+DENSITY & RADIUS &  & VELOCITY & PRESSURE & INTERNAL ENERGY & TEMPERATURE \\
+\hline
+7.920000E 00 & 9.353166E-01 & -O. &  & 0 . & 4.609830E-03 & 3.500994E-04 \\
+\hline
+7.919999E 00 & 1.870633E 00 & -0. &  & 0. & $4 \cdot 603765 \mathrm{E}-03$ & 3.496712E-04 \\
+\hline
+7.919999E 00 & 2.805949E 00 & -0. &  & 0. & 4.591511E-03 & 3.488057 E -04 \\
+\hline
+7.920000E 00 & 3.741266E 00 & -0. &  & 0. & 4.573052E-03 & 3.475017E-04 \\
+\hline
+7.919999E 00 & 4.676582E 00 & -0. &  & 0. & 4.548420E-03 & $3.457605 \mathrm{E}-04$ \\
+\hline
+7.919999E 00 & 5.611899E 00 & -0. &  & 0. & 4.517679 E -03 & $3.435855 \mathrm{E}-04$ \\
+\hline
+7.919999E 00 & 6.547217E 00 & -0. &  & 0. & 4.480917E-03 & 3.409822E-04 \\
+\hline
+7.919999E 00 & 7.482533E 00 & -0. &  & 0. & 4•438245E-03 & 3.379570E-04 \\
+\hline
+7.919999E 00 & 8.417846E 00 & -0. &  & $0 \bullet$ & 4.389797E-03 & 3.345174 E -04 \\
+\hline
+7.919998E 00 & 9.353163E 00 & -0. &  & 0. & 4•335721E-03 & 3.306729E-04 \\
+\hline
+7.919998E 00 & 1.028848E 01 & -0. &  & 0. & 4•276185E-03 & 3.264334E-04 \\
+\hline
+7.919999E 00 & 1.122380E 01 & -0. &  & 0. & 4•211373E-03 & 3.218098E-04 \\
+\hline
+7.919998E 00 & 1.215911E Ol & -0. &  & 0. & 4.141483E-03 & 3.168140E-04 \\
+\hline
+7.919997E 00 & 1.309443E 01 & -0. &  & 0. & 4.066724E-03 & 3.114589 E -04 \\
+\hline
+7.919998E 00 & 1.402975E 01 & -0. &  & 0. & 3.987319E-03 & 3.057583E-04 \\
+\hline
+7.919998E 00 & 1.496507E 01 & -0. &  & 0. & 3•903497E-03 & 2.997261E-04 \\
+\hline
+7.919998E 00 & 1.590038E Ol & -0. &  & 0. & 3.815498E-03 & 2.933772E-04 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+t & ＋ & v & n & ص & n & n & n & n & n & n & ＂ & In & nin &  & nin &  \\
+\hline
+i & i & i & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & i & 1 & 11 &  & P 1 &  \\
+\hline
+\multicolumn{17}{|l|}{\begin{tabular}{l}
+шய \\
+шш \\
+ш \\
+山 \\
+山 \\
+ய \\
+ш \\
+山 \\
+ш \\
+山 \\
+山 \\
+ш \\
+шш \\
+\end{tabular}} \\
+\hline
+r & N & N & $\sigma$ & о & σ & л & σ & o & o & о & o & の & の & о & の & の \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+$\omega_{\infty} \infty$ & Noower mo 6 の $\alpha$ の $\alpha$ の $\alpha$ の $\alpha$ の $\alpha$ の & m & N & の & の & の & の & の & の & の & の & の & の & の & の &  \\
+\hline
+rou & N &  &  & の & の & の & の & の & の & の & の & の & の & の & の & の \\
+\hline
+oのN & の & － & $N$ $N$ & の & の & の & の & の & の の & の & の & の & o & の & の & の \\
+\hline
+mrr & ＋ & ＋m & m & の & 0 & の & の & の & の & の &  & 0 & の & o & の & の \\
+\hline
+$\dot{N} \dot{N} \dot{N}$ & $\stackrel{\leftrightarrow}{\mathrm{N}}$ & v & ～ & ＋ & － & ＋ & ＋ & ＋ & ＋ & ＋ & ＋ & v & ＋ & 中 & 中 & • \\
+\hline
+\multicolumn{17}{|c|}{\multirow{9}{*}{\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(10)}
+}} \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025－11－22 04：22 GMT https：／／hdl．handle．net／2027／mdp． 39015078509448 ／Public Domain，Google－digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-092(7)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-092(3)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-092(1)}
+
+\begin{center}
+\begin{tabular}{|l|}
+\hline
+ \\
+\hline
+ \\
+\hline
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(5)}
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092}
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(2)}
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(4)}
+ \\
+\hline
+नનન $\rightarrow N N N N N N N N N N m$ m $m$ m $t$ t \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(6)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|}
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(9)}
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(12)}
+ \\
+\hline
+ののののにのの \\
+\hline
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(8)}
+ \\
+\hline
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-092(11)}
+ \\
+\hline
+ \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{13}{|l|}{GENEVE 10 RERUN MARCH 201959} \\
+\hline
+ & TIME &  &  & QP &  & POWER &  & ALPHA & DELT &  &  & W \\
+\hline
+ & 2.100000E & 02 &  & 4.614118E & 03 & 1.558345E & 01 & 1.308135E-02 & 2.000000E & 00 &  & 7.019199E-02 \\
+\hline
+2 & .400000E & 02 &  & 5.194141E & 03 & 2.307269E & 01 & 1.308255E-02 & 2.000000E & 00 & 9. & 746438E-02 \\
+\hline
+\multicolumn{13}{|c|}{DUMP 2} \\
+\hline
+2 & 2.620000E & 02 &  & 5.790050E & 03 & 3.076770E & 01 & 1.307606E-02 & 2.000000E & 00 &  & 1.350541E-01 \\
+\hline
+2 & 2.700000E & 02 &  & 6.052932E & 03 & 3.416063E & 01 & 1•291253E-02 & 2.000000E & 00 &  & 1.561587E-01 \\
+\hline
+2 & -740000E & 02 &  & 6.194982E & 03 & 3.597139E & 01 & 1.263538E-02 & 2.000000E & 00 &  & 1.673742E-01 \\
+\hline
+2 & -800000E & 02 &  & 6.422045E & 03 & 3.880450E & 01 & 1.173227E-02 & 2.000000E & 00 &  & 1.928673E-01 \\
+\hline
+2 & -820000E & 02 &  & 6.501495E & 03 & 3.972579E & 01 & 1.123132E-02 & 2.000000E & 00 &  & 1.980252E-01 \\
+\hline
+2 & 840000E & 02 &  & 6.582751E & 03 & 4.062824E & 01 & 1.061646E-02 & 2.000000E & 00 &  & 1.919355E-01 \\
+\hline
+2 & 860000E & 02 &  & 6.665751E & 03 & 4.150012E & 01 & 9.864639E-03 & 2.000000E & 00 &  & 1.957814E-01 \\
+\hline
+2 & .880000E & 02 &  & 6.750404E & 03 & 4.232701E & 01 & 8.957334E-03 & 2.000000E & 00 &  & 1.996146E-01 \\
+\hline
+2 & .900000E & 02 &  & 6.836587E & 03 & 4.309212E & 01 & 7.876132E-03 & 2.000000E & 00 & 2. & .178121E-01 \\
+\hline
+2 & 920000E & 02 &  & 6.924139E & 03 & 4.377629 E & 01 & 6.601209E-03 & 2•000000E & 00 &  & 2.293675E-01 \\
+\hline
+HALVE & DELT, & SENSE &  & \multicolumn{2}{|c|}{LIGHT 3 ON} &  &  &  &  &  &  &  \\
+\hline
+2 & -940000E & 02 &  & 7 & 03 & 4.435807E & 01 & 5.114744E-03 & 1.000000E & 00 &  & 2.192134E-01 \\
+\hline
+2 & -950000E & 02 &  & 7 & 03 & 4.469970E & 01 & 5.114744E-03 & 1.000000E & 00 & 8 & 427610E-02 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{lccl}
+TOTAL ENERGY & KINETIC ENERGY & CHECK & ERROR LOCAL \\
+7.057554 E 03 & 1.252171 E 01 & $-4.590405 \mathrm{E}-04$ & $9.519746 \mathrm{E}-06$ \\
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+DENSITY &  & RADIUS & VELOCITY & PRESSURE & INTERNAL ENERGY & TEMPERATURE \\
+\hline
+7.484143E & 00 & 9.531319E-01 & 2.407454 E -04 & 4.925818E-02 & 1.321355E-02 & 8.218011E-04 \\
+\hline
+7.493912E & 00 & 1.905539E 00 & 1.461096E-03 & 4•980521E-02 & 1.319808E-02 & 8.227578E-04 \\
+\hline
+7.493629E & 00 & 2.858224E 00 & 2.419077E-03 & 4.903755E-02 & 1.315292E-02 & 8.200302E-04 \\
+\hline
+7.504321E & 00 & 3.809892E 00 & 2.837079E-03 & 4.895018E-02 & 1.309500E-02 & 8.186132E-04 \\
+\hline
+7.515374E & 00 & 4.760746E 00 & 3.736507E-03 & 4.849854 E -02 & 1.301343E-02 & 8.158509E-04 \\
+\hline
+7.528976E & 00 & 5.710589E 00 & $4.365463 \mathrm{E}-03$ & $4.791449 \mathrm{E}-02$ & 1.291162E-02 & 8.123501E-04 \\
+\hline
+7.549754E & 00 & 6.658724E 00 & 5.095267E-03 & 4.764249E-02 & 1.279374E-02 & 8.092295E-04 \\
+\hline
+7.567464E & 00 & 7.605683E 00 & 5.717149E-03 & 4.669176E-02 & 1.265076E-02 & 8.039881E-04 \\
+\hline
+7.592811E & 00 & 8.550646E 00 & 6.363582E-03 & 4.609189E-02 & 1.249247E-02 & 7.992186E-04 \\
+\hline
+7.617350E & 00 & 9.493879E 00 & 6.965566E-03 & 4.503848E-02 & $1.231175 \mathrm{E}-02$ & 7.929039E-04 \\
+\hline
+7.648377E & 00 & 1.043473E 01 & 7.512518E-03 & 4.420762E-02 & 1.211524E-02 & 7.867189E-04 \\
+\hline
+7.680144E & 00 & 1.137329E 01 & $8.007845 \mathrm{E}-03$ & 4.308627E-02 & 1.189895E-02 & 7.794144E-04 \\
+\hline
+7.716881E & 00 & 1.230911E 01 & 8.478864E-03 & 4.204543E-02 & 1.166610E-02 & 7.718863E-04 \\
+\hline
+7.752517E & 00 & 1.324249E 01 & 8.894262 E -03 & 4.054883E-02 & 1.141318E-02 & 7.628349E-04 \\
+\hline
+7.791894E & 00 & 1.417309E 01 & $9.367871 \mathrm{E}-03$ & 3.903099E-02 & 1.114415E-02 & 7.533214E-04 \\
+\hline
+7.833664E & 00 & 1.510078E Ol & 9.557108E-03 & 3.738020E-02 & 1.085900E-02 & 7.430835E-04 \\
+\hline
+7.881988E & 00 & 1.602497E 01 & 9.646610E-03 & 3.593785E-02 & 1.055997E-02 & 7.329179E-04 \\
+\hline
+7.926625E & 00 & 1.694623E 01 & 9.939646E-03 & 3.384898E-02 & 1.024234E-02 & 7.208111E-04 \\
+\hline
+7.970825E & 00 & 1.786472E 01 & 9.889098E-03 & 3.142713E-02 & 9.909864E-03 & 7.075534E-04 \\
+\hline
+8.023799E & 00 & 1.877955E Ol & 9.526138E-03 & 2.938053E-02 & 9.565789E-03 & 6.947382E-04 \\
+\hline
+\end{tabular}
+\end{center}
+
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-094(2)}\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-094(1)}
+
+ஃ8ஃ8ㅇ멈\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-094}
+
+\begin{table}[h]
+\begin{center}
+\captionsetup{labelformat=empty}
+\caption{GENEVE 10 RERUN MARCH 201959}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{\begin{tabular}{l}
+TIME \\
+HALVE DELT, SENSE \\
+\end{tabular}} & QP & POWER & ALPHA & DELT & W \\
+\hline
+ & LIGHT 3 ON &  &  &  &  \\
+\hline
+2•950000E 02 & 7.057554E 03 & 4.469970E Ol & 4•275073E-03 & 5.000000E-01 & 8.427610E-02 \\
+\hline
+2.955000E 02 & 7.079975E 03 & 4.484325E Ol & 4•275073E-03 & 5.000000E-01 & 3.101643E-02 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+TOTAL ENERGY KINETIC ENERGY CHECK\\
+ERROR LOCAL\\
+9.519630E-06
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+DENSITY &  & RADIUS & VELOCITY & PRESSURE & INTERNAL ENERGY & TEMPERATURE \\
+\hline
+7.481986E & 00 & 9.532235E-01 & 1.832310E-04 & 5.029360E-02 & 1•328717E-02 & 8.257421E-04 \\
+\hline
+7.483834E & 00 & 1.906310E OO & 1.541746E-03 & 5.007831E-02 & 1.326452E-02 & 8.247782E-04 \\
+\hline
+7.483896E & 00 & 2.859438E 00 & 2.428255E-03 & 4•934222E-02 & 1•321954E-02 & 8.221285E-04 \\
+\hline
+7.496565E & 00 & 3.811334 E 00 & 2.884498E-03 & 4•944069E-02 & 1•316300E-02 & 8.211750E-04 \\
+\hline
+7.505908E & 00 & 4.762645E 00 & 3.797786E-03 & $4.882175 \mathrm{E}-02$ & 1•307953E-02 & 8.179883E-04 \\
+\hline
+7.520732E & 00 & 5.712786E 00 & 4.393979 E -03 & $4.834875 \mathrm{E}-02$ & 1.297824E-02 & 8.147601E-04 \\
+\hline
+7.540719E & 00 & 6.661322E 00 & 5.194831E-03 & 4.799533E-02 & 1.285901E-02 & 8.114288E-04 \\
+\hline
+7.559311E & 00 & 7.608573E 00 & 5.779899E-03 & 4•712015E-02 & 1.271605E-02 & 8.063677E-04 \\
+\hline
+7.584273E & 00 & 8.553883E 00 & 6.473626E-03 & $4.647534 \mathrm{E}-02$ & 1.255657E-02 & $8.014766 \mathrm{E}-04$ \\
+\hline
+7.609310E & 00 & 9.497405E 00 & 7.052238E-03 & 4.545819E-02 & 1.237529E-02 & 7.952406E-04 \\
+\hline
+7.640404E & 00 & 1.043855E Ol & 7.629301E-03 & 4.462197E-02 & 1.217775E-02 & 7.890296E-04 \\
+\hline
+7.672613E & 00 & 1.137735E Ol & 8.116051E-03 & 4.352798E-02 & 1•196060E-02 & 7.817777E-04 \\
+\hline
+7.709292E & 00 & 1.231343E Ol & 8.634149E-03 & 4•246773E-02 & 1.172641E-02 & 7.741857E-04 \\
+\hline
+7.745423E & 00 & 1.324701E 01 & 9.051432E-03 & 4.099948E-02 & 1.147246E-02 & 7.651852E-04 \\
+\hline
+7.784577E & 00 & 1.417786E 01 & $9.538440 E-03$ & 3.944508E-02 & 1•120181E-02 & 7.555634E-04 \\
+\hline
+7.827812E & 00 & 1.510563E 01 & 9.705800E-03 & 3.790197E-02 & 1.091598E-02 & 7.455610E-04 \\
+\hline
+7.876376E & 00 & 1.602990E 01 & 9.861428E-03 & 3.645849E-02 & 1.061536E-02 & 7.353667E-04 \\
+\hline
+7.920403E & 00 & 1.695132E 01 & 1.018808E-02 & 3.429620E-02 & 1.029561E-02 & 7.230590E-04 \\
+\hline
+7.966570E & 00 & 1.786977E 01 & 1.009850E-02 & 3.201226E-02 & 9.962271E-03 & 7.100937E-04 \\
+\hline
+8.020249E & 00 & 1.878451E Ol & 9.909690E-03 & 2.999489E-02 & 9.616482E-03 & 6.973107E-04 \\
+\hline
+8.056527E & 00 & 1.969758E 01 & 9.505358E-03 & 2.630742E-02 & 9.250290E-03 & 6.803254E-04 \\
+\hline
+8.122704E & 00 & 2.060574E 01 & 9.505549 E -03 & 2.466803E-02 & 8.882461E-03 & 6.676102E-04 \\
+\hline
+8.124196E & 00 & 2.151614E 01 & 3.625286E-03 & 1.822741E-02 & 8.481242E-03 & 6.426800E-04 \\
+\hline
+7.951445E & 00 & 2.244760E OI & 6.091743E-06 & 1.910850E-04 & 8.046777E-03 & 5.871777E-04 \\
+\hline
+7.920021E & 00 & 2.338291E 01 & -0. & 4.681418E-10 & 7.602204E-03 & 5.529851E-04 \\
+\hline
+1.583000E & 01 & 2.431823E 01 & -0. & 0. & 6.153750E-04 & 4.999998E-05 \\
+\hline
+1.583000E & 01 & 2.525355E Ol & -0. & 0. & 6.153750E-04 & 4•999998E-05 \\
+\hline
+1.583000E & 01 & 2.618887E 01 & -0. & 0. & 6.153750 E -04 & 4.999999 E-05 \\
+\hline
+1.583000E & 01 & 2.712418E 01 & -0. & 0. & 6.153750E-04 & 4.999999E-05 \\
+\hline
+1.583000E & 01 & 2.805950E 01 & -0. & 0. & 6•153750E-04 & 4.999999E-05 \\
+\hline
+1.583000E & 01 & 2.983168E 01 & -0. & 0. & 6.153750E-04 & 4.999998E-05 \\
+\hline
+1.583000E & 01 & 3.160386E 01 & -0. & 0. & 6•153750E-04 & 4.999998E-05 \\
+\hline
+1.583000E & 01 & 3.337602E 01 & -0. & 0. & 6.153750E-04 & 4•999998E-05 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{table}[h]
+\begin{center}
+\captionsetup{labelformat=empty}
+\caption{GENEVE 10 RERUN MARCH 201959}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+TIME &  & QP & POWER & ALPHA & DELT & W \\
+\hline
+2.955000E 02 &  & 7.079975E 03 & 4.484325E Ol & 3.829388E-03 & 5.000000E-01 & 3.101643E-02 \\
+\hline
+2.960000E 02 &  & 7.102438E 03 & 4.492919E 01 & 3.373051E-03 & 5.000000E-01 & 2.742106E-02 \\
+\hline
+2.965000E 02 &  & 7•124940E 03 & 4.500503E 01 & 2.902788E-03 & 5•000000E-01 & 3.258085E-02 \\
+\hline
+2.970000E 02 &  & 7.147474 E 03 & 4.507040E 01 & 2.416258E-03 & 5.000000E-01 & 3.735047E-02 \\
+\hline
+2.975000E 02 &  & 7.170036E 03 & 4.512488 E 01 & 1.913964E-03 & 5.000000E-01 & 4.068206E-02 \\
+\hline
+2.980000E 02 &  & 7.192619E 03 & 4.516808E Ol & 1.394506E-03 & 5.000000E-01 & 4.232702E-02 \\
+\hline
+2.985000E 02 &  & 7.215218E 03 & 4.519958E 01 & 8.567256E-04 & 5.000000E-01 & 4.214406E-02 \\
+\hline
+2.990000E 02 &  & 7.237827E 03 & 4.521895E 01 & 3.018303E-04 & 5.000000E-01 & 4.009234E-02 \\
+\hline
+2.995000E 02 &  & 7.260439E 03 & 4.522577E 01 & -2.711039E-04 & 5.000000E-01 & 3.624670E-02 \\
+\hline
+3.000000E 02 &  & 7•283048E 03 & 4.521964E 01 & -2.711039E-04 & 5.000000E-01 & 3.206001E-02 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{center}
+\begin{tabular}{ccccc}
+TOTAL ENERGY & KINETIC ENERGY & CHECK & ERROR LOCAL \\
+$7.283048 E 03$ & $2.097754 E 01$ & $-4.672505 E-04$ & $9.519164 E-06$ \\
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+DENSITY &  & RADIUS & VELOCITY & PRESSURE & INTERNAL ENERGY & TEMPERATURE \\
+\hline
+7.401031E & 00 & 9.566864E-01 & 1.424552E-03 & 5.353012E-02 & 1•389095E-02 & 8.457175 E -04 \\
+\hline
+7.393915E & 00 & 1.913910E 00 & 1.696909E-03 & 5.248137E-02 & 1•386256E-02 & 8.426854E-04 \\
+\hline
+7.404357E & 00 & 2.869995E 00 & 2.315887E-03 & 5•273834E-02 & 1.382527E-02 & 8.425310E-04 \\
+\hline
+7.412364E & 00 & 3.825582E 00 & $3.379210 \mathrm{E}-03$ & 5.234674E-02 & 1.376084E-02 & 8.402985E-04 \\
+\hline
+7.425086E & 00 & 4.780163E 00 & 3.948628E-03 & 5.203104E-02 & 1•367740E-02 & 8.378522E-04 \\
+\hline
+7.441152E & 00 & 5.733496E 00 & $4.823062 \mathrm{E}-03$ & 5.162633E-02 & 1.357202E-02 & 8.347411E-04 \\
+\hline
+7.457356E & 00 & 6.685685E 00 & 5.528755E-03 & 5.086122E-02 & 1•344403E-02 & 8.303217E-04 \\
+\hline
+7.481923E & 00 & 7.635847E 00 & 6.323115E-03 & 5.048868E-02 & 1.329935E-02 & 8•264491E-04 \\
+\hline
+7.504809E & 00 & 8.584374E 00 & 6.975247E-03 & 4.957673E-02 & 1.313071E-02 & 8.208129E-04 \\
+\hline
+7.534809E & 00 & 9.530544E 00 & 7.631582E-03 & 4.893916E-02 & 1•294487E-02 & 8.154280E-04 \\
+\hline
+7.565585E & 00 & 1.047445E 01 & 8.233802E-03 & 4.797767 E -02 & 1.273753E-02 & 8.087998E-04 \\
+\hline
+7.600967E & 00 & 1.141568E Ol & 8.869514 E -03 & 4.706591E-02 & 1.251226E-02 & 8.018751E-04 \\
+\hline
+7.636243E & 00 & 1.235442E 01 & 9.463822E-03 & 4.575969 E -02 & 1.226570E-02 & 7.935446E-04 \\
+\hline
+7.676543E & 00 & 1.329021E 01 & 1.002161E-02 & 4.453489 E -02 & 1•200253E-02 & 7.849881E-04 \\
+\hline
+7.720246E & 00 & 1.422281E 01 & 1.030141E-02 & 4.324137E-02 & 1.172205E-02 & 7.758339E-04 \\
+\hline
+7.769700E & 00 & 1.515174E 01 & 1.072612E-02 & 4.207328E-02 & 1.142572E-02 & 7.665367E-04 \\
+\hline
+7.814853E & 00 & 1.607768E 01 & 1.120278E-02 & 4.015730E-02 & 1.110779E-02 & 7.549974E-04 \\
+\hline
+7.865319E & 00 & 1.700015E 01 & 1.130235E-02 & 3.835686E-02 & 1.077639E-02 & 7.433248E-04 \\
+\hline
+7.922419E & 00 & 1.791856E 01 & 1.149764E-02 & 3.676734 E -02 & 1.043189E-02 & 7.317254E-04 \\
+\hline
+7.973327E & 00 & 1.883378E 01 & 1.156862E-02 & 3.429114E-02 & 1.006687E-02 & 7.175805E-04 \\
+\hline
+8.037897E & 00 & 1.974442E 01 & 1.140977E-02 & 3.262382E-02 & 9.695081E-03 & 7.049308E-04 \\
+\hline
+8.077105E & 00 & 2.065343E 01 & 1.096143 E -02 & 2.858021E-02 & 9.296469E-03 & 6.863642E-04 \\
+\hline
+8.148068E & 00 & 2.155735E 01 & 1.197423E-02 & 2.671503E-02 & 8.896784E-03 & 6.723445E-04 \\
+\hline
+8.215868E & 00 & 2.245678E Ol & 6.082644E-03 & 2.466825 E -02 & 8•480696E-03 & 6.564321E-04 \\
+\hline
+7.995130E & 00 & 2.338293E 01 & 2.579092E-05 & 5.399298E-04 & 7•963973E-03 & 5.891142E-04 \\
+\hline
+1.583035E & 01 & 2.431823E 01 & 1.911376E-07 & 1.040176E-05 & 6.153750E-04 & 5•000154E-05 \\
+\hline
+\end{tabular}
+\end{center}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp. } 39015078509448 \text { / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-098(4)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-098}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-098(2)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-098(3)}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+山 ய & Ш & س & س & س & Ш & Ш & Ш & Ш & Ш & Ш \\
+\hline
+In & $\infty$ & $\infty$ & 0 & N & 0 & $\infty$ & o & v & N & 0 \\
+\hline
+In $\infty$ & －ام & 0 & $\infty$ & 0 & N & m & n & N & の & $\sigma$ \\
+\hline
+$m \infty$ & t & － & m & 0 & $\infty$ & 0 & N & ＋ & 0 & の \\
+\hline
+n $\infty$ & N & m & 0 & N & v & N & の & b & m & 0 \\
+\hline
+Ne－ & T & $\infty$ & 0 & m & －1 & の & o & t & N & 0 \\
+\hline
+000 & N & の & － & m & In & 0 & $\infty$ & 0 & N & ＋ \\
+\hline
+\multicolumn{11}{|c|}{\multirow{2}{*}{NNNNNmmmmytt}} \\
+\hline
+ &  &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-098(1)}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+ய & W & Ш & ய & Ш & Ш & ш & س & Ш & لسا & Ш & Ш \\
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & の & の & 0 & の & の & の \\
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & の & の & 0 & の & の & の \\
+\hline
+0 & 0 & 0 & 0 & 0 & 0 & の & の & 0 & の & の & の \\
+\hline
+M & M & m & m & m & m & N & N & m & N & N & N \\
+\hline
+$\infty$ & 0 &  & 0 & 0 & ou & ou & 0 & $\infty$ & （） & $\infty$ & $\infty$ \\
+\hline
+th & n & in & ， & tn & م & In & n & ＂ & in & in & ， \\
+\hline
+－ & － & • & • & － & － & － & － & － & － & － & － \\
+\hline
+$-1$ &  &  &  &  &  &  &  &  &  &  &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[max width=\textwidth]{2025_11_22_9629766d565b25ccbdecg-100}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\multirow[b]{2}{*}{GENEVE 10 RERUN TIME} & MARCH 201959 & \multicolumn{3}{|c|}{\multirow{2}{*}{\begin{tabular}{l}
+POWER \\
+ALPHA \\
+DELT \\
+\end{tabular}}} &  \\
+\hline
+ &  &  &  &  & W \\
+\hline
+3.505000E 02 & 8.551790E 03 & 3.231899E 00 & -1.161970E-01 & 5.000000E-01 & 3.434920E-02 \\
+\hline
+\multicolumn{6}{|c|}{DUMP 4} \\
+\hline
+3.520000E 02 & 8.556109E 03 & 2.714952E 00 & -1.198263E-01 & 5.000000E-01 & 3.335743E-02 \\
+\hline
+3.535000E 02 & 8.559723E 03 & 2.268310E 00 & -1.233918E-01 & 5.000000E-01 & 3.362587E-02 \\
+\hline
+3.555000E 02 & 8.563617E 03 & 1.772253E 00 & -1.280392E-01 & 5.000000E-01 & 3.309837E-02 \\
+\hline
+3.575000E 02 & 8.566642E 03 & 1.371868E 00 & -1.325590E-01 & 5.000000E-01 & 3.361232E-02 \\
+\hline
+3.595000E 02 & 8.568970E 03 & 1.052381E 00 & -1.369468E-01 & 5.000000E-01 & 3.279974E-02 \\
+\hline
+\multicolumn{6}{|c|}{POWER SMALL NS4 UP} \\
+\hline
+3.615000E 02 & 8.570745E 03 & 8.002442E-01 & -1.412027E-01 & 5.000000E-01 & 3.265014E-02 \\
+\hline
+3.660000E 02 & 8.573310E 03 & 4.239031E-01 & -1.503135E-01 & 5.000000E-01 & 3.405175E-02 \\
+\hline
+3.710000E 02 & 8.574737E 03 & 1.999240E-01 & -1.597197E-01 & 5.000000E-01 & 3.279529E-02 \\
+\hline
+3.765000E 02 & 8.575432E 03 & 8.305300E-02 & -1.691910E-01 & 5.000000E-01 & 3.154983E-02 \\
+\hline
+3.825000E 02 & 8.575722E 03 & 3.009422E-02 & -1.784988E-01 & 5.000000E-01 & 3.112533E-02 \\
+\hline
+\multicolumn{6}{|c|}{DUMP 5} \\
+\hline
+3.890000E 02 & 8.575824E 03 & 9.431836E-03 & -1.876245E-01 & 5.000000E-01 & 3.067695E-02 \\
+\hline
+3.960000E 02 & 8.575850E 03 & 2.536333E-03 & -1.967015E-01 & 5.000000E-01 & 3.020719E-02 \\
+\hline
+4.000000E 02 & 8.575852E 03 & 1.154784E-03 & -1.967015E-01 & 5.000000E-01 & 2.994476E-02 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{cccc}
+TOTAL ENERGY & KINETIC ENERGY & CHECK & ERROR LOCAL \\
+8.575852 E 03 & 1.414158 E 02 & $-5.208532 \mathrm{E}-04$ & $2.470845 \mathrm{E}-05$ \\
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+DENSITY & RADIUS &  & VELOCITY & PRESSURE & INTERNAL ENERGY & TEMPERATURE \\
+\hline
+4.917073E 00 & 1.096389E 00 &  & 1.753956E-03 & 0 . & 1.725101E-02 & 4.417189E-05 \\
+\hline
+5.205647E 00 & 2.156736E 00 &  & 2.818523E-03 & 0. & 1.722617E-02 & 2.572979E-04 \\
+\hline
+5.499321E 00 & 3.188685E 00 &  & 3.305828E-03 & 0 . & 1.717615E-02 & 4.281693E-04 \\
+\hline
+5.537857E 00 & 4.230596E 00 &  & $4.029824 \mathrm{E}-03$ & 0. & 1.710035E-02 & 4.433258E-04 \\
+\hline
+5.419751E 00 & 5.297382E 00 &  & 5.289495E-03 & 0. & 1.699883E-02 & 3.721420E-04 \\
+\hline
+5.439850E 00 & 6.358381E 00 &  & $6.441835 \mathrm{E}-03$ & 0. & 1.687154E-02 & 3.745921E-04 \\
+\hline
+6.025999E 00 & 7.328801E 00 &  & 5.509934E-03 & $0 \bullet$ & 1.671965E-02 & 6.370937E-04 \\
+\hline
+6.094808E 00 & 8.307465E 00 &  & $5.501657 \mathrm{E}-03$ & 0. & 1.654206E-02 & 6.518982E-04 \\
+\hline
+6.331326E 00 & 9.265503E 00 &  & 4.705751E-03 & 0. & 1.633964E-02 & 7.214578E-04 \\
+\hline
+5.812325E 00 & 1.031525E 01 &  & 6.145067E-03 & $0 \bullet$ & 1.611205E-02 & 5.094094E-04 \\
+\hline
+5.605493E 00 & 1.139668E 01 &  & 8.310706E-03 & 0. & 1.586059E-02 & 3.934048E-04 \\
+\hline
+6.437482E 00 & 1.234178E 01 &  & 7.164884E-03 & 0. & 1.558564E-02 & 7.089424E-04 \\
+\hline
+6.060120E 00 & 1.335402E 01 &  & 8.256142E-03 & $0 \bullet$ & 1•528728E-02 & 5.586441E-04 \\
+\hline
+6.334372E 00 & 1.432737E 01 &  & 7.440804E-03 & $0 \bullet$ & 1.496597E-02 & 6.371157E-04 \\
+\hline
+6.329760E 00 & 1.530778E 01 &  & 8.697620E-03 & 0. & 1.462263E-02 & 6.138243E-04 \\
+\hline
+6.527848E 00 & 1.626487E 01 &  & 7.460192E-03 & 8.721617E-07 & 1.425737E-02 & 6.543277E-04 \\
+\hline
+6.711025E 00 & 1.720369E 01 &  & 6.942592E-03 & 0. & 1.387102E-02 & 6.834968E-04 \\
+\hline
+6.821918E 00 & 1.813551E 01 &  & 6.589408E-03 & 0 . & 1.346437E-02 & 6.883366E-04 \\
+\hline
+6.773332E 00 & 1.908118E Ol &  & 8.033070E-03 & 0 • & 1•303804E-02 & 6.486851E-04 \\
+\hline
+\end{tabular}
+\end{center}
+
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-103}
+
+\section*{APPENDIX A}
+\section*{DETAILS OF THE VJ-OK-1 TEST}
+Before the addition of the VJ-OK-1 test to the program it was observed that in the typical problem having a step function reactivity input at zero time and low power, $\mathrm{N}_{\mathrm{S}_{4}}$ would build up appreciably by the time high power and the accompanying shutoff mechanism were reached. As a result alpha would change considerably from $S_{4}$ calculation to $S_{4}$ calculation during shutoff. Since alpha is held constant between such neutronic calculations, some error in the time variation of power would result.
+
+It was desirable that $\mathrm{N}_{\mathrm{S}_{4}}$ be large before the burst to conserve machine time. A means of reducing its size at the beginning of the burst was needed. It was decided to obtain the necessary signal by observing $\ddot{\rho}$, the time rate of change of the reactivity inserted per unit time by the feedback mechanism. When the ratio $\frac{\ddot{\rho}}{\rho}$ became large, alpha would start changing rapidly and $\mathrm{N}_{\mathrm{S}_{4}}$ should be reduced.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp.39015078509448}{https://hdl.handle.net/2027/mdp.39015078509448} / Public Domain, Google-digitized
+
+Thus, in a power series expansion of reactivity,
+
+$$
+\rho=\rho_{0}+\dot{\rho} \Delta t+\frac{1}{2} \ddot{\rho}(\Delta t)^{2}+\ldots,
+$$
+
+the term in the second derivative is watched, and\\
+when
+
+$$
+\frac{\frac{1}{2} \ddot{\rho}(\Delta \mathrm{t})^{2}}{\rho_{\text {initial }}}>\mathrm{OK}_{1}
+$$
+
+$\mathrm{N}_{\mathrm{S}_{4}}$ is modified.\\
+Equation 14 from Appendix C of reference 1 provides the relation
+
+$$
+\begin{aligned}
+\ddot{\rho} & =\frac{-5}{2.54} \frac{\sqrt{q}}{b} \int \ddot{u}\left(\frac{d \phi}{d r}\right)^{2} r d r \\
+& =+\frac{5}{2.54} \frac{\sqrt{q}}{b} \int\left(\frac{1}{s} \frac{\partial p}{\partial r}\right)\left(-\frac{2 q r}{b^{2}}\right)^{2} r d r \\
+& =\frac{5}{2.54} \frac{1}{s}\left(\frac{\sqrt{q}}{b}\right)^{5}\left[p r^{3}-p \cdot 3 r^{2} d r\right]_{\circ}^{\infty} \\
+& =-\frac{20}{2.54} \frac{3}{s}\left(\frac{\sqrt{q}}{b}\right)^{5} \frac{1}{4 \pi} \int p r^{2} d r \cdot 4 \pi \\
+& =\frac{-60}{10.16 \pi} \frac{1}{s}\left(\frac{\sqrt{q}}{b}\right)^{5} \int p d V
+\end{aligned}
+$$
+
+where
+
+\begin{verbatim}
+\phi is the flux,
+u is the displacement,
+r is the radial position
+p is the pressure, and
+b, q, and s are defined below.
+\end{verbatim}
+
+Then
+
+$$
+\frac{\frac{1}{2} \ddot{\rho}(\Delta t)^{2}}{\rho_{\text {initial }}}=\frac{\left(N_{S_{4}}\right)^{2}(\Delta t)^{2}}{\rho_{\text {initial }}} \cdot \frac{30}{10.16 \pi}\left(\frac{\sqrt{q}}{b}\right)^{5} \frac{1}{s} \int p d V<{O K_{1}}^{.}
+$$
+
+Thus this ratio is proportional to a constant which is a function of the particular reactor, multiplied by the integral of the pressure over the reactor volume. This relation was derived by $V$. Jankus and has been previously reported in slightly different form in reference 2. (See equation \#23.)
+
+The last equation may be rewritten in the form
+
+$$
+\mathrm{VJ} \cdot(\Delta \mathrm{t})^{2} \cdot\left(\mathrm{~N}_{\mathrm{S}_{4}}\right)^{2} \int \mathrm{pdv}<\mathrm{OK}_{1}
+$$
+
+where
+
+$$
+\begin{aligned}
+\mathrm{VJ} & =\left(\frac{\sqrt{\mathrm{q}}}{\mathrm{~b}}\right)^{5} \times \frac{1}{\rho_{\max ^{\mathrm{s}}}} \\
+& =\left(\frac{\sqrt{\mathrm{q}}}{\mathrm{~b}}\right)^{5} \times \frac{1}{\alpha_{\max } \cdot \ell \cdot \mathrm{s}}
+\end{aligned}
+$$
+
+and
+
+\begin{verbatim}
+l-q = ratio of flux at core edge to center
+b = core radius, cm
+\alpha max = maximum alpha anticipated, }\delta\textrm{k}/\mu se
+s = core density, grams/ cm}\mp@subsup{}{}{3
+l = prompt neutron lifetime, \mu sec
+\end{verbatim}
+
+Generally OK-1 has been set equal to .01 . If the fractional change in reactivity in time $\mathrm{N}_{\mathrm{S}_{4}}$. $\Delta \mathrm{t}$ exceeds this amount, steps are taken to reduce $\mathrm{N}_{\mathrm{S}_{4}}$. To improve the efficiency of the over-all program, the test is not imposed until the local pressure at some point exceeds PTEST, an adjustable parameter.
+
+\section*{APPENDIX B}
+\section*{THE TIME SCALE}
+The continuous time variable of the burst is approximated by a series of small, finite steps, $\Delta t$. From any point $t$ in the course of the solution, the time is given by $t+n \Delta t$, assuming constant time increments. A superscript notation is used herein to label other parameters which vary with time. Thus, the radius for mass point I may be written as $\mathrm{R}(\mathrm{I})^{\mathrm{n}}, \mathrm{R}(\mathrm{I})^{\mathrm{n}+1}$, etc.
+
+When the problem begins, the radii are specified at time $t=0$. Alpha is calculated for this configuration, so that alpha is known at $t=0$. The acceleration is calculated at this time, requiring a knowledge of the pressure (and hence the energy) at $t=0$. To find the radii at $t+\Delta t,\left(R^{n+1}\right)$ the average velocity during the interval of $\mathrm{U}^{n+1 / 2}$ is needed. This may be calculated, provided that $\mathrm{U}^{\mathrm{n}-1 / 2}$ and the average acceleration during the time interval between $t+1 / 2 \Delta t$ are known.
+
+To find the internal energy (and thus the pressure) at $t+\Delta t$ requires he internal energy at $t$, plus the average power during $\triangle t$, or $P O W E R^{n+1 / 2}$. The latter may be calculated from the power at $t-1 / 2 \Delta t$, and the average rate of rise during the period $t-\frac{\Delta t}{2}$ to $t+\frac{\Delta t}{2}$, ALPHA $^{n}$.
+
+The positions in time at which the various variables must be computed are summarized in the following time chart.
+
+\begin{center}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+$\mathrm{U}^{\mathrm{n}-1 / 2}$ & $\mathrm{R}(\mathrm{I})^{\mathrm{n}}$ & $\mathrm{U}^{\mathrm{n}+1 / 2}$ & $\mathrm{R}(\mathrm{I})^{\mathrm{n}+1}$ & $\mathrm{U}^{\mathrm{n}+3 / 2}$ & $\mathrm{R}(\mathrm{I})^{\mathrm{n}+2}$ \\
+\hline
+POWER ${ }^{\text {n-1/2 }}$ & $\mathrm{p}^{\mathrm{n}}$ & POWER ${ }^{\mathrm{n}+1 / 2}$ & $\mathrm{p}^{\mathrm{n}+1}$ & POWER ${ }^{\text {n+3/2 }}$ & $\mathrm{p}^{\mathrm{n}+2}$ \\
+\hline
+ & $\Delta Q^{n}$ &  & $\Delta \mathrm{Q}^{\mathrm{n}+1}$ &  & $\Delta Q^{n+2}$ \\
+\hline
+ & $\mathrm{E}_{\text {internal }}^{\mathrm{n}}$ &  & $\mathrm{E}_{\text {internal }}$ &  & $\mathrm{E}_{\text {internal }}^{\mathrm{n}+2}$ \\
+\hline
+ & $\alpha^{\mathrm{n}}$ &  &  &  & $\alpha^{\mathrm{n}+2}$ \\
+\hline
+\end{tabular}
+\end{center}
+
+The time chart helps to explain the steps taken when $\Delta t$ is halved or doubled. When, as per order 9290, $\frac{\Delta t}{2} \rightarrow \Delta t$, one notes $\frac{3}{4} \Delta t^{\prime} \rightarrow \Delta t^{\prime}$. In the solution parameters specified on the half interval station change in accordance with $\Delta t^{\prime}$, while the others vary with $\Delta t$. Except during a change in time interval, $\Delta t^{\prime}=\Delta t$. At a time interval change, the variables $U$ and POWER\\
+should be maintained at their half interval position. Thus, if at time $t+\Delta t$, the time interval is halved, the time chart for $R(I)$ and $U$ would look as follows.\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-107(1)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-107(3)}\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-107(2)}\\
+t\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-107}
+
+Thus the time interval between $R(I)^{n+1}$ and $R(I)^{n+2}$ is half the old $\Delta t$, while the time interval between $\mathrm{U}^{\mathrm{n}+1 / 2}$ and $\mathrm{U}^{\mathrm{n}+3 / 2}$ is $3 / 4$ the old $\Delta \mathrm{t}$. On the other hand, on a doubling of $\Delta t, \Delta t^{\prime}$ increases only by a factor of 1.5 . This arbitrary procedure maintains the velocities and radii in the proper relative positions. A small error in computation is produced in that during a halving of $\Delta t$, the increment in $U$ is computed using as average acceleration the value at $2 / 3$ the interval instead of midway.\\
+Dolutured Google
+
+\section*{APPENDIX C}
+\section*{DISCUSSION OF HYDRODYNAMIC STABILITY CRITERIA AND SHOCK WAVE TREATMENT}
+If $c$ is the velocity of sound in the material, then for stability of the finite-difference scheme c $\Delta t<\Delta R$ must hold. (See Ch. II, Sections 2 and 3 of reference (10); also, see Ch. X, Section 11, p. 221 of (9).)
+
+Let $p=p(\rho, s)$ be the caloric equation of state, where $p$ is pressure, $\rho$ is density, and $s$ is specific entropy. Then $c^{2}=\frac{\partial p}{\partial \rho}$. (See (11), Ch. III, Section 35; or (12) p. 111, Section 6.10.) The material is treated as a polytropic gas, so that $p=f(s) \rho^{\gamma}$ and $\frac{\partial p}{\partial \rho}=\gamma \frac{p}{\rho}$, where $\gamma$ is the adiabatic exponent. But $\frac{p}{\rho}=(\gamma-1) E$, where $E$ is the specific internal energy (see p. 7 of (11)), so that the stability criterion becomes $\left(\frac{\Delta \mathrm{R}}{\Delta \mathrm{t}}\right)^{2}>\gamma(\gamma-1) \mathrm{E}$. Then, if one defines a "Courant stability constant" by $\mathrm{C}_{\mathrm{sc}}=\gamma(\gamma-1), \mathrm{C}_{\mathrm{sc}} \mathrm{E} \frac{(\Delta \mathrm{t})^{2}}{(\Delta \mathrm{R})^{2}}<1$ must hold.
+
+Actually, the stronger criterion
+
+$$
+\mathrm{C}_{\mathrm{sc}} \mathrm{E} \frac{(\Delta \mathrm{t})^{2}}{(\Delta \mathrm{R})^{2}}+4 \mathrm{C}_{\mathrm{vp}} \frac{|\Delta \mathrm{~V}|}{\mathrm{V}}<.3
+$$
+
+is imposed. (When it fails, $\Delta t$ is halved.) The second term (due to George N. White, Jr.) will ordinarily dominate only in the vicinity of a shock. $\mathrm{C}_{\mathrm{vp}}$ is the "shock-width constant," and is usually taken to be between 1.5 and 2. It is related to the number of mesh-widths by which the shock is artificially broadened in the von Neumann-Richtmyer method for the numerical calculation of hydrodynamic shocks. (See Ref. 8, also Ref. 9, Chap. 10.) They add a fictitious "pseudo-viscosity pressure" $P_{v}=C_{v p \rho} \rho^{3}\left(\Delta R \frac{\partial V}{\partial t}\right)^{2}$ to the real physical pressure in all dynamical equations. This imitates the shocksmearing effect of ordinary physical viscosity, and the differential equations need not be interrupted by troublesome boundary conditions (given by the Rankine-Hugoniot equations) at moving surfaces of internal discontinuity.\\
+$P_{V}$ is quadratic in $\frac{\partial V}{\partial t}$ so that the transition layer will have width independent of shock strength. (In the case of physical viscosity, the term is linear and the width goes to zero with increasing strength.) For further discussion of this method, see Ch. X, Sections 8-12, of (9).
+
+\section*{APPENDIX D}
+\section*{THERMODYNAMIC CONSIDERATIONS}
+The equation of state has been taken as
+
+$$
+p=\alpha \rho+\beta \theta+\tau
+$$
+
+with the accompanying relation
+
+$$
+\left(\frac{\partial E}{\partial \theta}\right)_{v}=c_{v}=A_{c v}+B_{c v} \theta
+$$
+
+The first law of thermodynamics provides the relation
+
+$$
+d E=d Q-p d v=\left(\frac{\partial E}{\partial \theta}\right)_{v} \partial \theta+\left(\frac{\partial E}{\partial v}\right)_{\theta} \partial v
+$$
+
+Further thermodynamic considerations (Ref. 12, See Chap. XIII) lead to the additional relation,
+
+$$
+\left(\frac{\partial E}{\partial v}\right)_{\theta}=\theta\left(\frac{\partial p}{\partial \theta}\right)_{v}-p \text {. }
+$$
+
+Hence
+
+$$
+\begin{aligned}
+d \theta & =\frac{\left\{d E-\left(\frac{\partial E}{\partial v}\right)_{\theta} d v\right\}}{\left(\frac{\partial E}{\partial \theta}\right)_{V}} \\
+& =\frac{\left\{d E-\left[\theta\left(\frac{\partial p}{\partial \theta}\right)_{V}-p\right] d v\right\}}{\left(\frac{\partial E}{\partial \theta}\right)_{V}} \\
+& =\frac{d E+(\alpha \rho+\tau) d V}{A_{c v}+B_{c v} \theta}
+\end{aligned}
+$$
+
+This leads to the formula under Order \#9130, which in effect reads
+
+$$
+\Delta \theta=\frac{\left\{\Delta E+\left(\frac{\alpha}{2}\left[\rho^{n}+\rho^{n+1}\right]+\tau\right) \Delta v\right\}}{A_{c v}+\frac{B_{c v}}{2}\left(\theta^{n}+\theta^{n+1}\right)}
+$$
+
+For the alternate computation of energy a similar starting point is taken, namely,
+
+$$
+\begin{aligned}
+\left(\frac{\partial E}{\partial v}\right)_{\theta} & =\theta\left(\frac{\partial p}{\partial \theta}\right)-p \\
+& =-\frac{\alpha}{v}-\tau \text { for the assumed equation of state. }
+\end{aligned}
+$$
+
+Integrating, one gets
+
+$$
+\begin{aligned}
+E & =-\alpha \ln v-\tau \mathbf{v}+\mathbf{f}(\theta) \\
+& =\alpha \ln \rho-\frac{\tau}{\rho}+\mathbf{f}(\theta)
+\end{aligned}
+$$
+
+Since $\left(\frac{\partial E}{\partial \theta}\right)_{v}=C_{v}=\frac{\partial f(\theta)}{\partial \theta}$, integration of the specific heat equation, yields\\
+the result
+
+$$
+f(\theta)=A_{c v} \theta+\frac{1}{2} B_{c v} \theta^{2}+E_{0},
+$$
+
+and thus
+
+$$
+\mathrm{E}=\alpha \ln \rho-\frac{\tau}{\rho}+\mathrm{A}_{\mathrm{cv}} \theta+\frac{1}{2} \mathrm{~B}_{\mathrm{cv}} \theta^{2}+\mathrm{E}_{0}=\text { Running } \mathrm{E}_{\text {internal }}
+$$
+
+If
+
+$$
+\left.E]_{t=0}=A_{c v} \theta+\frac{1}{2} B_{c v} \theta^{2}\right]_{t=0}
+$$
+
+then
+
+$$
+\left.\mathrm{E}_{0}=\frac{\tau}{\rho}-\alpha \ln \rho\right]_{\mathrm{t}=0}
+$$
+
+The so-called error local is obtained by comparing the running $E_{\text {internal }}$, computed as above for each mass point with the value obtained at Order \#9180, which represents the sum of the initial energy and all the succeeding $\Delta E$ values resulting from the corresponding iterative solutions for pressure.
+
+The second energy balance or "check" involves summing the kinetic and internal energies for all mass points and comparing it with the total energy $Q$, as determined directly from the integral of power over time.
+
+\section*{APPENDIX E}
+\section*{POSSIBLE VARIATIONS IN THE PROGRAM - Ax-1'}
+For Ax-1, a simple form of the equation of state was chosen, with the explicit intent of making modifications therein simple to accomplish. For example, another simple equation of state would be that employed by Bethe and Tait, ${ }^{(3)}{ }{ }{ }=(\gamma-1) \rho E_{\text {int }}$, wherein a direct calculation of temperature is bypassed, and a different dependence of pressure on density results. Considerably more elaborate equations might also be utilized. Work is continuing in this area to determine that form which might be most satisfactory for problems in fast reactor safety.
+
+One modification of Ax-1 has already been made. It has been customary in previous analytical calculations to make a pair of partially compensating assumptions, for simplicity of analysis. (3) First, during the burst alpha was held constant up till the time sufficient reactivity had been inserted by the shut off mechanism to balance the input reactivity exactly. This procedure kept the power rising too fast. Secondly, the energy developed in the burst was computed up to this point of reactivity balance, neglecting that portion generated while the power fell from its peak during the time of negative alpha. To check the effect of these assumptions, Ax-1 was modified so that it followed the course of the explosion in the above manner. The power distribution at zero time was used as that valid for computing the distribution of energy. The $\mathrm{S}_{\mathrm{n}}$ section was allowed to go on computing new alphas, but they were used only to terminate the calculation when $\alpha<0$. The recomputed fluxes and alphas did not enter the hydrodynamic calculation. The computation was accomplished by the following list of modifications:\\
+(1) Insert " $\mathrm{FOD}(40)$ " in dimension statements.\\
+(2) Omit "POWNGL" from (7135) and from print statement.\\
+(3) Insert "FBAR" = 0 after (7135)\\
+"FALPHA = 0"\\
+(4) In (9010) omit "FBAR = 0", and move up to insert the order "IF(NH)6800, 6800, 9014," now after (9011), in its place keeping the number (9010) for the moved order.
+
+Move the two orders
+
+$$
+\begin{aligned}
+& \text { "DO } 9011 \mathrm{I}=2, \mathrm{I} M A X \text { " } \\
+& \text { "9011 FBAR }=\text { FBAR }+\mathrm{T}(\mathrm{I}) * \mathrm{~F}(\mathrm{I}) \text { " }
+\end{aligned}
+$$
+
+down to just beyond 6800. Then insert "FALPHA" ALPHA"\\
+(5) Just beyond (6835), insert FOD (I) $=\mathrm{F}(\mathrm{I}) / \mathrm{RO}(\mathrm{I})$\\
+(6) In (9070), replace formula for DELQ by "DELQ $=$ FOD(I)*QBAR"\\
+(7) Omit (9060) +1 through (9065).\\
+(8) Omit " $Z=A L P H A$ * DELTP"
+
+Insert" $Z=$ FALPHA * DELTP" from just before (9060).\\
+(9) Between (9330) and (9337), take everything out and replace it by\\
+\includegraphics[max width=\textwidth, center]{2025_11_22_9629766d565b25ccbdecg-112}
+
+$$
+\begin{aligned}
+& \text { Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT } \\
+& \text { https://hdl.handle.net/2027/mdp.39015078509448 / Public Domain, Google-digitized }
+\end{aligned}
+$$
+
+\section*{APPENDIX F. 1}
+\section*{Ax-1 TAPE DUMP AND RECALL ROUTINE}
+A periodic dumping of the memory from $10000_{8}$ through $17777_{8}$ onto tape \#5 has been provided. In case of machine failure, lack of sufficient machine time to complete a problem, a desire to change control parameters, or a desire to continue past the original termination point, a previous dump can be selected and the problem continued from that point. The Tape Dump and Recall Routine occupies positions $140_{8}$ through $165_{8}$ in memory and is loaded by the FORTRAN loader. It was necessary to arrange transfers at appropriate addresses in the main body of the Ax-1 code to the above routine. This was accomplished by inserting at the addresses of formulas 7010 and 9069 a transfer to the tape recall portion of the routine and at the address of formula 9263 a transfer to the tape dump portion of the routine.
+
+\begin{table}[h]
+\begin{center}
+\captionsetup{labelformat=empty}
+\caption{Listing of Ax-1 Tape Dump and Recall Routine}
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+ &  & 00140 & ORG 96 &  \\
+\hline
+00140 & 0 & 0 & REW 5 &  \\
+\hline
+00141 & -0 & 00000 & PDX 0, 1 & (IRCNBR IS IN DEC. \\
+\hline
+00142 & 0 & 00225 & RTB 5 & OF ACCUMULATOR) \\
+\hline
+00143 & 2 & 00142 & TIX 98, 1, 1 &  \\
+\hline
+00144 & 0 & 00147 & TRA 103 &  \\
+\hline
+00145 & 0 & 00000 & TZE 0, 0, 0 &  \\
+\hline
+00146 & 0 & 00225 & WTB 5 &  \\
+\hline
+00147 & -0 & 00145 & LXD 101, 1 &  \\
+\hline
+00150 & -0 & 00000 & PXD 0, 0 &  \\
+\hline
+00151 & -0 & 00000 & CAD 0, 1 &  \\
+\hline
+00152 & 2 & 00151 & TIX &  \\
+\hline
+00153 & 0 & 00165 & SLW &  \\
+\hline
+00154 & 0 & 00165 & CLA &  \\
+\hline
+00155 & 0 & 00165 & CPY &  \\
+\hline
+00156 & 0 & 00165 & SUB &  \\
+\hline
+00157 & 0 & 4 & TZE &  \\
+\hline
+00160 & 0 & 0 & HPR &  \\
+\hline
+00161 & 0 & 00205 & BST &  \\
+\hline
+00162 & 0 & 0 & HPR &  \\
+\hline
+00163 & 0 & 0 & RTB &  \\
+\hline
+00164 & 0 & 00147 & TRA &  \\
+\hline
+ &  & 00000 & END &  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section*{APPENDIX F. 2}
+\section*{Ax-1 DUMP-TAPE CONSOLIDATION ROUTINE}
+If many Ax-1 dump tapes are saved in anticipation of restarts, the accumulation of tapes can present problems. In order to have the dumps available and yet avoid keeping a large number of tapes, a routine to combine several tapes into one was written. This routine copies the dumps from individual problems onto one master dump tape, checking both the tape reading and writing processes. Cards for this routine are not included in the Ax-1 deck.\\
+A. Operating Instructions:
+
+Reader: $72 \times 72$ board.\\
+Punch: Not used.\\
+Printer: Not used.\\
+Tapes: \#5-dump tape which is to be added to the consolidated tape. \#3-consolidated tape.\\
+Sense Switches: Not used.\\
+Running Procedure:
+
+\begin{enumerate}
+  \item Ready UA CSB1 Binary Card Loader (3 cards) followed by the Consolidation Routine Deck ( 4 cards) in the card reader.
+  \item Mount and ready tapes \#5 and \#3.
+  \item Clear and load cards.
+  \item At stop 2668:\\
+a. Enter into the decrement of the MQ the total number (in octal) of records (dumps) on tape \#5 to be saved.\\
+b. Enter into the address of the MQ the total number (in octal) of records (dumps) already on tape \#3.\\
+c. Press start.
+  \item At stop $270_{8}$, tape \#5 has been completely copied onto tape \#3. If another tape is to be copied onto tape \#3, mount and set it at \#5 and follow instructions under 4, omitting step B.
+\end{enumerate}
+
+\section*{Error Stops:}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+2458 & CKS error in reading tape \#5. Press start to try again. \\
+\hline
+$250_{8}$ & CKS error in writing or reading tape \#3. Press start to try reading tape \#3 again. If stop $250_{8}$ reoccurs, the error was in writing, not reading tape \#3. Press start again to recopy tape \#5 onto tape \#3. \\
+\hline
+$261_{8}$ & CKS error in writing tape \#3. Press start to try again. \\
+\hline
+\end{tabular}
+\end{center}
+
+\section*{B. Comments on Dump Numbering:}
+For a new problem, the dumps are numbered consecutively starting at one. The number of dumps on tape \#5 at the time the problem is terminated is equal to the last dump number printed in the on-line output.
+
+For a problem restarted from dump number $M$, (but not from the consolidated tape), additional dumps are made on tape \#5 following dump M and numbered consecutively starting at $\mathrm{M}+1$. Therefore, the total number of dumps on tape \#5 at the time the problem is terminated is still equal to the last dump number printed in the on-line output.
+
+For a problem restarted from the consolidated tape the dump number (IRCNBR) specified must be the number of the desired record on the consolidated tape, which is usually not the dump number of the specific problem. Therefore great care must be taken in keeping track of the location and the number of records on the consolidated tape. Reading in the dump replaces IRCNBR with the dump number of the specified problem. After the dump is completely read in from the consolidated tape, another blank tape should be set at 5 and the consolidated tape removed to avoid destroying dumps from other problems when getting new dumps from the problem being run. Also, it would be wise to manually set IRCNBR $=0$ at this time so that the dump numbers from the restarted problem will equal the record numbers on the new tape \#5. Depressing S.S. \#1 at the start of the problem will cause pause 111 which will enable these changes to be made.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+\begin{table}[h]
+\begin{center}
+\captionsetup{labelformat=empty}
+\caption{C. Listing of Ax-1 Dump-Tape Consolidation Routine}
+\begin{tabular}{|l|l|l|l|}
+\hline
+ & 00200 & ORG 128 &  \\
+\hline
+00200 & 076300000043 & LLS 35 &  \\
+\hline
+00201 & 073400100000 & PAX 0, 1 & No. of Records on Tape 3 \\
+\hline
+00202 & -200000100205 & TNX 133, 1, 0 & goes to A-Reg. \\
+\hline
+00203 & 076200000223 & RTB 3 &  \\
+\hline
+00204 & 200001100203 & TIX 131, 1, 1 &  \\
+\hline
+00205 & -073400100000 & PDX 0, 1 & No. of Records on Tape 5 \\
+\hline
+00206 & 076200000225 & RTB 5 & goes to A-Reg. \\
+\hline
+00207 & -053400200265 & LXD 181, 2 &  \\
+\hline
+00210 & -075400000000 & PXD 0 &  \\
+\hline
+00211 & -070000200000 & CAD 0, 2 &  \\
+\hline
+00212 & 200001200211 & TIX 137, 2, 1 &  \\
+\hline
+00213 & 060200000244 & SLW 164 &  \\
+\hline
+00214 & 050000000244 & CLA 164 &  \\
+\hline
+00215 & 070000000244 & CPY 164 &  \\
+\hline
+00216 & 040200000244 & SUB 164 &  \\
+\hline
+00217 & -010000000245 & TNZ 165 &  \\
+\hline
+00220 & 076600000223 & WTB 3 &  \\
+\hline
+00221 & -053400200265 & LXD 181, 2 &  \\
+\hline
+00222 & -075400000000 & PXD 0, 0 &  \\
+\hline
+00223 & -070000200000 & CAD 0, 2 &  \\
+\hline
+00224 & 200001200223 & TIX 147, 2, 1 &  \\
+\hline
+00225 & 060200000244 & SLW 164 &  \\
+\hline
+00226 & 070000000244 & CPY 164 &  \\
+\hline
+00227 & 076400000203 & BST 3 &  \\
+\hline
+00230 & 076200000223 & RTB 3 & Read Tape 3 again \\
+\hline
+00231 & -053400200265 & LXD 181, 2 & to check copying. \\
+\hline
+00232 & -075400000000 & PXD 0, 0 &  \\
+\hline
+00233 & -070000200000 & CAD 0, 2 &  \\
+\hline
+00234 & 200001200233 & TIX 155, 2, 1 &  \\
+\hline
+00235 & 060200000244 & SLW 164 &  \\
+\hline
+00236 & 050000000244 & CLA 164 &  \\
+\hline
+00237 & 070000000244 & CPY 164 &  \\
+\hline
+00240 & 040200000244 & SUB 164 &  \\
+\hline
+00241 & -010000000250 & TNZ 168 &  \\
+\hline
+00242 & 200001100206 & TIX 134, 1, 1 &  \\
+\hline
+00243 & 002000000270 & TRA 184 &  \\
+\hline
+00244 & 000000000000 & HTR 0 &  \\
+\hline
+00245 & 042000000000 & HPR 0 & Tape 5 read fail - \\
+\hline
+00246 & 076400000205 & BST 5 & try again \\
+\hline
+00247 & 002000000206 & TRA 134 &  \\
+\hline
+00250 & 042000000000 & HPR 0 & Tape 3 read or write \\
+\hline
+00251 & -076000000141 & SLT 1 & fail - try again \\
+\hline
+00252 & 002000000254 & TRA 172 &  \\
+\hline
+00253 & 002000000256 & TRA 174 &  \\
+\hline
+00254 & 076000000141 & SLN 1 &  \\
+\hline
+00255 & 002000000227 & TRA 151 &  \\
+\hline
+00256 & 076000000141 & SLN 1 &  \\
+\hline
+00257 & -076000000142 & SLT 2 &  \\
+\hline
+00260 & 002000000262 & TRA 178 &  \\
+\hline
+00261 & 042000000000 & HPR 0 & 2nd Tape 3 write fail \\
+\hline
+00262 & 076000000142 & SLN 2 &  \\
+\hline
+00263 & 076400000203 & BST 3 &  \\
+\hline
+00264 & 002000000246 & TRA 166 &  \\
+\hline
+00265 & 010000000000 & TZE 0 &  \\
+\hline
+00266 & 042000000000 & HPR 0 &  \\
+\hline
+00267 & 002000000200 & TRA 128 &  \\
+\hline
+00270 & 042000000000 & HPR 0 & END \\
+\hline
+00271 & 002000000200 & TRA 128 &  \\
+\hline
+ & 00266 & END 182 &  \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section*{REFERENCES}
+\begin{enumerate}
+  \item Koch, L. J., Monson, H. O., Okrent, D., Levenson, M. Simmons, W. R., Humphreys, J. R., Haugsnes, J., Jankus, V. Z., and Loewenstein, W. B., Hazard Summary Report, EBR-II, ANL-5719.
+  \item McCarthy, W. J. Jr., Nicholson, R. B., Okrent, D., and Jankus, V. Z., Studies of Nuclear Accidents in Fast Power Reactors, Paper P/2165, Proceedings of the Second International Conference on the Peaceful Uses of Atomic Energy. (Geneva, 1958)
+  \item Bethe, H. A., and Tait, J. H., An Estimate of the Order of Magnitude of the Explosion When the Core of a Fast Reactor Collapses, UKAEA RHM(56)/113.
+  \item Stratton, W. R., Colvin, T. H., and Lazarus, R. B., Analysis of Prompt Excursions in Simple Systems and Idealized Fast Reactors, Paper P/431, Proceedings of the Peaceful Uses of Atomic Energy. (Geneva, 1958)
+  \item Carlson, B. G., Solution of the Transport Equation by $S_{n}$ Approximations, LA-1891.
+  \item Carlson, B. G., The $\mathrm{S}_{\mathrm{n}}$ Method and the SNG and SNK Codes, T-1-159 (LASL document, unpublished).
+  \item Carlson, B. G., and Bell, G. I., Solution of the Transport Equation by the $\mathrm{S}_{\mathrm{n}}$ Method, Paper P/2386, Proceedings of the Second International Conference on the Peaceful Uses of Atomic Energy. (Geneva, 1958).
+  \item von Neumann, J., and Richtmyer, R. D., J. App. Phys., 21, 232 (1950).
+  \item Richtmyer, R. D., Difference Methods for Initial-Value Problems, Interscience Publishers, Inc., New York, 1957.
+  \item Courant, R., Friedrichs, K. O., and Lewy, H., Math. Ann., 100, 32 (1928).
+  \item Courant, R., and Friedrichs, K. O., Supersonic Flow and Shock Waves, Interscience Publishers, Inc., New York, 1948.
+  \item Zemansky, M. W., Heat and Thermodynamics (2nd Ed.), McGraw-Hill Book Co., Inc., New York, 1943.
+\end{enumerate}
+
+\section*{ACKNOWLEDGEMENTS}
+This program has been constructed upon a foundation of experience gained through the efforts of many individuals at LASL. The present authors have modified the method to suit it better to the purposes in mind.
+
+Janet Heestand assisted in preparing the report, in particular by writing Appendix F on Tape Dump, Recall and Consolidation Routines. L. Miller assisted in proof-reading and expediting the printing of the report. V. Z. Jankus contributed part of the ideas leading to the VJ-OKI test described in Appendix A, for control of the number of hydrodynamic iterations between neutronics calculations.\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT\\
+\href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized\\
+Generated at New York University through HathiTrust on 2025-11-22 04:22 GMT \href{https://hdl.handle.net/2027/mdp}{https://hdl.handle.net/2027/mdp}. 39015078509448 / Public Domain, Google-digitized
+
+
+\end{document}

@@ -1,0 +1,79 @@
+\contentsline {section}{\numberline {1}Executive Summary}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Key Findings}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Comparison to 1959 Documentation}{4}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Document Information}{4}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Core Methods Comparison}{4}{subsubsection.1.2.2}%
+\contentsline {paragraph}{Exact Matches to 1959:}{4}{section*.2}%
+\contentsline {paragraph}{Major Enhancements Beyond 1959:}{5}{section*.3}%
+\contentsline {paragraph}{Critical Observation from 1959 Report:}{5}{section*.4}%
+\contentsline {section}{\numberline {2}Core Computational Methods}{5}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Neutron Transport: $S_n$ Discrete Ordinates}{5}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Mathematical Formulation}{5}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Discrete Ordinates Approximation}{6}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Source Terms}{6}{subsubsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.2}Delayed Neutron Precursors}{6}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}$\alpha $-Eigenvalue Solver}{7}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Diffusion Synthetic Acceleration (DSA)}{7}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Hydrodynamics}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}1D Spherical Lagrangian Hydrodynamics}{7}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Governing Equations}{7}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}HLLC Riemann Solver}{7}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Slope Limiting}{8}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}Equation of State}{8}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Reactivity Feedback}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Feedback Mechanisms}{8}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Doppler Feedback}{8}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Fuel Expansion Feedback}{8}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Void Feedback}{8}{subsubsection.4.1.3}%
+\contentsline {subsection}{\numberline {4.2}Total Reactivity}{8}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Temperature-Dependent Cross Sections}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Doppler Broadening}{9}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Program Flow Structure}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Main Time Loop}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Expected Flow Diagrams from 1959 Document}{10}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Comparison Framework}{10}{subsection.6.3}%
+\contentsline {section}{\numberline {7}Data Structures}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Primary Data Types}{10}{subsection.7.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}State Type}{10}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.2}Shell Type}{11}{subsubsection.7.1.2}%
+\contentsline {subsubsection}{\numberline {7.1.3}Control Type}{11}{subsubsection.7.1.3}%
+\contentsline {subsection}{\numberline {7.2}Comparison to 1959 Data Structures}{11}{subsection.7.2}%
+\contentsline {section}{\numberline {8}Advanced Features (Phase 3)}{12}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Uncertainty Quantification}{12}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Sensitivity Analysis}{12}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Checkpoint/Restart}{12}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Validation Benchmarks}{12}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Bethe-Tait Transient}{12}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Other Benchmarks}{13}{subsection.9.2}%
+\contentsline {section}{\numberline {10}Verification Results}{13}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Build and Compilation}{13}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Test Suite Results}{13}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Smoke Test Verification}{13}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Equation Mapping Summary}{14}{subsection.10.4}%
+\contentsline {section}{\numberline {11}Critical Differences from 1959 Original}{14}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Critical Issue \#1: Hydrodynamics Algorithm Changed}{14}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Critical Issue \#2: Delayed Neutrons Added}{15}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}High Priority: Unit System Verification Needed}{15}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Verification Status: S\_n Constants}{16}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Verified Correct Implementations}{16}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Summary of Differences}{16}{subsection.11.6}%
+\contentsline {section}{\numberline {12}Key Differences from 1959}{16}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Computational Methods}{17}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}Software Engineering}{17}{subsection.12.2}%
+\contentsline {section}{\numberline {13}Conclusion}{18}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Summary of Modern Implementation}{18}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Fidelity to 1959 Design}{18}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Recommendations for Validation}{19}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Final Assessment}{19}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}Code Quality Assessment}{20}{subsection.13.5}%
+\contentsline {section}{\numberline {A}File Structure}{20}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Source Code Organization}{20}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Test and Validation Structure}{20}{subsection.A.2}%
+\contentsline {section}{\numberline {B}Key Equations Summary}{21}{appendix.B}%
+\contentsline {subsection}{\numberline {B.1}Neutron Transport}{21}{subsection.B.1}%
+\contentsline {subsection}{\numberline {B.2}Delayed Neutrons}{21}{subsection.B.2}%
+\contentsline {subsection}{\numberline {B.3}$\alpha $-Eigenvalue}{21}{subsection.B.3}%
+\contentsline {subsection}{\numberline {B.4}Hydrodynamics}{21}{subsection.B.4}%
+\contentsline {subsection}{\numberline {B.5}Reactivity Feedback}{21}{subsection.B.5}%
+\contentsline {subsection}{\numberline {B.6}Temperature-Dependent Cross Sections}{21}{subsection.B.6}%
+\contentsline {section}{\numberline {C}References}{22}{appendix.C}%
