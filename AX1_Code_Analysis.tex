@@ -980,6 +980,154 @@ During each hydrodynamic timestep, the code solves for temperature $\theta^{n+1}
 
 This Newton-like iteration converges quadratically near the solution, typically requiring 3-5 iterations with tolerance $|\Delta\theta| < 10^{-6}$ keV. Once temperature is determined, pressure follows immediately from the linear relationship, completing the thermodynamic state.
 
+\subsection{Prompt Neutron Kinetics Without Delayed Neutrons}
+
+The defining characteristic of the 1959 AX-1 implementation is the complete omission of delayed neutron precursor equations. This approximation, valid only for extremely fast transients where delayed neutrons have insufficient time to influence the dynamics, dramatically simplifies the governing equations while fundamentally altering the physical behavior.
+
+The standard point kinetics equations including delayed neutrons read:
+
+\begin{align}
+\frac{dn}{dt} &= \frac{\rho - \beta}{\Lambda} n + \sum_{i=1}^6 \lambda_i C_i \\
+\frac{dC_i}{dt} &= \frac{\beta_i}{\Lambda} n - \lambda_i C_i
+\end{align}
+
+where $n$ represents the neutron population, $\rho = (k_{eff}-1)/k_{eff}$ the reactivity, $\beta \approx 0.0065$ the total delayed neutron fraction, $\Lambda$ the prompt neutron generation time, and $C_i$ the precursor concentrations for each of six delayed groups with decay constants $\lambda_i$.
+
+The prompt-only approximation sets $\beta = 0$ and neglects all precursor equations, reducing the system to:
+
+\begin{equation}
+\frac{dn}{dt} = \frac{\rho}{\Lambda} n = \alpha n
+\end{equation}
+
+with solution $n(t) = n_0 \exp(\alpha t)$ where $\alpha = \rho/\Lambda$ is the prompt $\alpha$-eigenvalue. For fast reactor systems with $\Lambda \sim 10^{-7}$ seconds, this yields dramatically different behavior than the delayed case.
+
+Consider a reactivity insertion of $\rho = +\$0.50$ (half a dollar, or $\delta k/k = 0.5 \times 0.0065 = 0.00325$). The prompt response gives:
+
+\begin{equation}
+\alpha_{prompt} = \frac{0.00325}{10^{-7} \text{ s}} = 3.25 \times 10^4 \text{ s}^{-1}
+\end{equation}
+
+yielding reactor period $T = 1/\alpha \approx 30$ microseconds. In contrast, the delayed neutron response for the same reactivity insertion gives:
+
+\begin{equation}
+\alpha_{delayed} = \frac{\rho - \beta}{\Lambda + \sum_i \beta_i/\lambda_i} \approx \frac{-0.0032}{0.08} \approx -0.04 \text{ s}^{-1}
+\end{equation}
+
+since $\rho < \beta$ (subcritical on prompt neutrons). The system actually decreases in power with period $\sim 25$ seconds rather than exploding on a microsecond timescale. This factor of $\sim 10^6$ difference in time constants explains why delayed neutrons are essential for reactor control but irrelevant for prompt supercritical excursions.
+
+The Bethe-Tait maximum energy release theory, implemented in the 1959 code, exploits this prompt behavior. For a reactivity insertion $\rho_0$ with material compressibility $\alpha_{comp}$, the maximum energy release before disassembly quenches the reaction scales as:
+
+\begin{equation}
+E_{max} \sim \frac{\rho_0^2}{\alpha_{comp} \Lambda}
+\end{equation}
+
+This quadratic dependence on initial reactivity and inverse dependence on compressibility defines the fundamental safety limit for fast reactor accidents. The prompt-only approximation provides conservative (pessimistic) estimates since it neglects the stabilizing influence of delayed neutrons.
+
+\subsection{Numerical Stability and Time Step Control}
+
+Explicit time integration schemes for coupled neutronics-hydrodynamics face multiple stability constraints. The 1959 implementation employs adaptive time stepping based on physical stability criteria rather than formal von Neumann analysis, though the underlying principles are equivalent.
+
+The Courant-Friedrichs-Lewy (CFL) condition for explicit schemes applied to the transport equation requires:
+
+\begin{equation}
+\Delta t \leq \frac{\Delta r}{c + |U|}
+\end{equation}
+
+where $c = 3 \times 10^{10}$ cm/s is the neutron speed (approximately the speed of light), and $U$ the material velocity. For typical zone spacing $\Delta r \sim 0.5$ cm, this would demand $\Delta t < 10^{-11}$ seconds, far too restrictive for microsecond-scale transients.
+
+The key observation enabling practical computation is that neutron transport equilibrates on nanosecond timescales, much faster than hydrodynamic motion. The code exploits this separation of timescales by treating neutronics quasi-statically: within each hydro timestep, neutron flux distributions are recomputed assuming frozen material configuration. This effectively makes the neutronics implicit, removing the severe CFL constraint.
+
+The hydrodynamic CFL condition becomes:
+
+\begin{equation}
+\Delta t \leq \frac{\Delta R}{c_s + |U|}
+\end{equation}
+
+where $c_s = \sqrt{\partial P/\partial \rho} \sim 3 \times 10^5$ cm/s is the sound speed in condensed matter (nine orders of magnitude slower than light speed!). For $\Delta R \sim 0.5$ cm, this yields $\Delta t \lesssim 10^{-6}$ seconds, entirely manageable.
+
+The W stability function implemented in the 1959 code provides a practical stability monitor combining Courant and viscous diffusion criteria:
+
+\begin{equation}
+W = C_{sc} E \left(\frac{\Delta t}{\Delta R}\right)^2 + 4 C_{vp} \frac{|\Delta V|}{V}
+\end{equation}
+
+The first term represents acoustic stability (related to CFL with $c_s \sim \sqrt{E}$ for the linear EOS), while the second monitors material compression rate relative to artificial viscosity. Empirical calibration establishes $W < 0.3$ as the stability threshold; when violated, the timestep halves automatically.
+
+Additional stability controls include:
+\begin{itemize}
+\item Power change limiter: $\alpha \Delta t < 4 \eta_2$ prevents exponential growth over more than $e^4 \approx 50\times$ per timestep
+\item Pressure change limiter: $\Delta P/P < P_{test}$ ensures smooth pressure evolution
+\item VJ-OK-1 test: $VJ (\Delta t)^2 (NS4)^2 \int P \, dV < OK1$ controls neutronics-hydrodynamics coupling frequency
+\end{itemize}
+
+Together, these criteria maintain second-order accuracy while ensuring stability across the full range of prompt supercritical transients modeled by the code.
+
+\subsection{S$_N$ Quadrature Mathematical Foundations}
+
+The discrete ordinates method requires a quadrature set $\{(\mu_n, w_n)\}$ for numerical integration over the angular variable $\mu \in [-1,1]$. The S$_N$ designation indicates $N$ discrete directions per hemisphere (total $2N$ directions for both hemispheres), chosen to satisfy moment conservation conditions through prescribed polynomial order.
+
+For S$_4$ quadrature employed in the 1959 code, the four angular directions derive from the zeros of the fourth-order Legendre polynomial $P_4(\mu)$. Legendre polynomials form a complete orthogonal basis on $[-1,1]$ with respect to the weight function $w(\mu) = 1$, satisfying:
+
+\begin{equation}
+\int_{-1}^1 P_n(\mu) P_m(\mu) \, d\mu = \frac{2}{2n+1} \delta_{nm}
+\end{equation}
+
+The recurrence relation $P_4(\mu) = \frac{1}{8}(35\mu^4 - 30\mu^2 + 3)$ yields zeros:
+
+\begin{align}
+\mu_{1,2} &= \pm\sqrt{\frac{3 - 2\sqrt{6/5}}{7}} = \pm 0.2958759... \\
+\mu_{3,4} &= \pm\sqrt{\frac{3 + 2\sqrt{6/5}}{7}} = \pm 0.9082483...
+\end{align}
+
+These values are hardcoded in the 1959 implementation with full numerical precision as documented in ANL-5977 Appendix C.
+
+Quadrature weights $w_n$ must satisfy moment conservation up to polynomial degree $2N-1 = 7$ for S$_4$:
+
+\begin{equation}
+\sum_{n=1}^4 w_n \mu_n^k = \int_{-1}^1 \mu^k \, d\mu = \begin{cases}
+2 & k=0 \\
+0 & k \text{ odd} \\
+\frac{2}{k+1} & k \text{ even}
+\end{cases}
+\end{equation}
+
+By symmetry, odd moments vanish automatically. The even moment conditions $k=0,2,4,6$ provide four equations for four weights. For S$_4$, the remarkable result emerges that all weights equal $1/3$:
+
+\begin{equation}
+w_1 = w_2 = w_3 = w_4 = \frac{1}{3}
+\end{equation}
+
+This elegant uniformity simplifies implementation and guarantees positive weights (avoiding numerical instabilities from negative quadrature weights that plague some higher-order schemes).
+
+The scalar flux and current moments are computed exactly through:
+
+\begin{align}
+\phi(r) &= \sum_{n=1}^4 w_n \psi_n(r) = \frac{1}{3}\sum_{n=1}^4 \psi_n(r) \\
+J(r) &= \sum_{n=1}^4 w_n \mu_n \psi_n(r)
+\end{align}
+
+For spherical geometry, additional geometric factors AM, AMBAR, and B arise from the curvature term $(1-\mu^2)/r \cdot \partial\psi/\partial\mu$. The 1959 code employs the specific values AM(1)=0.52, AM(2)=1.52, AMBAR(1)=1.52, AMBAR(2)=0.52, B(1)=B(2)=1, derived from the spherical harmonics addition theorem and hardcoded for computational efficiency.
+
+\subsection{Comparative Analysis: 1959 Implementation vs Modern Methods}
+
+The 1959 AX-1 code represents the state-of-the-art in nuclear reactor safety analysis at the dawn of digital computing. Comparing this implementation against modern computational methods illuminates both the remarkable achievements of early nuclear engineers and the dramatic advances enabled by subsequent decades of algorithmic development.
+
+\textbf{Neutronics Methods.} The 1959 S$_4$ discrete ordinates transport closely approximates the true angular flux distribution using only four directions per hemisphere. Modern codes typically employ S$_8$ or S$_{16}$ quadratures (8 or 16 directions per hemisphere) for improved angular resolution, reducing ray effects in strongly absorbing media. More significantly, synthetic acceleration methods (Diffusion Synthetic Acceleration, Transport Synthetic Acceleration) achieve convergence in $O(N)$ iterations compared to $O(N^2)$ for the unaccelerated 1959 scheme, where $N$ denotes problem size. For the test problems examined here with $N \sim 10$ zones, this difference manifests as 100-200 iterations in 1959 versus 10-20 in modern codes, approximately tenfold speedup independent of raw processor performance gains.
+
+\textbf{Delayed Neutron Treatment.} The complete omission of delayed neutron precursor tracking constitutes the most profound physical approximation in the 1959 code. Modern reactor kinetics codes universally include six delayed neutron groups with precursor concentrations $C_i(r,t)$ evolved according to coupled differential equations. For slow transients (timescales $\gtrsim 1$ second), delayed neutrons dominate the dynamics through their effective multiplication factor reduction $k_{eff} \to k_{eff}/(1+\beta) \approx 0.994 k_{eff}$ and characteristic decay times $\tau_i \sim 0.1$-$80$ seconds. The 1959 prompt-only approximation produces $\alpha$-eigenvalues approximately $10^5$ times larger than reality for subcritical-on-prompt insertions, rendering it valid exclusively for microsecond-scale supercritical excursions where delayed neutrons contribute negligibly.
+
+\textbf{Cross Section Treatment.} The 1959 implementation employs energy-independent nuclear cross sections, neglecting Doppler broadening of resonances with temperature. Modern codes incorporate temperature-dependent cross section libraries, often with subgroup or probability table methods for accurate resonance self-shielding. For fast reactor spectra where fission neutrons populate energies above major resonances, this approximation introduces $\sim$10-15\% errors in reactivity coefficients per 1000 K temperature change. For the prompt supercritical transients modeled by the 1959 code where temperatures remain $\lesssim$ 100 K above initial conditions, cross section temperature dependence is legitimately negligible.
+
+\textbf{Hydrodynamics Methods.} The von Neumann-Richtmyer artificial viscosity employed in 1959 remains competitive with modern shock-capturing schemes for one-dimensional spherical geometry. Modern multidimensional codes favor Godunov-type Riemann solvers (HLLC, Roe, Osher) that achieve sub-zone shock resolution compared to the 2-3 zone smearing characteristic of artificial viscosity. However, for spherically symmetric problems, the 1959 Lagrangian formulation with artificial viscosity provides robust shock capture at modest computational cost, superior to early Eulerian advection schemes that dominated through the 1970s. The Lagrangian mesh-following approach automatically handles free boundaries and material interfaces, advantages retained in modern arbitrary Lagrangian-Eulerian (ALE) codes.
+
+\textbf{Equation of State.} The linear pressure-density-temperature relationship $P = \alpha\rho + \beta\theta + \tau$ represents a first-order Taylor expansion of more sophisticated equations of state. Modern codes employ tabular EOS data from SESAME or LEOS libraries capturing phase transitions, ionization effects, and high-pressure material response across 10+ orders of magnitude in density and temperature. For the moderate compressions ($\rho/\rho_0 < 3$) and temperatures ($T < 10^4$ K) encountered in fast reactor disassembly accidents, the linear EOS captures essential physics while enabling rapid analytical evaluation.
+
+\textbf{Computational Performance.} On 1959-era IBM 704 hardware executing $\sim$40,000 floating-point operations per second, the test problems documented herein required 10-30 minutes wall-clock time. The identical algorithms on modern x86 processors executing $10^{11}$ operations per second complete in $\sim$0.1 seconds, representing $10^7$ fold speedup purely from hardware advances. Memory capacity increased from 32 kilowords (144 KB) in 1959 to gigabytes today, eliminating out-of-core storage requirements that constrained problem sizes. The 1959 implementation demonstrates remarkable efficiency given these constraints, achieving meaningful simulations within available resources through judicious algorithm selection and coding optimization.
+
+\textbf{Software Engineering.} Modern implementations employ Fortran 90+, C++, or Python with object-oriented design, dynamic memory allocation, comprehensive test suites, version control, and continuous integration. The 1959 code utilized Fortran II/IV with COMMON blocks, fixed-format source, and tape-based file I/O, coding practices that would be considered unmaintainable today but represented standard professional software development for that era. The faithful reproduction documented herein translates 1959 algorithms into modern Fortran 90+ modules while preserving exact numerical methods, demonstrating that fundamental algorithmic innovations transcend software engineering practices.
+
+\textbf{Scientific Impact.} Despite limitations evident from a modern perspective, the 1959 AX-1 code enabled quantitative fast reactor safety analysis for the first time, establishing the Bethe-Tait maximum energy release methodology that remains the theoretical foundation for severe accident assessments. Modern probabilistic risk assessment (PRA) and best-estimate-plus-uncertainty (BEPU) approaches build upon this deterministic foundation, adding statistical treatment of input uncertainties through Monte Carlo sampling and incorporating phenomena omitted in 1959 (sodium boiling, fuel-coolant interaction, structural mechanics). The 1959 code's prompt supercritical analysis provides the conservative bounding case against which modern refined calculations are validated.
+
 \section{Conclusion}
 
 \subsection{Summary of Modern Implementation}
