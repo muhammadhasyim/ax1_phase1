@@ -155,11 +155,13 @@ contains
     ! =========================================================================
     ! CRITERION 4: Consider doubling if all criteria well-satisfied
     ! ANL-5977 Order 9290
-    ! If W < 0.5*W_limit AND α·Δt < 0.5*limit, consider doubling
+    ! CONSERVATIVE: Since W ∝ Δt², doubling Δt quadruples W.
+    ! Only double if W < 0.1*W_limit (so after doubling, W < 0.4*W_limit)
+    ! This prevents oscillation between halving and doubling.
     ! =========================================================================
-    if (st%W < 0.5_rk * ctrl%W_LIMIT) then
+    if (st%W < 0.1_rk * ctrl%W_LIMIT) then
       if (trim(ctrl%EIGMODE) == "k" .or. &
-          abs(st%ALPHA * ctrl%DELT) < 0.5_rk * ctrl%ALPHA_DELTA_LIMIT) then
+          abs(st%ALPHA * ctrl%DELT) < 0.25_rk * ctrl%ALPHA_DELTA_LIMIT) then
         ! Also check we're not at maximum time step
         if (ctrl%DELT < ctrl%DT_MAX) then
           double = .true.

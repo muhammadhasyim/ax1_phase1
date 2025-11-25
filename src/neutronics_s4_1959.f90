@@ -444,6 +444,7 @@ contains
     real(rk) :: alpha_prev
     real(rk) :: sum1, sum2, delta_i
     real(rk) :: delta_alpha_raw, delta_alpha_limited
+    real(rk) :: rate_change, rate_baseline, relative_change
     logical :: converged
     real(rk), parameter :: four_pi_over_three = 4.1887902047863909_rk
     integer, save :: sweep_call_count = 0
@@ -637,22 +638,31 @@ contains
       end if
       
       ! ANL-5977 line 8015/346: ALPHA = ALPHA + (FFBAR + FEBAR - FFBARP - FEBARP) / FENBAR
-      ! This tracks the rate of change in production/escape
-      ! NOTE: Apply relaxation to prevent oscillation (original code may have
-      ! relied on smaller time steps for stability)
-      if (abs(st%FENBAR) > 1.0e-30_rk) then
+      ! This tracks the rate of change in production/escape due to DENSITY CHANGES
+      !
+      ! CRITICAL: Only update alpha when there's actual density change from hydrodynamics
+      ! Without density change, the fission/escape rates should remain constant
+      ! and alpha should not drift due to numerical noise
+      !
+      ! Check for actual density change by looking at max velocity
+      ! If velocities are essentially zero, no expansion is happening
+      rate_change = maxval(abs(st%U(2:st%IMAX)))
+      
+      if (abs(st%FENBAR) > 1.0e-30_rk .and. rate_change > 1.0e-6_rk) then
         delta_alpha_raw = (st%FFBAR + st%FEBAR - st%FFBARP - st%FEBARP) / st%FENBAR
         
-        ! Limit the alpha change to prevent instability
-        ! Alpha should adjust slowly as the system evolves
-        delta_alpha_limited = sign(min(abs(delta_alpha_raw), 0.1_rk * max(abs(alpha), 0.01_rk)), &
-                                   delta_alpha_raw)
+        ! Limit the alpha change per time step
+        ! The 1959 code uses Δt = 2 μsec, so alpha can change by at most ~0.005/μsec per step
+        ! This corresponds to about 0.01 per 2 μsec time step
+        delta_alpha_limited = sign(min(abs(delta_alpha_raw), 0.005_rk), delta_alpha_raw)
         alpha = alpha + delta_alpha_limited
         
         if (sweep_call_count <= 10) then
           print *, "  Alpha update: delta_raw =", delta_alpha_raw, &
                    " limited =", delta_alpha_limited, " new alpha =", alpha
         end if
+      else if (sweep_call_count <= 5) then
+        print *, "  Alpha update SKIPPED: no expansion (max_U =", rate_change, ")"
       end if
       
       ! Save F, E for next Big G loop (ANL-5977: F, E persist as "old" values)

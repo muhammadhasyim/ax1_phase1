@@ -37,6 +37,7 @@ program ax1_1959
   integer :: output_unit, csv_time_unit, csv_spatial_unit
   integer :: big_g_iter, hydro_iter, iz
   logical :: terminate, halve_dt, double_dt, increase_ns4
+  real(rk) :: last_output_time, output_time_interval
   logical :: write_spatial_at_200
   character(len=256) :: term_reason, input_file
   real(rk) :: alpha_out, k_out
@@ -76,6 +77,10 @@ program ax1_1959
   
   ! Write CSV headers
   call write_csv_header_time(csv_time_unit)
+  
+  ! Initialize output time tracking (output every 10 μsec)
+  last_output_time = -100.0_rk
+  output_time_interval = 10.0_rk
   
   ! Echo input
   if (control%print_input) then
@@ -203,17 +208,17 @@ program ax1_1959
           state%ALPHA = alpha_out
           state%AKEFF = k_out
         else
-          ! Transient: Use POINT KINETICS only (simpler approach)
-          ! The k-eigenvalue flux distribution is maintained,
-          ! power grows as exp(α*t) driven by point kinetics (line 9064)
-          ! No transport sweep needed - flux shape is "frozen" but magnitude grows
+          ! Transient: Update alpha from neutronics feedback
+          ! ANL-5977: Alpha is updated based on changing density distribution
+          ! As the system expands, leakage increases and alpha decreases
           !
-          ! This matches the Geneva 10 approach where the primary transient
-          ! behavior comes from hydrodynamic expansion, not neutron transport changes
-          alpha_out = state%ALPHA  ! Keep alpha constant (from initial k calculation)
+          ! Call alpha-mode transport sweep which updates FFBAR, FEBAR, FENBAR
+          ! and computes new alpha from: α = α + (FFBAR+FEBAR-FFBARP-FEBARP)/FENBAR
+          call transport_sweep_alpha_mode_1959(state, control, state%ALPHA)
+          alpha_out = state%ALPHA
           
-          if (big_g_iter <= 5) then
-            print *, "Big G iter", big_g_iter, ": Point kinetics mode, α =", alpha_out
+          if (big_g_iter <= 5 .or. mod(big_g_iter, 100) == 0) then
+            print *, "Big G iter", big_g_iter, ": Alpha-mode transport, α =", alpha_out
           end if
         end if
       end if
@@ -328,7 +333,8 @@ program ax1_1959
     ! ==========================================================================
     ! STEP 4: OUTPUT (Order 9250)
     ! ==========================================================================
-    if (mod(big_g_iter, control%output_freq) == 0) then
+    ! Output at regular time intervals for plotting
+    if (state%TIME >= last_output_time + output_time_interval) then
       call write_output_step(state, control, output_unit)
       flush(output_unit)
       
@@ -336,8 +342,10 @@ program ax1_1959
       call write_csv_step_time(state, control, csv_time_unit)
       flush(csv_time_unit)
       
+      last_output_time = state%TIME
+      
       ! Write spatial profile at t=200 μsec (within tolerance)
-      if (.not. write_spatial_at_200 .and. abs(state%TIME - 200.0_rk) < 1.0_rk) then
+      if (.not. write_spatial_at_200 .and. abs(state%TIME - 200.0_rk) < 5.0_rk) then
         call write_csv_header_spatial(csv_spatial_unit)
         call write_csv_step_spatial(state, csv_spatial_unit)
         flush(csv_spatial_unit)

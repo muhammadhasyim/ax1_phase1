@@ -138,7 +138,7 @@ module types_1959
      ! -----------------------------------------------------------------------
      ! Output control
      ! -----------------------------------------------------------------------
-     integer :: output_freq = 100   ! Output every N neutronics cycles (reduced for disk space)
+     integer :: output_freq = 10    ! Output every N neutronics cycles (for comparison plots)
      character(len=256) :: output_file = "ax1_1959.out"
      logical :: print_input = .true.  ! Print input echo
      logical :: verbose = .false.     ! Verbose output for debugging

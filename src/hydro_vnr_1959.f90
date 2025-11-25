@@ -103,16 +103,6 @@ contains
       st%Q = st%Q + delq * st%HMASS(i)
       st%DELQ_TOTAL = st%DELQ_TOTAL + delq * st%HMASS(i)
       
-      ! Debug trace for NaN origin
-      if (i == 2 .and. (.not. ieee_is_finite(z_term) .or. st%NH < 3)) then
-        print *, "==== HYDRO DEBUG zone 2, t =", st%TIME, "μsec ===="
-        print *, "  qbar =", qbar, "  FREL =", st%FREL(i), "  ROSN =", st%ROSN(i)
-        print *, "  delq =", delq, "  delta_v_eff =", delta_v_eff
-        print *, "  dele =", dele, "  z_term =", z_term
-        print *, "  HP(i) =", st%HP(i), "  HP_PREV(i) =", st%HP_PREV(i)
-        print *, "  HE(i) =", st%HE(i), "  THETA(i) =", st%THETA(i)
-        print *, "==== END HYDRO DEBUG ===="
-      end if
       
       ! Update thermodynamics with energy source
       call update_thermo_1959(st, ctrl, i, z_term, energy_error)
@@ -153,21 +143,30 @@ contains
                max(0.5_rk * (st%RL(i+1) - st%RL(i-1)), 1.0e-12_rk)
       
       ! Ratio (R/RL)² for coordinate transformation
+      ! Limit this ratio to prevent runaway when expansion is extreme
       R_ratio_sq = (st%R(i)**2) / max(st%RL(i)**2, 1.0e-30_rk)
+      R_ratio_sq = min(R_ratio_sq, 100.0_rk)  ! Limit amplification factor
       
       ! Acceleration: -1/ρ · ∂P/∂r = -(R²/RL²) · ∂P/∂RL
       accel = -R_ratio_sq * dP_dRL
       
+      ! Limit acceleration to prevent numerical instability
+      accel = max(min(accel, 1.0e6_rk), -1.0e6_rk)
+      
       ! Velocity update (leapfrog scheme)
       st%U(i) = st%U(i) + ctrl%DELT * accel
       
-      ! Debug first few steps
-      if (st%TIME < 5.0_rk .and. i == 2) then
-        print *, "VELOCITY DEBUG: t =", st%TIME, " U(2) =", st%U(2), " accel =", accel
-        print *, "  dP_dRL =", dP_dRL, " R_ratio_sq =", R_ratio_sq
-        print *, "  HP(2) =", st%HP(2), " HP(3) =", st%HP(3)
-      end if
+      ! Limit velocity to prevent runaway
+      st%U(i) = max(min(st%U(i), 1.0e3_rk), -1.0e3_rk)  ! Max 1000 cm/μsec
+      
     end do
+    
+    ! Outer boundary velocity (free boundary condition)
+    ! ANL-5977: The outer boundary velocity is updated using the pressure
+    ! at the boundary. With HP(IMAX+1) = -HP(IMAX), the gradient drives expansion.
+    ! For stability, we use the same velocity as the last interior point
+    ! (extrapolation) rather than computing from the artificial BC.
+    st%U(st%IMAX + 1) = st%U(st%IMAX)
     
   end subroutine update_velocities_lagrangian
 
@@ -197,25 +196,24 @@ contains
   end subroutine update_positions
 
   ! ===========================================================================
-  ! Update density from Lagrangian coordinates
-  ! Mass conservation: ρ·R²·dR = RL²·dRL = constant
-  ! Therefore: ρ = RL²/(R²·∂R/∂RL)
+  ! Update density from mass conservation
+  ! ANL-5977 line 1503: RHOT = HMASS(I) / (R(I)³ - R(I-1)³)
+  ! This is the direct formula: ρ = M / V where V = (4π/3)·(R³ - R_prev³)
+  ! Note: HMASS lacks the 4π/3 factor, so it cancels
   ! ===========================================================================
   subroutine update_density_lagrangian(st)
     type(State_1959), intent(inout) :: st
     
     integer :: i
-    real(rk) :: dR_dRL, volume_ratio
+    real(rk) :: volume
     
     do i = 2, st%IMAX
-      ! Finite difference approximation of ∂R/∂RL
-      dR_dRL = (st%R(i) - st%R(i-1)) / max(st%RL(i) - st%RL(i-1), 1.0e-30_rk)
-      
-      ! Volume ratio (RL/R)²
-      volume_ratio = (st%RL(i)**2) / max(st%R(i)**2, 1.0e-30_rk)
+      ! Volume of shell (lacking 4π/3 factor, consistent with HMASS)
+      volume = st%R(i)**3 - st%R(i-1)**3
       
       ! Hydrodynamic density (g/cc)
-      st%RO(i) = volume_ratio / max(dR_dRL, 1.0e-12_rk)
+      ! HMASS(I) = mass of shell (lacking 4π/3)
+      st%RO(i) = st%HMASS(i) / max(volume, 1.0e-30_rk)
       
       ! Prevent unphysical densities
       if (st%RO(i) < 1.0e-6_rk) st%RO(i) = 1.0e-6_rk
