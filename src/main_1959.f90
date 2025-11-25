@@ -34,11 +34,13 @@ program ax1_1959
 
   type(State_1959) :: state
   type(Control_1959) :: control
-  integer :: output_unit
-  integer :: big_g_iter, hydro_iter
+  integer :: output_unit, csv_time_unit, csv_spatial_unit
+  integer :: big_g_iter, hydro_iter, iz
   logical :: terminate, halve_dt, double_dt, increase_ns4
+  logical :: write_spatial_at_200
   character(len=256) :: term_reason, input_file
   real(rk) :: alpha_out, k_out
+  real(rk) :: delt_outer, delt_sub, qbar_cycle, ns4_real
   
   ! ============================================================================
   ! Initialization
@@ -62,9 +64,18 @@ program ax1_1959
   ! Initialize time control
   call init_time_control(control)
   
-  ! Open output file
+  ! Open output files
   output_unit = 20
+  csv_time_unit = 21
+  csv_spatial_unit = 22
+  write_spatial_at_200 = .false.
+  
   open(unit=output_unit, file=trim(control%output_file), status='replace', action='write')
+  open(unit=csv_time_unit, file='output_time_series.csv', status='replace', action='write')
+  open(unit=csv_spatial_unit, file='output_spatial_t200.csv', status='replace', action='write')
+  
+  ! Write CSV headers
+  call write_csv_header_time(csv_time_unit)
   
   ! Echo input
   if (control%print_input) then
@@ -76,6 +87,40 @@ program ax1_1959
   
   ! Initialize Lagrangian coordinates
   call compute_lagrangian_coords(state)
+  state%TOTKE = 0._rk
+  state%TOTIEN = 0._rk
+  do iz = 2, state%IMAX
+    state%TOTIEN = state%TOTIEN + state%HMASS(iz) * state%HE(iz)
+  end do
+  state%Q = state%TOTKE + state%TOTIEN
+  state%QPRIME = state%Q
+  state%CHECK = 0._rk
+  
+  ! Diagnostic: print initial energy values
+  print *, "========================================="
+  print *, "INITIAL ENERGY DIAGNOSTIC"
+  print *, "========================================="
+  print *, "  TOTIEN (lacking 4π/3) =", state%TOTIEN
+  print *, "  QP = 4π/3 * Q =", 4.18879_rk * state%Q
+  print *, "  Sample zone 10:"
+  print *, "    HMASS(10) =", state%HMASS(10)
+  print *, "    HE(10) =", state%HE(10)
+  print *, "    θ(10) =", state%THETA(10)
+  print *, "    ACV =", state%mat(state%K(10))%ACV
+  print *, "    BCV =", state%mat(state%K(10))%BCV
+  print *, "========================================="
+  
+  ! ============================================================================
+  ! ICNTRL=01: Critical Geometry Search (ANL-5977 Sheet No. 2)
+  ! ============================================================================
+  if (control%ICNTRL == 1) then
+    print *, "========================================="
+    print *, "ICNTRL=01 MODE: Fitting geometry to target alpha"
+    print *, "========================================="
+    call fit_geometry_to_alpha_1959(state, control)
+    ! After geometry fit, recompute Lagrangian coordinates
+    call compute_lagrangian_coords(state)
+  end if
   
   ! ============================================================================
   ! BIG G LOOP (ANL-5977 Order 8000)
@@ -111,25 +156,57 @@ program ax1_1959
       ! Compute total power (fission rate)
       state%TOTAL_POWER = state%FBAR
       if (big_g_iter == 1) state%POWER_PREV = state%TOTAL_POWER
+      
+      ! Apply point kinetics power growth: P(t+Δt) = P(t) × exp(α·Δt)
+      ! This is the prompt supercritical transient behavior
+      if (state%ALPHA > 1.0e-10_rk) then
+        state%TOTAL_POWER = state%POWER_PREV * exp(state%ALPHA * control%DELT)
+        state%POWER_PREV = state%TOTAL_POWER
+        print *, "Point kinetics: α =", state%ALPHA, "Δt =", control%DELT, &
+                 "Power growth =", exp(state%ALPHA * control%DELT)
+      end if
     end if
+    
+    ! Store ROSN snapshot for this neutron cycle (Order 1190)
+    state%ROSN(2:state%IMAX) = state%RO(2:state%IMAX)
+    
+    ! Compute QBAR = POWER · Δt / (4π · FBAR)
+    ! ANL-5977 Order 9060: QBAR = POWER * DELT / (12.56637 * FBAR)
+    ! where FBAR = Σ T(I) · F(I) is GEOMETRIC (not flux-weighted)
+    state%QBAR = 0._rk
+    if (state%FBAR_GEOM > 1.0e-30_rk) then
+      state%QBAR = state%TOTAL_POWER * control%DELT / &
+                   (12.566370614359172_rk * state%FBAR_GEOM)
+    end if
+    if (state%QBAR > 0._rk .and. state%W > control%W_LIMIT) then
+      state%QBAR = state%QBAR * control%W_LIMIT / max(state%W, control%W_LIMIT)
+    end if
+    state%QBAR_LAST = state%QBAR
     
     ! ==========================================================================
     ! STEP 2: HYDRO SUB-LOOP (Order 9050-9200, NS4 times)
     ! ==========================================================================
-    do hydro_iter = 1, control%NS4
+    delt_outer = control%DELT
+    if (control%NS4 > 0) then
+      ns4_real = real(control%NS4, rk)
+      delt_sub = delt_outer / ns4_real
+    else
+      ns4_real = 1._rk
+      delt_sub = delt_outer
+    end if
+    qbar_cycle = state%QBAR / ns4_real
+    
+    do hydro_iter = 1, max(control%NS4, 1)
       state%NH = state%NH + 1
+      control%DELT = delt_sub
       
       ! Update hydrodynamics
-      call hydro_step_1959(state, control)
-      
-      ! Add fission energy (distributed to zones)
-      if (state%TOTAL_POWER > 1.0e-30_rk) then
-        call add_fission_energy(state, control, state%TOTAL_POWER, state%FBAR)
-      end if
+      call hydro_step_1959(state, control, qbar_cycle)
       
       ! Update Lagrangian coordinates
       call compute_lagrangian_coords(state)
     end do
+    control%DELT = delt_outer
     
     ! Advance time
     state%TIME = state%TIME + control%DELT
@@ -143,6 +220,13 @@ program ax1_1959
     
     ! Compute total energy
     call compute_total_energy(state)
+    if (control%verbose) then
+      print *, "----- ORDER 9210 DIAGNOSTICS -----"
+      print *, "   W =", state%W, "(limit", control%W_LIMIT, ")"
+      print *, "   alpha·Δt =", state%ALPHA * control%DELT, "(limit", 4._rk * control%ETA2, ")"
+      print *, "   NS4 =", control%NS4
+      print *, "   CHECK =", state%CHECK, "   ERRLCL =", state%ERRLCL
+    end if
     
     ! Check VJ-OK-1 test for NS4 adjustment
     call check_vj_ok1_test(state, control, increase_ns4)
@@ -165,6 +249,19 @@ program ax1_1959
     if (mod(big_g_iter, control%output_freq) == 0) then
       call write_output_step(state, control, output_unit)
       flush(output_unit)
+      
+      ! Write CSV time-series data
+      call write_csv_step_time(state, control, csv_time_unit)
+      flush(csv_time_unit)
+      
+      ! Write spatial profile at t=200 μsec (within tolerance)
+      if (.not. write_spatial_at_200 .and. abs(state%TIME - 200.0_rk) < 1.0_rk) then
+        call write_csv_header_spatial(csv_spatial_unit)
+        call write_csv_step_spatial(state, csv_spatial_unit)
+        flush(csv_spatial_unit)
+        write_spatial_at_200 = .true.
+        print *, "Wrote spatial profile at t =", state%TIME, " μsec"
+      end if
     end if
     
     ! Save previous values
@@ -200,12 +297,15 @@ program ax1_1959
   
   ! Write final output
   call write_output_step(state, control, output_unit)
+  call write_csv_step_time(state, control, csv_time_unit)
   
   ! Write summary
   call write_summary(state, control, output_unit)
   
-  ! Close output
+  ! Close output files
   close(output_unit)
+  close(csv_time_unit)
+  close(csv_spatial_unit)
   
   print *, "========================================="
   print *, "SIMULATION COMPLETE"

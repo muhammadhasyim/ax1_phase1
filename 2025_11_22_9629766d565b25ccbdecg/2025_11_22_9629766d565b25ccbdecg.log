@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2025.11.22)  22 NOV 2025 17:29
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2025.11.23)  23 NOV 2025 13:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -727,27 +727,1736 @@ Package caption Info: hyperref package is loaded.
 (/usr/share/texlive/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
 Package: xeCJK 2021/12/12 v3.8.8 Typesetting CJK scripts with XeLaTeX
 
+(/usr/share/texlive/texmf-dist/tex/latex/ctex/ctexhook.sty
+Package: ctexhook 2021/12/12 v2.5.8 Document and package hooks (CTEX)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3packages/xtemplate/xtemplate.sty
+Package: xtemplate 2022-01-12 L3 Experimental prototype document functions
+\l__xtemplate_tmp_dim=\dimen182
+\l__xtemplate_tmp_int=\count299
+\l__xtemplate_tmp_muskip=\muskip18
+\l__xtemplate_tmp_skip=\skip68
+)
+\l__xeCJK_tmp_int=\count300
+\l__xeCJK_tmp_box=\box56
+\l__xeCJK_tmp_dim=\dimen183
+\l__xeCJK_tmp_skip=\skip69
+\g__xeCJK_space_factor_int=\count301
+\l__xeCJK_begin_int=\count302
+\l__xeCJK_end_int=\count303
+\c__xeCJK_CJK_class_int=\XeTeXcharclass307
+\c__xeCJK_FullLeft_class_int=\XeTeXcharclass308
+\c__xeCJK_FullRight_class_int=\XeTeXcharclass309
+\c__xeCJK_HalfLeft_class_int=\XeTeXcharclass310
+\c__xeCJK_HalfRight_class_int=\XeTeXcharclass311
+\c__xeCJK_NormalSpace_class_int=\XeTeXcharclass312
+\c__xeCJK_CM_class_int=\XeTeXcharclass313
+\c__xeCJK_HangulJamo_class_int=\XeTeXcharclass314
+\l__xeCJK_last_skip=\skip70
+\g__xeCJK_node_int=\count304
+\c__xeCJK_CJK_node_dim=\dimen184
+\c__xeCJK_CJK-space_node_dim=\dimen185
+\c__xeCJK_default_node_dim=\dimen186
+\c__xeCJK_default-space_node_dim=\dimen187
+\c__xeCJK_CJK-widow_node_dim=\dimen188
+\c__xeCJK_normalspace_node_dim=\dimen189
+\l__xeCJK_ccglue_skip=\skip71
+\l__xeCJK_ecglue_skip=\skip72
+\l__xeCJK_punct_kern_skip=\skip73
+\l__xeCJK_last_penalty_int=\count305
+\l__xeCJK_last_bound_dim=\dimen190
+\l__xeCJK_last_kern_dim=\dimen191
+\l__xeCJK_widow_penalty_int=\count306
 
-! LaTeX Error: File `ctexhook.sty' not found.
+Package xtemplate Info: Declaring object type 'xeCJK/punctuation' taking 0
+(xtemplate)             argument(s) on line 2337.
 
-Type X to quit or <RETURN> to proceed,
-or enter new name. (Default extension: sty)
+\l__xeCJK_fixed_punct_width_dim=\dimen192
+\l__xeCJK_mixed_punct_width_dim=\dimen193
+\l__xeCJK_middle_punct_width_dim=\dimen194
+\l__xeCJK_fixed_margin_width_dim=\dimen195
+\l__xeCJK_mixed_margin_width_dim=\dimen196
+\l__xeCJK_middle_margin_width_dim=\dimen197
+\l__xeCJK_bound_punct_width_dim=\dimen198
+\l__xeCJK_bound_margin_width_dim=\dimen199
+\l__xeCJK_margin_minimum_dim=\dimen256
+\l__xeCJK_kerning_total_width_dim=\dimen257
+\l__xeCJK_same_align_margin_dim=\dimen258
+\l__xeCJK_different_align_margin_dim=\dimen259
+\l__xeCJK_kerning_margin_width_dim=\dimen260
+\l__xeCJK_kerning_margin_minimum_dim=\dimen261
+\l__xeCJK_bound_dim=\dimen262
+\l__xeCJK_reverse_bound_dim=\dimen263
+\l__xeCJK_margin_dim=\dimen264
+\l__xeCJK_minimum_bound_dim=\dimen265
+\l__xeCJK_kerning_margin_dim=\dimen266
+\g__xeCJK_family_int=\count307
+\l__xeCJK_fam_int=\count308
+\g__xeCJK_fam_allocation_int=\count309
+\l__xeCJK_verb_case_int=\count310
+\l__xeCJK_verb_exspace_skip=\skip74
 
-Enter file name: 
-! Interruption.
-<to be read again> 
-                   }
-l.55 \prg_new_conditional:Npnn
-                               \xeCJK_if_package_loaded:n #1 { p , T , F , T...
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.sty
+Package: fontspec 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTeX
 
-? XXX
- 
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+Package: fontspec-xetex 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTe
+X
+\l__fontspec_script_int=\count311
+\l__fontspec_language_int=\count312
+\l__fontspec_strnum_int=\count313
+\l__fontspec_tmp_int=\count314
+\l__fontspec_tmpa_int=\count315
+\l__fontspec_tmpb_int=\count316
+\l__fontspec_tmpc_int=\count317
+\l__fontspec_em_int=\count318
+\l__fontspec_emdef_int=\count319
+\l__fontspec_strong_int=\count320
+\l__fontspec_strongdef_int=\count321
+\l__fontspec_tmpa_dim=\dimen267
+\l__fontspec_tmpb_dim=\dimen268
+\l__fontspec_tmpc_dim=\dimen269
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+(/usr/share/texlive/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg
+File: xeCJK.cfg 2021/12/12 v3.8.8 Configuration file for xeCJK package
+))
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/polyglossia.sty
+Package: polyglossia 2021/04/12 v1.53 Modern multilingual typesetting with XeLa
+TeX and LuaLaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count322
+)
+(/usr/share/texlive/texmf-dist/tex/latex/makecmds/makecmds.sty
+Package: makecmds 2009/09/03 v1.0a extra command making commands
+)
+
+LaTeX hooks Warning: Generic hook 'file/after/tracklang.sty' is deprecated.
+(hooks)              Use hook 'file/tracklang.sty/after' instead.
+
+
+LaTeX hooks Warning: Generic hook 'package/after/bidi' is deprecated.
+(hooks)              Use hook 'package/bidi/after' instead.
+
+
+LaTeX hooks Warning: Generic hook 'package/after/luabidi' is deprecated.
+(hooks)              Use hook 'package/luabidi/after' instead.
+
+\xpg@normalclass=\XeTeXcharclass315
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-latex.ldf
+File: gloss-latex.ldf polyglossia: module for default language
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}.
+)
+Package polyglossia Info: Default language is latex.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/newunicodechar/newunicodechar.sty
+Package: newunicodechar 2018/04/08 v1.2 Defining Unicode characters
+)
+
+Package fontspec Info: Could not resolve font "Noto Serif CJK JP/I" (it
+(fontspec)             probably doesn't exist).
+
+
+Package fontspec Info: Font family 'NotoSerifCJKJP(0)' created for font 'Noto
+(fontspec)             Serif CJK JP' with options [Script={CJK}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"Noto Serif CJK
+(fontspec)             JP/OT:script=hani;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"Noto Serif CJK
+(fontspec)             JP/B/OT:script=hani;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"Noto Serif
+(fontspec)             CJK JP/BI/OT:script=hani;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-english.ldf
+File: gloss-english.ldf polyglossia: module for english
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/script}  =>  {latin}
+>  {english/lcscript}  =>  {latin}
+>  {english/scripttag}  =>  {}
+>  {english/language}  =>  {English}
+>  {english/langtag}  =>  {ENG}
+>  {english/bcp47}  =>  {en-US}
+>  {english/hyphennames}  =>  {english,american,usenglish,USenglish}
+>  {english/direction}  =>  {LR}
+>  {english/hyphenmins}  =>  {2,3}
+>  {english/frenchspacing}  =>  {false}
+>  {english/indentfirst}  =>  {false}
+>  {english/fontsetup}  =>  {true}
+>  {english/envname}  =>  {english}
+>  {english/babelname}  =>  {english}
+>  {english/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/Localnumeral}  =>  {polyglossia@C@localnumeral}.
+Package polyglossia Info: Option: English, variant=american.
+)
+Package polyglossia Info: Default language is english.
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-tamil.ldf
+File: gloss-tamil.ldf polyglossia: module for tamil
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/script}  =>  {latin}
+>  {english/lcscript}  =>  {latin}
+>  {english/scripttag}  =>  {}
+>  {english/language}  =>  {English}
+>  {english/langtag}  =>  {ENG}
+>  {english/bcp47}  =>  {en-US}
+>  {english/hyphennames}  =>  {english,american,usenglish,USenglish}
+>  {english/direction}  =>  {LR}
+>  {english/hyphenmins}  =>  {2,3}
+>  {english/frenchspacing}  =>  {false}
+>  {english/indentfirst}  =>  {false}
+>  {english/fontsetup}  =>  {true}
+>  {english/envname}  =>  {english}
+>  {english/babelname}  =>  {american}
+>  {english/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/script}  =>  {Tamil}
+>  {tamil/lcscript}  =>  {tamil}
+>  {tamil/scripttag}  =>  {taml}
+>  {tamil/language}  =>  {Tamil}
+>  {tamil/langtag}  =>  {TAM}
+>  {tamil/bcp47}  =>  {ta}
+>  {tamil/hyphennames}  =>  {tamil}
+>  {tamil/direction}  =>  {LR}
+>  {tamil/hyphenmins}  =>  {2,2}
+>  {tamil/frenchspacing}  =>  {false}
+>  {tamil/indentfirst}  =>  {false}
+>  {tamil/fontsetup}  =>  {true}
+>  {tamil/envname}  =>  {tamil}
+>  {tamil/babelname}  =>  {tamil}
+>  {tamil/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/Localnumeral}  =>  {polyglossia@C@localnumeral}.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-arabic.ldf
+File: gloss-arabic.ldf polyglossia: module for arabic
+
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/bidi.sty
+Package: bidi 2022/02/01 v36.4 Bidirectional typesetting in plain TeX and LaTeX
+
+
+****************************************************
+* 
+* bidi package (Bidirectional typesetting in
+* plain TeX and LaTeX, using XeTeX engine)
+* 
+* Description: A convenient interface for
+* typesetting bidirectional texts in plain TeX
+* and LaTeX. The package includes adaptations
+* for use with many other commonly-used packages.
+* 
+* Copyright (c) 2007--2022 Vafa Khalighi
+* Copyright (c) 2018--2020 bidi-tex GitHub organization
+* 
+* v36.4, 2022/02/01
+* 
+* License: LaTeX Project Public License, version
+* 1.3c or higher (your choice)
+* 
+* Location on CTAN: /macros/xetex/latex/bidi
+* 
+* Issue tracker: https://github.com/tex-persian/bidi/issues
+* 
+* Support Email: tex-persian@vafa.ac
+* 
+* Primary author of bidi package: Vafa Khalighi.
+* 
+****************************************************
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/biditools.sty
+Package: biditools 2022/02/01 v2.1 Programming tools for bidi package
+\@bidi@envbody=\toks26
+\@bidi@emptytoks=\toks27
+\bidi@poscount=\count323
+\bidi@tempcountb=\count324
+\bidi@temptoksa=\toks28
+\bidi@temptoksb=\toks29
+\bidi@dummies=\count325
+\bidi@are@these@correct=\toks30
+\bidi@toks@lista=\toks31
+\bidi@toks@listb=\toks32
+\bidi@stack@length=\count326
+\bidi@empty@stack=\toks33
+\bidi@looprepeat@depth=\count327
+)
+==> First Aid for biditools.sty no longer applied!
+    Expected:
+        2020/05/13 v2 Programming tools for bidi package
+    but found:
+        2022/02/01 v2.1 Programming tools for bidi package
+    so I'm assuming it got fixed.
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-abspage.sty
+Package: zref-abspage 2020-07-03 v2.32 Module abspage for zref (HO)
+
+(/usr/share/texlive/texmf-dist/tex/latex/zref/zref-base.sty
+Package: zref-base 2020-07-03 v2.32 Module base for zref (HO)
+Package zref Info: New property list: main on input line 764.
+Package zref Info: New property: default on input line 765.
+Package zref Info: New property: page on input line 766.
+)
+\c@abspage=\count328
+Package zref Info: New property: abspage on input line 66.
+)
+\@bidi@copyins@=\insert252
+
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/latex-xetex-bidi.def
+File: latex-xetex-bidi.def 2022/02/01 v1.3.8 bidi adaptations for `latex.ltx' f
+or XeTeX engine
+\bidi@n@everypar=\toks34
+\bidi@column@check@number=\count329
+
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/footnote-xetex-bidi.def
+File: footnote-xetex-bidi.def 2017/08/09 v1.1 bidi footnote macros for XeTeX en
+gine
+\c@footdir@label=\count330
+\footdir@toks=\toks35
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/article-xetex-bidi.def
+File: article-xetex-bidi.def 2017/06/09 v0.6 bidi adaptations for standard arti
+cle class for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/amsmath-xetex-bidi.def
+File: amsmath-xetex-bidi.def 2020/05/16 v1.2 bidi adaptations for amsmath packa
+ge for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/amstext-xetex-bidi.def
+File: amstext-xetex-bidi.def 2016/09/12 v0.2 bidi adaptations for amstext packa
+ge for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/caption-xetex-bidi.def
+File: caption-xetex-bidi.def 2010/07/25 v0.1 bidi adaptations for caption packa
+ge for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/caption3-xetex-bidi.def
+File: caption3-xetex-bidi.def 2013/04/01 v0.1 bidi adaptations for caption3 pac
+kage for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/graphicx-xetex-bidi.def
+File: graphicx-xetex-bidi.def 2017/06/17 v0.5 bidi adaptations for graphicx pac
+kage for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/hyperref-xetex-bidi.def
+File: hyperref-xetex-bidi.def 2018/11/11 v1.1 bidi adaptations for hyperref pac
+kage for XeTeX engine
+)
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/tc-xetex-bidi.def
+File: tc-xetex-bidi.def 2014/07/08 v0.1 bidi adaptations for Clipping driver fo
+r XeTeX engine
+))
+(/usr/share/texlive/texmf-dist/tex/xelatex/bidi/loadingorder-xetex-bidi.def
+File: loadingorder-xetex-bidi.def 2017/12/29 v0.97 making sure that bidi is the
+ last package loaded
+)
+\bidi@digits=\count331
+\bidi@digits@charclass=\XeTeXcharclass316
+\bidi@sepmark@charclass=\XeTeXcharclass317
+)
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/arabicnumbers.sty
+Package: arabicnumbers 2010/03/18 v0.2 Formatting of Arabic and Farsi digits an
+d of Arabic abjad numerals
+)
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/hijrical.sty
+Package: hijrical 2010/07/12 v0.2 Islamic calendar
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/cal-util.def
+\c@tmpA=\count332
+\c@tmpB=\count333
+\c@tmpC=\count334
+\c@tmpD=\count335
+\c@tmpE=\count336
+\c@tmpF=\count337
+)
+\c@Hijriday=\count338
+\c@Hijrimonth=\count339
+\c@Hijriyear=\count340
+)
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/script}  =>  {latin}
+>  {english/lcscript}  =>  {latin}
+>  {english/scripttag}  =>  {}
+>  {english/language}  =>  {English}
+>  {english/langtag}  =>  {ENG}
+>  {english/bcp47}  =>  {en-US}
+>  {english/hyphennames}  =>  {english,american,usenglish,USenglish}
+>  {english/direction}  =>  {LR}
+>  {english/hyphenmins}  =>  {2,3}
+>  {english/frenchspacing}  =>  {false}
+>  {english/indentfirst}  =>  {false}
+>  {english/fontsetup}  =>  {true}
+>  {english/envname}  =>  {english}
+>  {english/babelname}  =>  {american}
+>  {english/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/script}  =>  {Tamil}
+>  {tamil/lcscript}  =>  {tamil}
+>  {tamil/scripttag}  =>  {taml}
+>  {tamil/language}  =>  {Tamil}
+>  {tamil/langtag}  =>  {TAM}
+>  {tamil/bcp47}  =>  {ta}
+>  {tamil/hyphennames}  =>  {tamil}
+>  {tamil/direction}  =>  {LR}
+>  {tamil/hyphenmins}  =>  {2,2}
+>  {tamil/frenchspacing}  =>  {false}
+>  {tamil/indentfirst}  =>  {false}
+>  {tamil/fontsetup}  =>  {true}
+>  {tamil/envname}  =>  {tamil}
+>  {tamil/babelname}  =>  {tamil}
+>  {tamil/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {arabic/script}  =>  {Arabic}
+>  {arabic/lcscript}  =>  {arabic}
+>  {arabic/scripttag}  =>  {arab}
+>  {arabic/language}  =>  {Arabic}
+>  {arabic/langtag}  =>  {ARA}
+>  {arabic/bcp47}  =>  {ar}
+>  {arabic/hyphennames}  =>  {nohyphenation}
+>  {arabic/direction}  =>  {RL}
+>  {arabic/hyphenmins}  =>  {2,3}
+>  {arabic/frenchspacing}  =>  {false}
+>  {arabic/indentfirst}  =>  {false}
+>  {arabic/fontsetup}  =>  {true}
+>  {arabic/envname}  =>  {Arabic}
+>  {arabic/babelname}  =>  {arabic}
+>  {arabic/localnumeral}  =>  {arabicnumerals}
+>  {arabic/Localnumeral}  =>  {arabicnumerals}.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/gloss-hindi.ldf
+File: gloss-hindi.ldf polyglossia: module for hindi
+
+(/usr/share/texlive/texmf-dist/tex/latex/polyglossia/devanagaridigits.sty
+Package: devanagaridigits 2010/04/01 v0.1 Formatting of Devanagari digits
+)
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/script}  =>  {latin}
+>  {english/lcscript}  =>  {latin}
+>  {english/scripttag}  =>  {}
+>  {english/language}  =>  {English}
+>  {english/langtag}  =>  {ENG}
+>  {english/bcp47}  =>  {en-US}
+>  {english/hyphennames}  =>  {english,american,usenglish,USenglish}
+>  {english/direction}  =>  {LR}
+>  {english/hyphenmins}  =>  {2,3}
+>  {english/frenchspacing}  =>  {false}
+>  {english/indentfirst}  =>  {false}
+>  {english/fontsetup}  =>  {true}
+>  {english/envname}  =>  {english}
+>  {english/babelname}  =>  {american}
+>  {english/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/script}  =>  {Tamil}
+>  {tamil/lcscript}  =>  {tamil}
+>  {tamil/scripttag}  =>  {taml}
+>  {tamil/language}  =>  {Tamil}
+>  {tamil/langtag}  =>  {TAM}
+>  {tamil/bcp47}  =>  {ta}
+>  {tamil/hyphennames}  =>  {tamil}
+>  {tamil/direction}  =>  {LR}
+>  {tamil/hyphenmins}  =>  {2,2}
+>  {tamil/frenchspacing}  =>  {false}
+>  {tamil/indentfirst}  =>  {false}
+>  {tamil/fontsetup}  =>  {true}
+>  {tamil/envname}  =>  {tamil}
+>  {tamil/babelname}  =>  {tamil}
+>  {tamil/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {arabic/script}  =>  {Arabic}
+>  {arabic/lcscript}  =>  {arabic}
+>  {arabic/scripttag}  =>  {arab}
+>  {arabic/language}  =>  {Arabic}
+>  {arabic/langtag}  =>  {ARA}
+>  {arabic/bcp47}  =>  {ar}
+>  {arabic/hyphennames}  =>  {nohyphenation}
+>  {arabic/direction}  =>  {RL}
+>  {arabic/hyphenmins}  =>  {2,3}
+>  {arabic/frenchspacing}  =>  {false}
+>  {arabic/indentfirst}  =>  {false}
+>  {arabic/fontsetup}  =>  {true}
+>  {arabic/envname}  =>  {Arabic}
+>  {arabic/babelname}  =>  {arabic}
+>  {arabic/localnumeral}  =>  {arabicnumerals}
+>  {arabic/Localnumeral}  =>  {arabicnumerals}
+>  {hindi/script}  =>  {Devanagari}
+>  {hindi/lcscript}  =>  {devanagari}
+>  {hindi/scripttag}  =>  {deva}
+>  {hindi/language}  =>  {Hindi}
+>  {hindi/langtag}  =>  {HIN}
+>  {hindi/bcp47}  =>  {hi}
+>  {hindi/hyphennames}  =>  {}
+>  {hindi/direction}  =>  {LR}
+>  {hindi/hyphenmins}  =>  {2,3}
+>  {hindi/frenchspacing}  =>  {false}
+>  {hindi/indentfirst}  =>  {false}
+>  {hindi/fontsetup}  =>  {true}
+>  {hindi/envname}  =>  {hindi}
+>  {hindi/babelname}  =>  {hindi}
+>  {hindi/localnumeral}  =>  {hindinumerals}
+>  {hindi/Localnumeral}  =>  {hindinumerals}.
+)
+
+Package fontspec Info: Could not resolve font "Noto Serif Tamil/I" (it
+(fontspec)             probably doesn't exist).
+
+
+Package fontspec Info: Font family 'NotoSerifTamil(0)' created for font 'Noto
+(fontspec)             Serif Tamil' with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Tamil/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Tamil/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"Noto Serif
+(fontspec)             Tamil/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+Package fontspec Info: Could not resolve font "Noto Naskh Arabic/I" (it
+(fontspec)             probably doesn't exist).
+
+
+Package fontspec Info: Font family 'NotoNaskhArabic(0)' created for font 'Noto
+(fontspec)             Naskh Arabic' with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"Noto Naskh
+(fontspec)             Arabic/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"Noto Naskh
+(fontspec)             Arabic/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"Noto Naskh
+(fontspec)             Arabic/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+Package fontspec Info: Could not resolve font "Noto Serif Devanagari/I" (it
+(fontspec)             probably doesn't exist).
+
+
+Package fontspec Info: Font family 'NotoSerifDevanagari(0)' created for font
+(fontspec)             'Noto Serif Devanagari' with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Devanagari/OT:script=DFLT;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Devanagari/B/OT:script=DFLT;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"Noto Serif
+(fontspec)             Devanagari/BI/OT:script=DFLT;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+Package fontspec Info: Could not resolve font "Noto Serif Gujarati/I" (it
+(fontspec)             probably doesn't exist).
+
+
+Package fontspec Info: Font family 'NotoSerifGujarati(0)' created for font
+(fontspec)             'Noto Serif Gujarati' with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Gujarati/OT:language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"Noto Serif
+(fontspec)             Gujarati/B/OT:language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"Noto Serif
+(fontspec)             Gujarati/BI/OT:language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+Package fontspec Info: Font family 'DejaVuSans(0)' created for font 'DejaVu
+(fontspec)             Sans' with options [].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->"DejaVu
+(fontspec)             Sans/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->"DejaVu
+(fontspec)             Sans/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'italic' (m/it) with NFSS spec.: <->"DejaVu
+(fontspec)             Sans/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.: <->"DejaVu
+(fontspec)             Sans/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+(./2025_11_22_9629766d565b25ccbdecg.aux
+LaTeX Info: Redefining \rmfamily on input line 21.
+LaTeX Info: Redefining \sffamily on input line 21.
+LaTeX Info: Redefining \ttfamily on input line 21.
+)
+\openout1 = `2025_11_22_9629766d565b25ccbdecg.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 129.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 1
+29.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 129.
+LaTeX Font Info:    ... okay on input line 129.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+Package: color 2021/12/07 v1.3c Standard LaTeX Color (DPC)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package color Info: Driver file: xetex.def on input line 149.
+)
+Package hyperref Info: Link coloring ON on input line 129.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count341
+)
+LaTeX Info: Redefining \ref on input line 129.
+LaTeX Info: Redefining \pageref on input line 129.
+LaTeX Info: Redefining \nameref on input line 129.
+
+(./2025_11_22_9629766d565b25ccbdecg.out)
+(./2025_11_22_9629766d565b25ccbdecg.out)
+\@outlinefile=\write3
+\openout3 = `2025_11_22_9629766d565b25ccbdecg.out'.
+
+
+Package chemgreek Info: Activating mapping `fontspec' on line 129.
+
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: End \AtBeginDocument code.
+
+Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
+(fontspec)             this).
+
+\symlegacymaths=\mathgroup7
+LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 129.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 129.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 129.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 129.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 129.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 129.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 129.
+LaTeX Font Info:    Redeclaring math accent \check on input line 129.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 129.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 129.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 129.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 129.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 129.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 129.
+
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 129.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 129.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 129.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 129.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 129.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 129.
+LaTeX Info: Redefining \rmfamily on input line 129.
+LaTeX Info: Redefining \sffamily on input line 129.
+LaTeX Info: Redefining \ttfamily on input line 129.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 131
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 131
+.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+LaTeX Font Info:    Trying to load font information for U+stmry on input line 1
+31.
+
+(/usr/share/texlive/texmf-dist/tex/latex/stmaryrd/Ustmry.fd)
+Overfull \hbox (97.6758pt too wide) in paragraph at lines 131--131
+ [][][][] 
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-001.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-001.jpg>
+LaTeX Font Info:    Font shape `TU/DejaVuSans(0)/bx/n' in size <14.4> not avail
+able
+(Font)              Font shape `TU/DejaVuSans(0)/b/n' tried instead on input li
+ne 136.
+[1
+
+] [2]
+Overfull \hbox (85.625pt too wide) detected at line 175
+[][]
+ []
+
+[3] [4]
+Overfull \hbox (8.10027pt too wide) in paragraph at lines 214--214
+[][][]\TU/DejaVuSans(0)/b/n/14.4 II. GENERAL DESCRIPTION OF THE PROGRAM []
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 224
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-010.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-010.jpg>
+[5] [6]
+Overfull \hbox (70.79123pt too wide) detected at line 271
+[][]
+ []
+
+[7]
+
+Package xeCJK Warning: Unknown CJK family `\CJKttdefault' is being ignored.
+(xeCJK)                
+(xeCJK)                Try to use `\setCJKmonofont[...]{...}' to define it.
+
+
+Overfull \hbox (85.625pt too wide) detected at line 308
+[][]
+ []
+
+
+Overfull \hbox (328.96152pt too wide) in paragraph at lines 311--342
+ [][][] 
+ []
+
+[8]
+Overfull \hbox (428.61816pt too wide) in paragraph at lines 347--382
+ [][][] 
+ []
+
+
+Overfull \hbox (711.43568pt too wide) in paragraph at lines 388--417
+ [][][] 
+ []
+
+[9]
+Overfull \hbox (642.92682pt too wide) in paragraph at lines 420--445
+ [][][] 
+ []
+
+
+Overfull \hbox (494.22073pt too wide) in paragraph at lines 451--474
+ [][][] 
+ []
+
+[10]
+Overfull \hbox (85.625pt too wide) detected at line 483
+[][]
+ []
+
+
+Overfull \hbox (756.46686pt too wide) in paragraph at lines 486--513
+ [][][] 
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 520
+[][]
+ []
+
+
+Overfull \hbox (736.68549pt too wide) in paragraph at lines 523--556
+ [][][] 
+ []
+
+[11]
+Overfull \hbox (571.65736pt too wide) in paragraph at lines 562--589
+ [][][] 
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 596
+[][]
+ []
+
+
+Overfull \hbox (687.48248pt too wide) in paragraph at lines 599--626
+ [][][] 
+ []
+
+[12]
+Overfull \hbox (624.87183pt too wide) in paragraph at lines 629--658
+ [][][] 
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 665
+[][]
+ []
+
+
+Overfull \hbox (554.50557pt too wide) in paragraph at lines 668--710
+ [][][] 
+ []
+
+[13]
+
+LaTeX Font Warning: Font shape `U/stmry/b/n' undefined
+(Font)              using `U/stmry/m/n' instead on input line 727.
+
+
+Overfull \hbox (712.76257pt too wide) in paragraph at lines 713--744
+ [][][] 
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 751
+[][]
+ []
+
+
+Overfull \hbox (481.0069pt too wide) in paragraph at lines 756--772
+ [][][] 
+ []
+
+[14]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-027.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-027.jpg>
+ [15]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-028.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-028.jpg>
+ [16]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-028(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-028(1).jpg>
+ [17] [18]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-029.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-029.jpg>
+ [19]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-030.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-030.jpg>
+ [20] [21]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-031.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-031.jpg>
+ [22]
+Overfull \vbox (142.29845pt too high) has occurred while \output is active []
+
+
+[23]
+Overfull \hbox (0.16776pt too wide) in paragraph at lines 809--810
+[][]\TU/DejaVuSans(0)/m/n/10 Following the check on numerical accuracy, which i
+s merely printed[]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-032.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-032.jpg>
+[24]
+Overfull \hbox (4.02216pt too wide) in paragraph at lines 817--817
+[][][]\TU/DejaVuSans(0)/b/n/14.4 V. DETAILED FLOW DIAGRAM AND EXPLANA-[]
+ []
+
+[25]
+Overfull \hbox (3.30872pt too wide) in paragraph at lines 835--836
+[]\TU/DejaVuSans(0)/m/n/10 computer mixes substances numbered $[][]\OML/cmm/m/i
+t/10 ; [][]; [] ; [][]$ \TU/DejaVuSans(0)/m/n/10 in the pro-[]
+ []
+
+[26] [27]
+Overfull \hbox (4.13971pt too wide) in paragraph at lines 878--879
+[][]\TU/DejaVuSans(0)/m/n/10 The Lagrangian coordinates, $\OML/cmm/m/it/10 R[]$
+\TU/DejaVuSans(0)/m/n/10 , are defined by the relation $\OML/cmm/m/it/10 ^^ZR[]
+dR \OT1/cmr/m/n/10 =$[]
+ []
+
+[28]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-036.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-036.jpg>
+ [29]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-038.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-038.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-038(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-038(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-039.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-039.jpg>
+ [30] [31]
+Overfull \hbox (85.625pt too wide) detected at line 932
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-040.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-040.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-041.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-041.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-042.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-042.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-043.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-043.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-044.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-044.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-045.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-045.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-046.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-046.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-047.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-047.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-048.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-048.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-049.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-049.jpg>
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 934--959
+[][][] []
+ []
+
+[32]
+Overfull \vbox (103.28387pt too high) has occurred while \output is active []
+
+
+[33] [34] [35]
+Overfull \vbox (103.60948pt too high) has occurred while \output is active []
+
+
+[36] [37] [38] [39]
+Overfull \vbox (60.68826pt too high) has occurred while \output is active []
+
+
+[40] [41] [42]
+Overfull \vbox (215.48318pt too high) has occurred while \output is active []
+
+
+[43]
+Overfull \hbox (85.625pt too wide) detected at line 965
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-050.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-050.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-051.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-051.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-052.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-052.jpg>
+[44] [45]
+Overfull \vbox (105.14432pt too high) has occurred while \output is active []
+
+
+[46] [47]
+Overfull \hbox (19.32129pt too wide) in paragraph at lines 1038--1038
+[][]\TU/DejaVuSans(0)/m/n/10 9943 FORMAT (27H TOTAL KINETIC ENERGY = 1P1E15.6, 
+28H TOTAL INTER[] []
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 1045
+[][]
+ []
+
+[48]
+Overfull \hbox (17.71973pt too wide) in paragraph at lines 1059--1059
+[][]\TU/DejaVuSans(0)/m/n/10 7070 READ 9910, ANUSIG(IG,N), SIG(IG,N), (SIGMA(IG
+,IH,N), IH=1,IGMAX)[] []
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-054.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-054.jpg>
+
+Overfull \hbox (22.24121pt too wide) in paragraph at lines 1106--1106
+[][]\TU/DejaVuSans(0)/m/n/10 7110 READ 9910, (ROLAB(M), ALPH(M), BETA(M), TAU(M
+), ACV(M), BCV(M))[] []
+ []
+
+[49]
+Overfull \hbox (19.63957pt too wide) in paragraph at lines 1108--1136
+[]\TU/DejaVuSans(0)/m/n/10 7180 PRINT 9911, ANUSIG(IG,N), SIG(IG,N), (SIGMA(IG,
+IH,N), IH=1,IGMAX) []
+ []
+
+[50]
+Overfull \hbox (85.625pt too wide) detected at line 1170
+[][]
+ []
+
+[51] [52]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-057.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-057.jpg>
+ [53]
+Overfull \hbox (85.625pt too wide) detected at line 1296
+[][]
+ []
+
+[54]
+Overfull \hbox (85.625pt too wide) detected at line 1358
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-059.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-059.jpg>
+[55]
+Overfull \hbox (2.51465pt too wide) in paragraph at lines 1419--1419
+[][]    \TU/DejaVuSans(0)/m/n/10 6 8 1 0 ~ R L ( I ) = C U B E R T F ( R L ( I 
+- 1 ) * * 3 + R O ( I ) * ( R ( I ) * * 3 -[]
+ []
+
+
+Overfull \hbox (4.73145pt too wide) in paragraph at lines 1419--1419
+[][]    \TU/DejaVuSans(0)/m/n/10 6833 HP(I)=MAXIF(0.0,(ALPH(M)*RO(I)+BETA(M)*TH
+ETA(I)+TAU(M)))[] []
+ []
+
+[56]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-060.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-060.jpg>
+
+Overfull \hbox (57.12695pt too wide) in paragraph at lines 1479--1479
+[][]\TU/lmtt/m/n/10 9 0 1 8 \TU/DejaVuSans(0)/m/n/10 ~ z ~ = ~ A R S F ( A L P 
+H A P - A L P H A ) / ( A L P H A O ~ + ~ 3 . 0 * E P S A )[] []
+ []
+
+[57]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-060(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-060(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-060(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-060(2).jpg>
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 1481--1483
+[][][] []
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 1494
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-061(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-061(2).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-061(3).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-061(3).jpg>
+[58]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-061(4).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-061(4).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-061.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-061.jpg>
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 1539--1541
+[][][] []
+ []
+
+
+Overfull \hbox (23.96973pt too wide) in paragraph at lines 1552--1552
+[][]    \TU/DejaVuSans(0)/m/n/10 9140 PSTAR=MAXIF(O.O, (ALPH(M)*RHOT+BETA(M)*TH
+ET+TAU(M)))+VP[] []
+ []
+
+
+Overfull \hbox (16.44531pt too wide) in paragraph at lines 1552--1552
+[][]    \TU/DejaVuSans(0)/m/n/10 9150 IF(ABSF(PSTAR-HPT)/(ABSF(PSTAR)+EPS1)-ETA
+1)9180,9180,9151[] []
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-061(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-061(1).jpg>
+
+Overfull \hbox (188.85742pt too wide) in paragraph at lines 1571--1571
+[][]    \TU/DejaVuSans(0)/m/n/10 9 1 9 0 W R ~ = ~ C S C * A B S F ( H E ( I ) 
+) * D E L T * * 2 / D E L R * * 2 + 4 . 0 * C V P * R H O T * A B S F ( D E L V
+ )[] []
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-062(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-062(2).jpg>
+[59]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-062(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-062(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-062.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-062.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-062(3).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-062(3).jpg>
+ [60]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-063(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-063(1).jpg>
+ [61]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-063.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-063.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-064.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-064.jpg>
+ [62]
+Overfull \hbox (85.625pt too wide) detected at line 1760
+[][]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-066.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-066.jpg>
+[63]
+Overfull \hbox (3.96497pt too wide) in paragraph at lines 1766--1769
+[]\TU/DejaVuSans(0)/m/n/10 inadvertently included as pages 62,63 , and 64 . Thi
+s has been deleted,[]
+ []
+
+
+Overfull \hbox (20.06256pt too wide) in paragraph at lines 1770--1770
+[][][]\TU/DejaVuSans(0)/b/n/14.4 VII. ROLE OF SENSE SWITCHES, SENSE LIGHTS[]
+ []
+
+[64] [65] [66]
+Overfull \hbox (1290.73749pt too wide) in paragraph at lines 1808--1831
+ [][][] 
+ []
+
+
+Overfull \hbox (914.61821pt too wide) in paragraph at lines 1835--1844
+ [][][] 
+ []
+
+[67] [68]
+Overfull \hbox (85.625pt too wide) detected at line 1920
+[][]
+ []
+
+[69] [70] [71]
+Overfull \hbox (163.84526pt too wide) in paragraph at lines 2036--2049
+ [][][] 
+ []
+
+
+Overfull \hbox (248.599pt too wide) in paragraph at lines 2055--2080
+ [][][] 
+ []
+
+
+Overfull \hbox (85.625pt too wide) detected at line 2087
+[][]
+ []
+
+[72]
+Overfull \hbox (251.54822pt too wide) in paragraph at lines 2090--2153
+ [][][] 
+ []
+
+[73]
+Overfull \hbox (93.00049pt too wide) detected at line 2168
+[][]
+ []
+
+
+Overfull \hbox (3.5466pt too wide) in paragraph at lines 2176--2179
+[]\TU/DejaVuSans(0)/m/n/10 Label the mixtures with the integers $\OML/cmm/m/it/
+10 N [] \OT1/cmr/m/n/10 +1\OML/cmm/m/it/10 ; N [] \OT1/cmr/m/n/10 +2\OML/cmm/m/
+it/10 ; N [] \OT1/cmr/m/n/10 +\OML/cmm/m/it/10 M []$ []
+ []
+
+
+Overfull \hbox (39.43568pt too wide) in paragraph at lines 2183--2211
+ [][][] 
+ []
+
+[74]
+Overfull \hbox (143.00978pt too wide) in paragraph at lines 2260--2274
+ [][][] 
+ []
+
+[75]
+Overfull \hbox (290.72212pt too wide) in paragraph at lines 2286--2305
+ [][][] 
+ []
+
+
+Overfull \hbox (113.19388pt too wide) in paragraph at lines 2309--2330
+ [][][] 
+ []
+
+
+Overfull \hbox (98.88715pt too wide) in paragraph at lines 2337--2358
+ [][][] 
+ []
+
+
+Overfull \hbox (111.86131pt too wide) in paragraph at lines 2362--2383
+ [][][] 
+ []
+
+[76]
+Overfull \hbox (364.8386pt too wide) in paragraph at lines 2389--2398
+ [][][] 
+ []
+
+
+Overfull \hbox (42.4532pt too wide) in paragraph at lines 2419--2426
+ [][][] 
+ []
+
+[77] [78]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-089(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-089(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-089.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-089.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-089(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-089(2).jpg>
+
+Overfull \hbox (332.71706pt too wide) in paragraph at lines 2486--2538
+ [][][] 
+ []
+
+[79]
+Overfull \hbox (164.83018pt too wide) in paragraph at lines 2541--2580
+ [][][] 
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(10).jpg Graphic file (type
+ bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(10).jpg>
+
+Overfull \vbox (12.8114pt too high) detected at line 2620
+ []
+
+
+Overfull \hbox (273.40471pt too wide) in paragraph at lines 2583--2639
+ [][][] 
+ []
+
+[80]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(7).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(7).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(3).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(3).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(1).jpg>
+
+Overfull \hbox (16.65994pt too wide) in paragraph at lines 2641--2645
+[][]\TU/DejaVuSans(0)/m/n/10 Generated at New York University through HathiTrus
+t on 2025\TU/NotoSerifCJKJP(0)/m/n/10 －\TU/DejaVuSans(0)/m/n/10 11\TU/NotoSerif
+CJKJP(0)/m/n/10 －\TU/DejaVuSans(0)/m/n/10 22[]
+ []
+
+
+Overfull \hbox (5.09396pt too wide) in paragraph at lines 2641--2645
+[]\TU/DejaVuSans(0)/m/n/10 04\TU/NotoSerifCJKJP(0)/m/n/10 ：| \TU/DejaVuSans(0)/
+m/n/10 22 GMT https\TU/NotoSerifCJKJP(0)/m/n/10 ：|  ／ ／\TU/DejaVuSans(0)/m/n/10
+ hdl\TU/NotoSerifCJKJP(0)/m/n/10 ．| \TU/DejaVuSans(0)/m/n/10 handle\TU/NotoSeri
+fCJKJP(0)/m/n/10 ．| \TU/DejaVuSans(0)/m/n/10 net\TU/NotoSerifCJKJP(0)/m/n/10 ／\
+TU/DejaVuSans(0)/m/n/10 2027\TU/NotoSerifCJKJP(0)/m/n/10 ／\TU/DejaVuSans(0)/m/n
+/10 mdp\TU/NotoSerifCJKJP(0)/m/n/10 ．| \TU/DejaVuSans(0)/m/n/10 39015078509448[
+]
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(5).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(5).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-092.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(2).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(4).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(4).jpg>
+
+Overfull \hbox (12.00633pt too wide) in paragraph at lines 2647--2670
+ [][][] 
+ []
+
+[81]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(6).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(6).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(9).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(9).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(12).jpg Graphic file (type
+ bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(12).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(8).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(8).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-092(11).jpg Graphic file (type
+ bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-092(11).jpg>
+
+Overfull \hbox (12.00633pt too wide) in paragraph at lines 2677--2698
+ [][][] 
+ []
+
+
+Overfull \hbox (289.00311pt too wide) in paragraph at lines 2701--2740
+ [][][] 
+ []
+
+
+Overfull \hbox (6.55765pt too wide) in paragraph at lines 2743--2747
+ [][][] 
+ []
+
+
+Overfull \hbox (195.57726pt too wide) in paragraph at lines 2750--2795
+ [][][] 
+ []
+
+[82]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-094(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-094(2).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-094(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-094(1).jpg>
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 2797--2800
+[][][] []
+ []
+
+[83]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-094.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-094.jpg>
+
+Overfull \hbox (132.96037pt too wide) in paragraph at lines 2808--2822
+ [][][] 
+ []
+
+[84]
+Overfull \hbox (195.52843pt too wide) in paragraph at lines 2830--2901
+ [][][] 
+ []
+
+
+Overfull \hbox (105.67345pt too wide) in paragraph at lines 2907--2932
+ [][][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Overfull \hbox (7.70596pt too wide) in paragraph at lines 2936--2940
+ [][][] 
+ []
+
+
+Overfull \hbox (199.59581pt too wide) in paragraph at lines 2943--3000
+ [][][] 
+ []
+
+[85]
+Overfull \hbox (70.79123pt too wide) detected at line 3007
+[][]
+ []
+
+[86]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-098(4).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-098(4).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-098.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-098.jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-098(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-098(2).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-098(3).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-098(3).jpg>
+
+Overfull \hbox (15.0pt too wide) in paragraph at lines 3009--3013
+[][][] []
+ []
+
+[87]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-098(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-098(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-100.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-100.jpg>
+ [88]
+Overfull \vbox (12.0pt too high) detected at line 3077
+ []
+
+
+Overfull \hbox (212.15146pt too wide) in paragraph at lines 3071--3116
+ [][][] 
+ []
+
+[89]
+Overfull \hbox (6.55765pt too wide) in paragraph at lines 3119--3123
+ [][][] 
+ []
+
+
+Overfull \hbox (185.61142pt too wide) in paragraph at lines 3126--3169
+ [][][] 
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-103.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-103.jpg>
+
+Overfull \hbox (10.17473pt too wide) in paragraph at lines 3171--3173
+[]\TU/DejaVuSans(0)/m/n/10 22 04:22 GMT [][][]https://hdl.handle.net/2027/mdp.3
+9015078509448[][][] / Pub-[]
+ []
+
+[90] [91]
+Overfull \vbox (341.57216pt too high) has occurred while \output is active []
+
+
+[92] [93] [94]
+Overfull \hbox (25.14362pt too wide) in paragraph at lines 3264--3277
+ [][][] 
+ []
+
+File: ./images//2025_11_22_9629766d565b25ccbdecg-107(1).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-107(1).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-107(3).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-107(3).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-107(2).jpg Graphic file (type 
+bmp)
+<./images//2025_11_22_9629766d565b25ccbdecg-107(2).jpg>
+File: ./images//2025_11_22_9629766d565b25ccbdecg-107.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-107.jpg>
+[95] [96]
+Overfull \hbox (0.67201pt too wide) in paragraph at lines 3291--3291
+[][][]\TU/DejaVuSans(0)/b/n/14.4 DISCUSSION OF HYDRODYNAMIC STABILITY[]
+ []
+
+[97] [98] [99]
+Overfull \hbox (23.44795pt too wide) in paragraph at lines 3398--3404
+[]\TU/DejaVuSans(0)/m/n/10 (4) In (9010) omit "FBAR = 0", and move up to insert
+ the order "IF(NH)6800,[]
+ []
+
+[100]
+File: ./images//2025_11_22_9629766d565b25ccbdecg-112.jpg Graphic file (type bmp
+)
+<./images//2025_11_22_9629766d565b25ccbdecg-112.jpg>
+
+Overfull \hbox (85.625pt too wide) detected at line 3429
+[][]
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[101] [102]
+Overfull \hbox (701.34753pt too wide) in paragraph at lines 3516--3525
+ [][][] 
+ []
+
+[103]
+
+LaTeX Warning: Float too large for page by 226.39963pt on input line 3663.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[104]
+The property list \polyglossia@langsetup contains the pairs (without outer
+braces):
+>  {latex/script}  =>  {latin}
+>  {latex/lcscript}  =>  {latin}
+>  {latex/scripttag}  =>  {}
+>  {latex/language}  =>  {Latex}
+>  {latex/langtag}  =>  {ENG}
+>  {latex/bcp47}  =>  {}
+>  {latex/hyphennames}  =>  {english}
+>  {latex/direction}  =>  {LR}
+>  {latex/hyphenmins}  =>  {2,3}
+>  {latex/frenchspacing}  =>  {false}
+>  {latex/indentfirst}  =>  {false}
+>  {latex/fontsetup}  =>  {true}
+>  {latex/envname}  =>  {latex}
+>  {latex/babelname}  =>  {latex}
+>  {latex/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {latex/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/script}  =>  {latin}
+>  {english/lcscript}  =>  {latin}
+>  {english/scripttag}  =>  {}
+>  {english/language}  =>  {English}
+>  {english/langtag}  =>  {ENG}
+>  {english/bcp47}  =>  {en-US}
+>  {english/hyphennames}  =>  {english,american,usenglish,USenglish}
+>  {english/direction}  =>  {LR}
+>  {english/hyphenmins}  =>  {2,3}
+>  {english/frenchspacing}  =>  {false}
+>  {english/indentfirst}  =>  {false}
+>  {english/fontsetup}  =>  {true}
+>  {english/envname}  =>  {english}
+>  {english/babelname}  =>  {american}
+>  {english/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {english/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/script}  =>  {Tamil}
+>  {tamil/lcscript}  =>  {tamil}
+>  {tamil/scripttag}  =>  {taml}
+>  {tamil/language}  =>  {Tamil}
+>  {tamil/langtag}  =>  {TAM}
+>  {tamil/bcp47}  =>  {ta}
+>  {tamil/hyphennames}  =>  {tamil}
+>  {tamil/direction}  =>  {LR}
+>  {tamil/hyphenmins}  =>  {2,2}
+>  {tamil/frenchspacing}  =>  {false}
+>  {tamil/indentfirst}  =>  {false}
+>  {tamil/fontsetup}  =>  {true}
+>  {tamil/envname}  =>  {tamil}
+>  {tamil/babelname}  =>  {tamil}
+>  {tamil/localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {tamil/Localnumeral}  =>  {polyglossia@C@localnumeral}
+>  {arabic/script}  =>  {Arabic}
+>  {arabic/lcscript}  =>  {arabic}
+>  {arabic/scripttag}  =>  {arab}
+>  {arabic/language}  =>  {Arabic}
+>  {arabic/langtag}  =>  {ARA}
+>  {arabic/bcp47}  =>  {ar}
+>  {arabic/hyphennames}  =>  {nohyphenation}
+>  {arabic/direction}  =>  {RL}
+>  {arabic/hyphenmins}  =>  {2,3}
+>  {arabic/frenchspacing}  =>  {false}
+>  {arabic/indentfirst}  =>  {false}
+>  {arabic/fontsetup}  =>  {true}
+>  {arabic/envname}  =>  {Arabic}
+>  {arabic/babelname}  =>  {arabic}
+>  {arabic/localnumeral}  =>  {arabicnumerals}
+>  {arabic/Localnumeral}  =>  {arabicnumerals}
+>  {hindi/script}  =>  {Devanagari}
+>  {hindi/lcscript}  =>  {devanagari}
+>  {hindi/scripttag}  =>  {deva}
+>  {hindi/language}  =>  {Hindi}
+>  {hindi/langtag}  =>  {HIN}
+>  {hindi/bcp47}  =>  {hi}
+>  {hindi/hyphennames}  =>  {}
+>  {hindi/direction}  =>  {LR}
+>  {hindi/hyphenmins}  =>  {2,3}
+>  {hindi/frenchspacing}  =>  {false}
+>  {hindi/indentfirst}  =>  {false}
+>  {hindi/fontsetup}  =>  {true}
+>  {hindi/envname}  =>  {hindi}
+>  {hindi/babelname}  =>  {hindi}
+>  {hindi/localnumeral}  =>  {hindinumerals}
+>  {hindi/Localnumeral}  =>  {hindinumerals}.
+ [105] [106] (./2025_11_22_9629766d565b25ccbdecg.aux
+LaTeX Info: Redefining \rmfamily on input line 21.
+LaTeX Info: Redefining \sffamily on input line 21.
+LaTeX Info: Redefining \ttfamily on input line 21.
+)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package rerunfilecheck Info: File `2025_11_22_9629766d565b25ccbdecg.out' has no
+t changed.
+(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+ ) 
 Here is how much of TeX's memory you used:
- 13644 strings out of 478114
- 230724 string characters out of 5851328
- 539176 words of memory out of 5000000
- 34131 multiletter control sequences out of 15000+600000
- 469627 words of font info for 30 fonts, out of 8000000 for 9000
- 14 hyphenation exceptions out of 8191
- 69i,0n,117p,383b,82s stack positions out of 5000i,500n,10000p,200000b,80000s
-No pages of output.
+ 22796 strings out of 477675
+ 526499 string characters out of 5839864
+ 1218186 words of memory out of 5000000
+ 43009 multiletter control sequences out of 15000+600000
+ 483470 words of font info for 153 fonts, out of 8000000 for 9000
+ 264 hyphenation exceptions out of 8191
+ 74i,24n,117p,1731b,838s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on 2025_11_22_9629766d565b25ccbdecg.pdf (106 pages).

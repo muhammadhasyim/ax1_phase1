@@ -1,0 +1,95 @@
+85
+B
+Results
+The on-line print-out for
+the
+complete problem is included
+herein.
+First,
+a
+complete reproduction of the input data is printed, in
+exactly the
+same array
+as
+it is presented to the card punchers _
+Since
+a
+calculation of keff
+was
+requested, this number is printed, followed by the
+initial total kinetic energy, total internal energy and initial maximum
+radius _
+At time equal to zero,
+a
+short print-out is made, consise
+of
+Time,
+Power, Alpha,
+At and
+W_
+As the calculation progresses,
+similar
+short prints are repeated following each Sn calculation.
+Dumps
+are noted a8
+occur
+during the process_
+When a "long" print-out is
+in order (NH = 0
+mod Np) first the
+total energy, the kinetic
+energy and
+the checks
+on the
+energy
+computation
+are
+printed_
+This
+is followed by a
+detailed lis
+of the density, radius,
+velocity, pressure, internal energy and temperature of each mas8 point.
+This latter print-out i8 time-consuming; hence, the program
+wa8 revised
+to permit infrequent or-line,
+prints_
+coupled with frequent off-line,
+long prints _
+The latter
+are
+dumped
+on
+tape and
+are available for off-line
+]
+print-out on separate equipment, if needed.
+5
+N @
+8
+8
+N
+4
+93
+5
+1
+]
+1
+7
+K
+8
+2
+1
+{
+2
+J
+Original from
+TECHNICAL REPORT ARCHIVE & IMAGE
+Digitized by
+Google
+LIBRARY
+ting
+Qp,
+they
+ting
+long

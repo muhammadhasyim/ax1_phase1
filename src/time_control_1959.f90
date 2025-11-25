@@ -34,47 +34,60 @@ contains
 
   ! ===========================================================================
   ! Compute W stability function
-  ! ANL-5977 Appendix D, Order 9210
-  ! W = C_sc·E·(Δt/ΔR)² + 4·C_vp·|ΔV|/V
+  ! ANL-5977 Order 9190 (EXACT formula from original paper):
+  !   WR = CSC * ABSF(HE(I)) * DELT**2 / DELR**2 + 4.0 * CVP * RHOT * ABSF(DELV)
+  !   W = MAXIF(WR, W)
+  ! Where:
+  !   - HE(I) = internal energy per gram [10^12 erg/g = cm^2/μs^2]
+  !   - DELV = specific volume change = 1/ρ_new - 1/ρ_old [cm^3/g]
+  !   - RHOT = current density [g/cm^3]
   ! ===========================================================================
   subroutine compute_w_stability(st, ctrl)
     type(State_1959), intent(inout) :: st
     type(Control_1959), intent(in) :: ctrl
     
     integer :: i
-    real(rk) :: W_sum, W_cfl, W_visc, delta_R, delta_V, V_zone
-    real(rk) :: sound_speed, E_internal
+    real(rk) :: W_zone, W_cfl, W_visc, delta_R
+    real(rk) :: W_max, W_cfl_max, W_visc_max
+    real(rk) :: DELV, RHOT
     
-    W_sum = 0._rk
+    W_max = 0._rk
+    W_cfl_max = 0._rk
+    W_visc_max = 0._rk
     
     do i = 2, st%IMAX
-      ! Zone width
+      ! Zone width (DELR in original)
       delta_R = st%R(i) - st%R(i-1)
       if (delta_R < 1.0e-12_rk) cycle
       
-      ! Zone volume
-      V_zone = (4._rk/3._rk) * 3.14159265_rk * (st%R(i)**3 - st%R(i-1)**3)
+      ! Current density (RHOT in original)
+      RHOT = st%RO(i)
       
-      ! Volume change (approximate from velocity)
-      delta_V = (st%U(i) - st%U(i-1)) * ctrl%DELT * st%R(i)**2
+      ! Use the stored DELV_MAX from the hydro step (computed as 1/ρ_new - 1/ρ_old)
+      ! This is the correct DELV per ANL-5977 Order 9190
+      DELV = st%DELV_MAX(i)
       
-      ! Internal energy per unit mass
-      E_internal = st%HE(i)
+      ! ANL-5977 Order 9190 CFL term: CSC * |HE(I)| * (Δt/ΔR)²
+      ! HE(I) is internal energy per gram [cm²/μs²]
+      ! This term represents c² * (Δt/ΔR)² where c² ~ CSC * E_int
+      W_cfl = ctrl%CSC * abs(st%HE(i)) * (ctrl%DELT / delta_R)**2
       
-      ! Sound speed estimate: c_s ~ sqrt(∂P/∂ρ) ~ sqrt(E)
-      sound_speed = sqrt(max(E_internal, 1.0_rk))
+      ! ANL-5977 Order 9190 Viscous term: 4 * CVP * RHOT * |DELV|
+      ! Note: RHOT * |DELV| = ρ * |Δ(1/ρ)| ~ |Δρ/ρ| (fractional density change)
+      W_visc = 4._rk * ctrl%CVP * RHOT * abs(DELV)
       
-      ! CFL-like term: C_sc·E·(Δt/ΔR)²
-      W_cfl = ctrl%CSC * sound_speed * (ctrl%DELT / delta_R)**2
+      ! Total W for this zone
+      W_zone = W_cfl + W_visc
       
-      ! Viscous term: 4·C_vp·|ΔV|/V
-      W_visc = 4._rk * ctrl%CVP * abs(delta_V) / max(V_zone, 1.0e-30_rk)
-      
-      ! Maximum W in system
-      W_sum = max(W_sum, W_cfl + W_visc)
+      ! Track maximum W in system (MAXIF in original)
+      W_max = max(W_max, W_zone)
+      W_cfl_max = max(W_cfl_max, W_cfl)
+      W_visc_max = max(W_visc_max, W_visc)
     end do
     
-    st%W = W_sum
+    st%W = W_max
+    st%W_CFL = W_cfl_max
+    st%W_VISC = W_visc_max
     
   end subroutine compute_w_stability
 
@@ -329,6 +342,7 @@ contains
     if (ctrl%CSC < 1.0e-12_rk) ctrl%CSC = 3.0_rk
     if (ctrl%CVP < 1.0e-12_rk) ctrl%CVP = 2.0_rk
     if (ctrl%W_LIMIT < 1.0e-12_rk) ctrl%W_LIMIT = 0.3_rk
+    if (ctrl%MIN_ZONE_WIDTH < 1.0e-6_rk) ctrl%MIN_ZONE_WIDTH = 0.5_rk
     if (ctrl%ALPHA_DELTA_LIMIT < 1.0e-12_rk) ctrl%ALPHA_DELTA_LIMIT = 0.2_rk
     if (ctrl%POWER_DELTA_LIMIT < 1.0e-12_rk) ctrl%POWER_DELTA_LIMIT = 0.2_rk
     

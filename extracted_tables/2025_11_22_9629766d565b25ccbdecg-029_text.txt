@@ -1,0 +1,55 @@
+9050
+Nh+|-_NH
+tt4t-t
+2 _I,
+BEG |m I LooP
+U(I)
+i(I)t
+S
+U(I)
+R(I)
+U(It _ -R(I)
+MASS
+Pt,a
+VOLUME
+~Av
+Is
+Av
+0.1 )
+>07
+no
+yes
+9020
+COMPUte 4q
+PRInT  TRoubLe , HaLvE]dELT ,> DELV
+R(I)-R(R-I)~R
+LARGE .
+no
+18
+AR
+0?
+HALVE At
+Nsynt+1
+Nstr
+Y08
+no
+9124
+Is Av
+<02
+yes
+8009
+COMpUte] ThE
+IS Nsw-Nst
+L0
+no
+Or
+VISCOUS_PRESSURE
+SCALC
+Y0s
+9050
+9124
+or
+I-LOOP
+Phyd(I)
+Phyd
+(Phya

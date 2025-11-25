@@ -1,0 +1,97 @@
+30
+)
+for
+J
+=
+1,2,3
+Ioi
+4OL
+M(J)-Mt
+M(J)-M
+B(J)~Bt
+420
+103
+no
+Is J < 3
+6-J ~ Jk
+yes
+102
+)-H(I,kj)
+CI
+I
+a58
+104 to I loop
+assign 105 to ILOOP
+104
+Jh J
+I-L,II
+II-I
+405
+no
+899
+ItL
+=0
+>0
+Is
+J
+=,5
+I+l-I
+Yes
+*0
+I -II
+J+l-
+900
+STOP   1357 |
+107
+no
+79
+no
+yes
+79
+Is
+Is_Jz5
+yes-
+106
+Bt
+S(II)-Bs
+(Mv-Bs-H(II) ) N(L,kJ)
++
+S4(II) _ N(I,,)
+2
+901
+902
+1o8
+~0
+>0
+STOP
+2345
+J-|
+N(I,EJ)
++
+(M
++
+Bs-H(II) )N(L,kJ-1)
+~(MT-Bs
+H(II) )N(I,uj- )
+N(LLJ)
+N(I,kj)
+S__(II)
+Mj+Bs+HTIT)
+L
+N(I,EJ)
+Is N(I,kj)
+0
+yes
+no
+ioco
+0 -
+N(I,kJ)
+I0|
+go
+to ILOOP
+(104 , /05 )
+0 - N(IgarkJ
+a( i,Jk
+Laeig?
+3
+IsIgar

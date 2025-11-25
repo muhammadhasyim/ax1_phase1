@@ -1,0 +1,93 @@
+8009
+PRELiminary CALCULATiON
+2 ~I
+K(I)-m
+RO( L)_ROsu ( I)
+8040
+(I)
+hyd
+0(I)
+o(w)
+nout
+ab
+no
+I + |-I
+Is I =
+Iar
+Ye9
+2~I
+R(I)
+R(I-W} ~ R(I)
+R(I)-R(I-I) = A(I)
+A(I)
+S(I)
+R(I)
+R?(I)-R?(T-I
+T(I)
+is
+no
+yes
+I + | I
+8C00
+START big 6 LOOP
+2
+K(I)
+n
+ye8
+is KCALC
+0
+p(I)
+) = H(I)
+nout
+no
+5
+A(I)(G9,"
+0(I)
++4) _ H (I)
+neut
+i8 H(I) < 0
+yes
+14
+no
+PAUSE
+14
+15
+0 ~H(I)
+0+8
+3
+I + I+I
+AF(I)
+4}-S,(I)
+is
+i
+teration count
+0
+neut
+yes
+no
+no
+no
+40
+es
+is
+I-I,ax
+is KCALC
+0
+2+ Nh
+~81
+for
+"G
+yes
+I0
+B(I)
+p(I)
+2,) ~ So(I)
+Keff
+neut
+ILU
+A(I)(Gg,# *
+p(Ij
+4(I)vg
+(Ilogh, M `
+hzg,
+W(I)(v

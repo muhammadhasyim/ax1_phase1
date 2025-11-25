@@ -22,6 +22,8 @@ module io_1959
 
   private
   public :: read_input_1959, write_output_header, write_output_step
+  public :: write_csv_header_time, write_csv_step_time
+  public :: write_csv_header_spatial, write_csv_step_spatial
   public :: write_summary, echo_input
 
 contains
@@ -82,6 +84,11 @@ contains
     read(unit, '(A)') ctrl%eigmode
     ctrl%eigmode = trim(adjustl(ctrl%eigmode))
     
+    ! Default ICNTRL (no geometry search by default)
+    ctrl%ICNTRL = 0
+    ctrl%ALPHA_TARGET = 0.0_rk
+    ctrl%EPSR = 1.0e-4_rk
+    
     ! Time parameters
     read(unit, *) ctrl%DELT
     read(unit, *) ctrl%DT_MAX
@@ -121,12 +128,12 @@ contains
     st%IMAX = nzones
     
     ! Zone boundaries (radii in cm)
+    ! R(I) is outer boundary of zone I. We read IMAX values: R(1) to R(IMAX)
     read(unit, '(A)') line  ! Skip "RADII"
-    do i = 1, st%IMAX + 1
+    do i = 1, st%IMAX
       read(unit, *) st%R(i)
     end do
     st%R(0) = 0._rk  ! Center always at r=0
-    st%R(1) = 0._rk
     
     ! Material assignment per zone
     read(unit, '(A)') line  ! Skip "MATERIALS"
@@ -144,6 +151,22 @@ contains
     read(unit, '(A)') line  ! Skip "TEMPERATURES"
     do i = 2, st%IMAX
       read(unit, *) st%THETA(i)
+    end do
+    
+    ! Relative fission density F(I)
+    read(unit, '(A)') line
+    if (trim(adjustl(line)) /= 'FISSION_DENSITIES') then
+      print *, 'ERROR: Expected FISSION_DENSITIES block in geometry section.'
+      print *, 'Found: ', trim(adjustl(line))
+      stop 1
+    end if
+    do i = 2, st%IMAX
+      read(unit, *) st%FREL(i)
+    end do
+    
+    print *, "FISSION_DENSITIES (first 15 zones):"
+    do i = 2, min(st%IMAX, 15)
+      print '(I5,ES14.6)', i, st%FREL(i)
     end do
     
     print *, "Geometry read: ", st%IMAX, " zones"
@@ -189,8 +212,20 @@ contains
         read(unit, *) (st%mat(imat)%sig_s(gp, g), gp = 1, st%IG)
       end do
       
+      ! Transport cross section (optional, if not provided use default)
+      read(unit, '(A)') line
+      if (trim(adjustl(line)) == 'SIG_TR') then
+        do g = 1, st%IG
+          read(unit, *) st%mat(imat)%sig_tr(g)
+        end do
+        read(unit, '(A)') line  ! Read next header for CHI
+      end if
+      
       ! Fission spectrum
-      read(unit, '(A)') line  ! Skip "CHI"
+      ! line already contains "CHI" from above
+      if (trim(adjustl(line)) /= 'CHI') then
+        read(unit, '(A)') line  ! Skip "CHI" if not already read
+      end if
       do g = 1, st%IG
         read(unit, *) st%mat(imat)%chi(g)
       end do
@@ -221,7 +256,8 @@ contains
     type(State_1959), intent(inout) :: st
     type(Control_1959), intent(in) :: ctrl
     
-    integer :: i, imat
+    integer :: i, imat, g
+    real(rk) :: r_ratio
     
     ! Initialize velocities to zero
     st%U = 0._rk
@@ -247,9 +283,19 @@ contains
                  st%mat(imat)%TAU
       if (st%HP(i) < 0._rk) st%HP(i) = 0._rk
     end do
+    st%ROSN = st%RO
+    st%RO_PREV = st%RO
+    st%HP_PREV = st%HP
     
-    ! Initialize flux to flat guess
-    st%N = 1._rk
+    ! Initialize flux with cosine shape (physical for reactor)
+    ! Flux should peak at center and decrease towards edge
+    do i = 2, st%IMAX
+      ! Cosine shape: N(r) = cos(π/2 * r/R_max) for r < R_core
+      r_ratio = st%R(i) / st%R(st%IMAX)
+      do g = 1, st%IG
+        st%N(g, i) = max(0.1_rk, cos(1.57079632679_rk * r_ratio))
+      end do
+    end do
     
     ! Initialize time
     st%TIME = 0._rk
@@ -347,9 +393,13 @@ contains
     type(State_1959), intent(in) :: st
     type(Control_1959), intent(in) :: ctrl
     integer, intent(in) :: unit
+    real(rk), parameter :: four_pi_over_three = 4.1887902047863909_rk
+    real(rk) :: qp_print
+    
+    qp_print = four_pi_over_three * st%Q
     
     write(unit, '(F9.6,2ES12.4,F12.6,F10.6,ES12.4,F8.4,F10.4)') &
-      st%TIME, st%Q, st%TOTAL_POWER, st%ALPHA, st%AKEFF, &
+      st%TIME, qp_print, st%TOTAL_POWER, st%ALPHA, st%AKEFF, &
       ctrl%DELT, st%W, st%R(st%IMAX)
     
   end subroutine write_output_step
@@ -371,15 +421,115 @@ contains
     write(unit, '(A,I10)') "Total S4 iterations:     ", st%AITCT
     write(unit, '(A,ES14.6)') "Final alpha:             ", st%ALPHA
     write(unit, '(A,F12.6)') "Final k-eff:             ", st%AKEFF
-    write(unit, '(A,ES14.6,A)') "Final energy:            ", st%Q, " × 10¹² ergs"
+    write(unit, '(A,ES14.6,A)') "Final energy:            ", &
+        4.1887902047863909_rk * st%Q, " × 10¹² ergs"
     write(unit, '(A,ES14.6,A)') "Final KE:                ", st%TOTKE, " × 10¹² ergs"
     write(unit, '(A,ES14.6,A)') "Final IE:                ", st%TOTIEN, " × 10¹² ergs"
+    write(unit, '(A,ES14.6)')    "Energy balance CHECK:    ", st%CHECK
     write(unit, '(A,F12.4,A)') "Final radius:            ", st%R(st%IMAX), " cm"
     write(unit, '(A,F12.4,A)') "Final max temp:          ", maxval(st%THETA(2:st%IMAX)), " keV"
     write(unit, '(A,ES14.6,A)') "Final max pressure:      ", maxval(st%HP(2:st%IMAX)), " megabars"
     write(unit, '(A)') "========================================="
     
   end subroutine write_summary
+
+  ! ===========================================================================
+  ! Write CSV header for time-series data
+  ! Format matches reference data: geneve10_time_evolution.csv
+  ! ===========================================================================
+  subroutine write_csv_header_time(unit)
+    integer, intent(in) :: unit
+    
+    write(unit, '(A)') "time_microsec,QP_1e12_erg,power_relative,alpha_1_microsec,delt_microsec," // &
+                       "W_dimensionless,QBAR_1e12erg_per_g,DELQ_1e12_erg,TOTKE_1e12_erg," // &
+                       "TOTIEN_1e12_erg,W_cfl,W_visc,NS4,DTMAX_microsec,FBAR_weighted," // &
+                       "FBAR_geom,W_limit_flag,alpha_dt_flag,CHECK,ERRLCL"
+    
+  end subroutine write_csv_header_time
+
+  ! ===========================================================================
+  ! Write CSV data for time-series (one time step)
+  ! Format matches reference data: geneve10_time_evolution.csv
+  ! ===========================================================================
+  subroutine write_csv_step_time(st, ctrl, unit)
+    type(State_1959), intent(in) :: st
+    type(Control_1959), intent(in) :: ctrl
+    integer, intent(in) :: unit
+    real(rk), parameter :: four_pi_over_three = 4.1887902047863909_rk
+    real(rk) :: qp_print, delq_print, totke_print, totien_print
+    real(rk) :: qbar_print, alpha_dt
+    integer :: w_flag, alpha_flag
+    
+    qp_print   = four_pi_over_three * st%Q
+    delq_print = four_pi_over_three * st%DELQ_TOTAL
+    totke_print = four_pi_over_three * st%TOTKE
+    totien_print = four_pi_over_three * st%TOTIEN
+    qbar_print = st%QBAR_LAST
+    alpha_dt = st%ALPHA * ctrl%DELT
+    w_flag = merge(1, 0, st%W > ctrl%W_LIMIT)
+    alpha_flag = merge(1, 0, alpha_dt > 4._rk * ctrl%ETA2)
+    
+    ! CSV format with diagnostics
+    write(unit, '(ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,' // &
+                'ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,I0,A,' // &
+                'ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6)') &
+      st%TIME, ',', &
+      qp_print, ',', &
+      st%TOTAL_POWER, ',', &
+      st%ALPHA, ',', &
+      ctrl%DELT, ',', &
+      st%W, ',', &
+      qbar_print, ',', &
+      delq_print, ',', &
+      totke_print, ',', &
+      totien_print, ',', &
+      st%W_CFL, ',', &
+      st%W_VISC, ',', &
+      ctrl%NS4, ',', &
+      ctrl%DT_MAX, ',', &
+      st%FBAR, ',', &
+      st%FBAR_GEOM, ',', &
+      real(w_flag, rk), ',', &
+      real(alpha_flag, rk), ',', &
+      st%CHECK, ',', &
+      st%ERRLCL
+    
+  end subroutine write_csv_step_time
+
+  ! ===========================================================================
+  ! Write CSV header for spatial profile data
+  ! Format matches reference data: geneve10_spatial_t200.csv
+  ! ===========================================================================
+  subroutine write_csv_header_spatial(unit)
+    integer, intent(in) :: unit
+    
+    write(unit, '(A)') "zone_index,density_g_cm3,radius_cm,velocity_cm_microsec," // &
+                       "pressure_megabars,internal_energy_1e12_erg_g,temperature_keV"
+    
+  end subroutine write_csv_header_spatial
+
+  ! ===========================================================================
+  ! Write CSV data for spatial profile (all zones at current time)
+  ! Format matches reference data: geneve10_spatial_t200.csv
+  ! ===========================================================================
+  subroutine write_csv_step_spatial(st, unit)
+    type(State_1959), intent(in) :: st
+    integer, intent(in) :: unit
+    integer :: i
+    
+    ! Write data for each zone
+    do i = 2, st%IMAX
+      write(unit, '(I5,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6)') &
+        i, ',', &
+        st%RHO(i), ',', &
+        st%R(i), ',', &
+        st%U(i), ',', &
+        st%HP(i), ',', &
+        st%HE(i), ',', &
+        st%THETA(i)
+    end do
+    
+  end subroutine write_csv_step_spatial
 
 end module io_1959
 

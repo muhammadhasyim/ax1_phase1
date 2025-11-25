@@ -1,0 +1,65 @@
+9124
+CALCULATE
+0
+9190
+CALCULATE StABiLiTY
+CONSTANT ,
+m
+Is I =
+Ibax
+yes
+no
+ENd OF I-LOOP
+I+l ~I
+BEGIn I-LOOP
+1s
+Nsy > |
+no
+9210
+yes
+Is
+4 >0
+no
+9210
+yes
+IS
+ThE
+MAXiMUM PRESSURE   GREATER
+no
+9210
+THAN Ptest
+yes
+9206
+COMPUTE
+THE
+INTEGRAL
+OF   PRESSURE
+OVER
+VOLUME_
+P
+COMPUTE THE
+FRACT |ONAL ChANGE
+in ALPHA
+PER NEUTRON IC CYCLE,
+VJ (At)2 (Nsw)2
+Aa
+yes
+Is
+oki
+9210
+no
+9212
+Aa
+Is
+a
+0k2
+yes
+Nsy
+2
+no
+Ns4
+9210
+9210
+Eint'
+Ph?
+As4

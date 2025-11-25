@@ -1,0 +1,102 @@
+# Geneve 10 Rerun March 20, 1959 - Input Parameters
+# Reference: ANL-5977 (1959), Pages 89-103 in LaTeX document
+# Extracted from: 2025_11_22_9629766d565b25ccbdecg.tex
+
+# CONTROL PARAMETERS
+parameter,value,unit,description
+alpha_initial,0.013084,1/microsec,Initial alpha (inverse period)
+power_initial,1.0,1e12 erg/microsec,Initial power
+k_eff,1.003243,dimensionless,Effective multiplication factor
+
+# GEOMETRY
+parameter,value,unit,description
+r_core,23.75,cm,Core radius
+r_blanket,44.70,cm,Blanket outer radius
+n_zones_core,25,dimensionless,Number of mass points in core
+n_zones_blanket,14,dimensionless,Number of mass points in blanket
+total_zones,39,dimensionless,Total number of zones (IMax-1)
+
+# INITIAL CONDITIONS
+parameter,value,unit,description
+rho_core,7.92,g/cm3,Core density
+rho_blanket,15.83,g/cm3,Blanket density
+T_core,1.0e-4,keV,Core temperature
+T_blanket,5.0e-5,keV,Blanket temperature
+velocity_initial,0.0,cm/microsec,Initial velocity (all zones)
+
+# MATERIAL COMPOSITION
+parameter,value,unit,description
+core_U235_fraction,0.36,atomic_fraction,U-235 in core (Substance 1)
+core_U238_fraction,0.64,atomic_fraction,U-238 in core (Substance 2)
+blanket_U238_fraction,1.0,atomic_fraction,U-238 in blanket (Substance 3)
+atomic_mass,396.0,1e-24 g/atom,Atomic mass (P_Lab)
+
+# NEUTRON CONSTANTS
+parameter,value,unit,description
+v_group_1,169.5,cm/microsec,Neutron velocity for group 1
+chi_1,1.0,dimensionless,Fission spectrum (nu_g) for group 1
+
+# CROSS SECTIONS (barns) - Substance 1 (U-235)
+parameter,value,unit,description
+nu_sigma_f_1_sub1,3.75,barns,nu*sigma_fission for U-235
+sigma_tr_1_sub1,7.0,barns,sigma_transport for U-235
+sigma_scat_1_sub1,5.3,barns,sigma_scatter for U-235
+
+# CROSS SECTIONS (barns) - Substance 2 (U-238)
+parameter,value,unit,description
+nu_sigma_f_1_sub2,0.25,barns,nu*sigma_fission for U-238
+sigma_tr_1_sub2,7.0,barns,sigma_transport for U-238
+sigma_scat_1_sub2,6.7,barns,sigma_scatter for U-238
+
+# CROSS SECTIONS (barns) - Substance 3 (U-238 blanket, no fission)
+parameter,value,unit,description
+nu_sigma_f_1_sub3,0.0,barns,nu*sigma_fission for U-238 blanket
+sigma_tr_1_sub3,7.0,barns,sigma_transport for U-238 blanket
+sigma_scat_1_sub3,6.8,barns,sigma_scatter for U-238 blanket
+
+# EQUATION OF STATE - Core (Material 4)
+parameter,value,unit,description
+alpha_eos_core,0.02873,cm2/microsec2,EOS parameter alpha for core
+beta_eos_core,278.46,g/(cm*microsec2*keV),EOS parameter beta for core
+tau_eos_core,-0.3946,g/(cm*microsec2),EOS parameter tau for core
+
+# EQUATION OF STATE - Blanket (Material 3)
+parameter,value,unit,description
+alpha_eos_blanket,0.02873,cm2/microsec2,EOS parameter alpha for blanket
+beta_eos_blanket,278.46,g/(cm*microsec2*keV),EOS parameter beta for blanket
+tau_eos_blanket,-0.4687189,g/(cm*microsec2),EOS parameter tau for blanket
+
+# SPECIFIC HEAT PARAMETERS
+parameter,value,unit,description
+A_cv,12.163,cm2/(microsec2*keV),Specific heat parameter A
+B_cv,5780.0,cm2/(microsec2*keV2),Specific heat parameter B
+
+# ACCURACY CRITERIA
+parameter,value,unit,description
+EPSR,3.0e-6,cm,Tolerance for outer radius
+EPSA,5.0e-5,1/microsec,Tolerance in alpha
+EPSI,1.0e-4,g/(cm*microsec2),Largest negligible pressure
+ETA1,1.0e-3,dimensionless,Fractional pressure tolerance
+ETA2,1.5e-2,dimensionless,Maximum tolerated alpha*dt / 4
+ETA3,3.0e-2,dimensionless,Tolerance for change in alpha
+
+# NUMERICAL CONTROL
+parameter,value,unit,description
+CVP,2.0,dimensionless,Viscous pressure coefficient
+CSC,3.0,dimensionless,Courant stability constant
+dt_initial,2.0,microsec,Initial time step
+dt_max,16.0,microsec,Maximum time step
+NP,100,dimensionless,Hydro cycles between detailed print
+NPOFF,15,dimensionless,Cycles between offline print
+NPOFFP,3,dimensionless,Revised offline print frequency
+KCNTRL,1,dimensionless,Calculate k_eff (1=yes, 0=no)
+
+# ADDITIONAL CONTROL PARAMETERS
+parameter,value,unit,description
+VJ,6.6e-7,g-1*cm-2,Limit on alpha change between S4
+OK1,0.01,dimensionless,Test parameter
+OK2,0.04,dimensionless,Test parameter
+PTEST,1.0e-4,megabars,Maximum local pressure test
+EPSK,5.0e-6,dimensionless,Convergence criterion on k
+POWNGL,1.0,dimensionless,Power following burst threshold
+

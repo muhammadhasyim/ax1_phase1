@@ -1,0 +1,107 @@
+READ:
+er' &
+e1,ni,n2'713,
+Csc'
+At,
+4 "effi ,oftikeff CONTROL
+235
+READ:
+TEST  PARAMETERS _-VJ , OK / , OK2 , PTEST _
+POWER NEGLIG |BLE
+0
+iteraTion
+COUNT
+a = dri
+4-CONTROL
+0
+no 7140
+yes
+7150
+€
+~€
+44
+Ioe
+F
+43
+R(IMAX)~Gw
+M(i)
+0
+M(I)
+0
+B( | )
+2/3 _M(2)
+5/6=0(2)
+5/3 ~ B(2)
+Il6 - M(3)
+Il3--6(3)
+M/a - B(3)
+Ila-M(4)
+1/6--N(4)
+IMI3--B(4)
+5/6
+Lon
+m(5)
+2/3-~M(5 )
+5/3 _ -B( 5)
+Print:
+PROBLEM NAME
+AND   DATE
+SENSE SHITCH 86
+on
+off
+7155
+Print: (-CONTROL,
+a,
+POWER, ISax
+9000
+R(I) , Ghya(I) , F(I),
+U(I),
+0(I), K(I)
+for I =
+2,8,..Kar
+6,
+no
+Ie
+70
+yes
+7172
+Print:
+1
+for
+i=1,2,8*.8
+Print:
+Vg
+for M=l,2,
+for g31,2,'6
+i
+for i=l,2,
+"9
+vg
+Print:
+(vof)g,"; G,8} Ggh;"
+I~J
+for N=l,2,
+Njar ; 9=1,2,*G
+hzl,2,
+"G
+J +
+1~J
+K'(~m
+no
+7190
+yes
+next
+page
+J=jgar
+PR inT:
+(M), a(m), B(m), t(m),
+Acv(m), Bcv(m)
+(at)gar'
+ex'
+0,ar'
+Aaa#
+Haea
+Pm,
+oHaa
+Aa
+PIab

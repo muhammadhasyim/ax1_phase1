@@ -1,0 +1,9 @@
+85
+are noted a8
+in order (NH = 0
+velocity, pressure, internal energy and temperature of each mas8 point.
+This latter print-out i8 time-consuming; hence, the program
+wa8 revised
+5
+8
+2

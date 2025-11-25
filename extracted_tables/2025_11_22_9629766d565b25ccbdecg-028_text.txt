@@ -1,0 +1,27 @@
+8000
+BIG
+G
+LOOP
+915
+Print ROUTinES
+IS
+Nh>0
+yes
+9014
+no
+6820
+6830
+no
+Is [al AtJn2]z0
+At
+At
+BEGIN
+yes
+HYDROCYCLE
+IAt~At
+2
+Print:
+HALVE
+DELT
+9050
+initiALLy

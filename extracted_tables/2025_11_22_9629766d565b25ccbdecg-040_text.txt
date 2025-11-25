@@ -1,0 +1,119 @@
+Print:
+E1'
+n1'
+n13 '
+Cvp' C,c'
+At,
+N,; np,_
+keff ContROL,
+TeST PARAMETERS ~VJ,Oki,0k2 PTEST ,
+POwER NEGLIG | BLE
+9000
+0 ~t
+64
+NH
+300 ~ Ni t
+max
+64
+~a
+0 _=FLAG
+ND
+ND
+bax
+Turn OfF SENSE LiGHTS
+At
+At~
+SENSE SwiTCH #|
+on
+off
+9002
+9003
+PAUSE
+Mm
+0-nsr
+208
+mixture code
+Is
+0
+no
+209
+yes
+CM
+8009
+210
+0 =%
+for
+h = 1,2,=
+""
+6
+E2
+Nw,
+M
+21
+% + Px,l " Ggh,n,~4'
+for
+h =
+1,2,".6
+21
+72i
+22
++
+Ph,
+E
+22
+207
+is
+i+2: =
+0
+no
+yes
+213
+no
+yes
+1+
+is
+= 8
+i+1
+M
+214
+Zh
+Ggh,m
+tor
+h
+=9,
+"G
+no
+21
+9 +
+9
+i8 9
+= 6
+yes
+22
+no
+M + 1-m
+is M
+Maax
+yes
+8009
+er'
+60'
+n2'
+(at)nax'
+Ap;=
+off;
+off;
+ex
+NDaa*
+1 ~Keff
+Nlaa*
+T~n,4
+Heer
+0 _ %i'
+Pa, i
+(vof) 9,#.
+1*09,M4
+Ma,
+Aa. `
+vof)9,4.
+~09,4a

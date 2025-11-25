@@ -27,6 +27,7 @@ module types_1959
   integer, parameter :: GMAX_1959 = 7       ! Maximum energy groups
   integer, parameter :: SHELLMAX_1959 = 256 ! Maximum spatial zones (IMAX)
   integer, parameter :: MU_S4 = 2           ! S4 has 2 directions per hemisphere
+  real(rk), parameter :: ENERGY_RELEASE_TIME_1959 = 72._rk ! Blanket heating delay (μsec)
 
   ! ===========================================================================
   ! Material_1959: Nuclear and thermodynamic properties
@@ -39,6 +40,7 @@ module types_1959
      real(rk) :: sig_f(GMAX_1959) = 0._rk       ! Fission cross section (barns)
      real(rk) :: nu_sig_f(GMAX_1959) = 0._rk    ! ν·σ_f (barns)
      real(rk) :: sig_s(GMAX_1959, GMAX_1959) = 0._rk  ! Scattering g'→g (barns)
+     real(rk) :: sig_tr(GMAX_1959) = 0._rk      ! Transport cross section (barns)
      real(rk) :: chi(GMAX_1959) = 0._rk         ! Fission spectrum
      
      ! -----------------------------------------------------------------------
@@ -73,8 +75,9 @@ module types_1959
      ! Eigenvalue mode control
      ! -----------------------------------------------------------------------
      character(len=8) :: eigmode = "alpha"   ! "alpha" or "k"
-     integer :: ICNTRL = 0                   ! 0: alpha specified, 1: adjust R
+     integer :: ICNTRL = 0                   ! 0: calc alpha, 1: fit radii to alpha
      integer :: KCNTRL = 0                   ! 0: alpha mode, 1: k-eff mode
+     real(rk) :: ALPHA_TARGET = 0.0_rk      ! Target alpha for ICNTRL=1 (μsec⁻¹)
      
      ! -----------------------------------------------------------------------
      ! Convergence criteria (ANL-5977 symbols)
@@ -93,6 +96,7 @@ module types_1959
      real(rk) :: CSC = 2.0_rk       ! Courant stability constant ≈ γ(γ-1)
      real(rk) :: CVP = 1.7_rk       ! Viscous pressure coefficient (typically 1.5-2.0)
      real(rk) :: W_LIMIT = 0.3_rk   ! Maximum allowed W stability function
+     real(rk) :: MIN_ZONE_WIDTH = 0.5_rk ! Minimum ΔR used in W estimate (cm)
      real(rk) :: ALPHA_DELTA_LIMIT = 0.2_rk  ! Maximum α·Δt for stability
      real(rk) :: POWER_DELTA_LIMIT = 0.2_rk  ! Maximum power change per step
      
@@ -132,7 +136,7 @@ module types_1959
      ! -----------------------------------------------------------------------
      ! Output control
      ! -----------------------------------------------------------------------
-     integer :: output_freq = 1     ! Output every N neutronics cycles
+     integer :: output_freq = 100   ! Output every N neutronics cycles (reduced for disk space)
      character(len=256) :: output_file = "ax1_1959.out"
      logical :: print_input = .true.  ! Print input echo
      logical :: verbose = .false.     ! Verbose output for debugging
@@ -156,10 +160,14 @@ module types_1959
      real(rk) :: U(0:SHELLMAX_1959) = 0._rk       ! Velocities (cm/μsec)
      real(rk) :: RO(SHELLMAX_1959) = 0._rk        ! Hydrodynamic density (g/cc)
      real(rk) :: RHO(SHELLMAX_1959) = 0._rk       ! Neutronic density (atoms/cc × 10⁻²⁴)
+     real(rk) :: ROSN(SHELLMAX_1959) = 0._rk      ! Density snapshot for S₄ (ROSN in 1959)
+     real(rk) :: RO_PREV(SHELLMAX_1959) = 0._rk   ! Previous hydrodynamic density
+     real(rk) :: HP_PREV(0:SHELLMAX_1959) = 0._rk ! Previous pressure (before viscosity)
      real(rk) :: HP(0:SHELLMAX_1959) = 0._rk      ! Total pressure P_H + P_v (megabars)
      real(rk) :: THETA(SHELLMAX_1959) = 0._rk     ! Temperature (keV)
      real(rk) :: HE(SHELLMAX_1959) = 0._rk        ! Specific internal energy (10¹² ergs/g)
      real(rk) :: HMASS(SHELLMAX_1959) = 0._rk     ! Zone mass (factor 4π/3 omitted)
+     real(rk) :: FREL(SHELLMAX_1959) = 0._rk      ! Relative fission density F(I)
      
      ! -----------------------------------------------------------------------
      ! Material assignment
@@ -186,26 +194,31 @@ module types_1959
      real(rk) :: AMBAR(5) = [0.0_rk, 5._rk/6._rk, 1._rk/3._rk, 1._rk/6._rk, 2._rk/3._rk]
      real(rk) :: B_CONST(5) = [0.0_rk, 5._rk/3._rk, 11._rk/3._rk, 11._rk/3._rk, 5._rk/3._rk]
      
-     ! -----------------------------------------------------------------------
-     ! Eigenvalues and power
-     ! -----------------------------------------------------------------------
-     real(rk) :: ALPHA = 0._rk      ! Inverse period (μsec⁻¹)
-     real(rk) :: ALPHAP = 0._rk     ! Previous alpha
-     real(rk) :: ALPHAO = 0._rk     ! Alpha for VJ-OK-1 test
-     real(rk) :: AKEFF = 1._rk      ! k-effective
-     real(rk) :: AK(4) = 1._rk      ! k-eff iteration array
-     real(rk) :: POWER = 0._rk      ! Power (arbitrary units)
-     real(rk) :: TOTAL_POWER = 0._rk  ! Total system power
-     real(rk) :: POWER_PREV = 0._rk   ! Previous power for change detection
+    ! -----------------------------------------------------------------------
+    ! Eigenvalues and power
+    ! -----------------------------------------------------------------------
+    real(rk) :: ALPHA = 0._rk      ! Inverse period (μsec⁻¹)
+    real(rk) :: ALPHAP = 0._rk     ! Previous alpha
+    real(rk) :: ALPHAO = 0._rk     ! Alpha for VJ-OK-1 test
+    real(rk) :: AKEFF = 1._rk      ! k-effective
+    real(rk) :: AK(4) = 1._rk      ! k-eff iteration array
+    real(rk) :: POWER = 0._rk      ! Power (arbitrary units)
+    real(rk) :: TOTAL_POWER = 0._rk  ! Total system power
+    real(rk) :: POWER_PREV = 0._rk   ! Previous power for change detection
+    real(rk) :: LAMBDA_INITIAL = 0._rk  ! Initial generation time (μsec) - cached
      real(rk) :: Q = 0._rk          ! Total energy (10¹² ergs, lacking 4π/3)
      real(rk) :: QPRIME = 0._rk     ! Previous Q
+    real(rk) :: QBAR = 0._rk       ! Energy increment per cycle (10¹² ergs)
+    real(rk) :: QBAR_LAST = 0._rk   ! Cached QBAR for diagnostics
+    real(rk) :: DELQ_TOTAL = 0._rk  ! Total fission energy deposited this cycle
      
      ! -----------------------------------------------------------------------
      ! Energetics
      ! -----------------------------------------------------------------------
      real(rk) :: TOTKE = 0._rk      ! Total kinetic energy (10¹² ergs)
      real(rk) :: TOTIEN = 0._rk     ! Total internal energy (10¹² ergs)
-     real(rk) :: FBAR = 1._rk       ! Average fission rate
+     real(rk) :: FBAR = 1._rk       ! Flux-weighted fission rate (ΣWN·F)
+     real(rk) :: FBAR_GEOM = 1._rk  ! Geometric fission sum (ΣT·F)
      
      ! -----------------------------------------------------------------------
      ! Time
@@ -217,6 +230,9 @@ module types_1959
      ! Stability and diagnostics
      ! -----------------------------------------------------------------------
      real(rk) :: W = 0._rk          ! Stability function
+    real(rk) :: W_CFL = 0._rk      ! CFL contribution to W
+    real(rk) :: W_VISC = 0._rk     ! Viscous contribution to W
+    real(rk) :: DELV_MAX(SHELLMAX_1959) = 0._rk  ! Max specific volume change per zone (for W calc)
      real(rk) :: ERRLCL = 0._rk     ! Local energy error
      real(rk) :: CHECK = 0._rk      ! Energy balance check
      real(rk) :: FLAG1 = 0._rk      ! Power termination flag
@@ -262,10 +278,14 @@ contains
     st%U = 0._rk
     st%RO = 0._rk
     st%RHO = 0._rk
+    st%ROSN = 0._rk
+    st%RO_PREV = 0._rk
+    st%HP_PREV = 0._rk
     st%HP = 0._rk
     st%THETA = 0._rk
     st%HE = 0._rk
     st%HMASS = 0._rk
+    st%FREL = 0._rk
     st%N = 0._rk
     st%ENN = 0._rk
     st%K = 1

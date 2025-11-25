@@ -25,12 +25,13 @@
 module hydro_vnr_1959
   use kinds
   use types_1959
+  use, intrinsic :: ieee_arithmetic, only: ieee_is_finite
   implicit none
 
   private
   public :: hydro_step_1959, compute_lagrangian_coords
   public :: update_thermo_1959, compute_viscous_pressure
-  public :: compute_total_energy, add_fission_energy
+  public :: compute_total_energy
 
 contains
 
@@ -38,28 +39,80 @@ contains
   ! Complete hydro step: velocity → position → density → EOS
   ! ANL-5977 Order 9050-9200
   ! ===========================================================================
-  subroutine hydro_step_1959(st, ctrl)
+  subroutine hydro_step_1959(st, ctrl, qbar)
     type(State_1959), intent(inout) :: st
     type(Control_1959), intent(in) :: ctrl
+    real(rk), intent(in) :: qbar
     
-    integer :: i
+    integer :: i, imat
+    real(rk) :: delq, delta_v, ro_inv_new, ro_inv_old
+    real(rk) :: dele, z_term, delta_v_eff
+    real(rk) :: energy_error
+    
+    ! Reset per-cycle diagnostics
+    st%DELQ_TOTAL = 0._rk
+    st%ERRLCL = 0._rk
+    st%DELV_MAX = 0._rk  ! Reset max specific volume change for W calculation
     
     ! Update velocities from pressure gradient (Lagrangian)
     call update_velocities_lagrangian(st, ctrl)
+    call diagnose_geometry_finiteness(st, "after velocity update")
     
     ! Update positions from velocities
     call update_positions(st, ctrl)
+    call diagnose_geometry_finiteness(st, "after position update")
     
-    ! Update density from Lagrangian coordinates
+    ! Update density from Lagrangian coordinates (store previous)
+    st%RO_PREV = st%RO
     call update_density_lagrangian(st)
+    call diagnose_geometry_finiteness(st, "after density update")
     
-    ! Compute viscous pressure (von Neumann-Richtmyer)
-    call compute_viscous_pressure(st, ctrl)
+    ! Preserve previous total pressure for work term
+    st%HP_PREV(2:st%IMAX) = st%HP(2:st%IMAX)
+    
+    ! Predictor pressure using current density / old temperature
+    call compute_hydrodynamic_pressure(st)
     
     ! Update thermodynamics (EOS iteration)
     do i = 2, st%IMAX
-      call update_thermo_1959(st, ctrl, i)
+      imat = st%K(i)
+      
+      ! Specific volume change (DELV in ANL-5977)
+      ro_inv_new = 1.0_rk / max(st%RO(i), 1.0e-30_rk)
+      ro_inv_old = 1.0_rk / max(st%RO_PREV(i), 1.0e-30_rk)
+      delta_v = ro_inv_new - ro_inv_old
+      
+      ! Store max |DELV| for W stability calculation (Order 9190)
+      st%DELV_MAX(i) = max(st%DELV_MAX(i), abs(delta_v))
+      
+      ! Fission energy increment per gram (ANL-1959 Order 9070)
+      delq = qbar * st%FREL(i) / max(st%ROSN(i), 1.0e-30_rk)
+      if (delq > 0._rk) then
+        delq = min(delq, 0.05_rk * max(st%HE(i), 1.0e-6_rk))
+      end if
+      
+      ! Mechanical work correction and EOS linear terms (Orders 9130-9134)
+      delta_v_eff = delta_v
+      if (st%TIME < ENERGY_RELEASE_TIME_1959) delta_v_eff = 0._rk
+      
+      dele = delq - 0.5_rk * (st%HP_PREV(i) + st%HP(i)) * delta_v_eff
+      z_term = dele + delta_v_eff * (st%mat(imat)%TAU + &
+                st%mat(imat)%ALPHA * 0.5_rk * (st%RO(i) + st%RO_PREV(i)))
+      
+      ! Accumulate total energy (Q lacking 4π/3)
+      st%Q = st%Q + delq * st%HMASS(i)
+      st%DELQ_TOTAL = st%DELQ_TOTAL + delq * st%HMASS(i)
+      
+      ! Update thermodynamics with energy source
+      call update_thermo_1959(st, ctrl, i, z_term, energy_error)
+      st%ERRLCL = max(st%ERRLCL, energy_error)
     end do
+    
+    ! Recompute hydrodynamic pressure from updated state
+    call compute_hydrodynamic_pressure(st)
+    
+    ! Compute viscous pressure (von Neumann-Richtmyer) using updated θ, ρ
+    call compute_viscous_pressure(st, ctrl)
     
     ! Apply free boundary condition
     st%HP(st%IMAX + 1) = -st%HP(st%IMAX)
@@ -200,15 +253,7 @@ contains
     
     do i = 2, st%IMAX
       imat = st%K(i)
-      
-      ! Compute hydrodynamic pressure from EOS (before viscosity)
-      ! P_H = α·ρ + β·θ + τ
-      P_H = st%mat(imat)%ALPHA * st%RO(i) + &
-            st%mat(imat)%BETA * st%THETA(i) + &
-            st%mat(imat)%TAU
-      
-      ! Apply no-negative-pressure constraint
-      if (P_H < 0._rk) P_H = 0._rk
+      P_H = st%HP(i)
       
       ! Check for compression: ΔV < 0 ?
       ! Volume of shell: V ∝ R³ - R_{i-1}³
@@ -234,13 +279,22 @@ contains
               (dV_dt**2) / max(V_new**2, 1.0e-60_rk)
         
         ! Limit viscous pressure to avoid instability
-        P_v = min(P_v, 10._rk * abs(P_H))
+        P_v = min(P_v, 10._rk * max(abs(P_H), 1.0e-12_rk))
       else
         P_v = 0._rk  ! No viscosity during expansion
       end if
       
       ! Total pressure
       st%HP(i) = P_H + P_v
+      
+      if (.not. ieee_is_finite(st%HP(i))) then
+        print *, "==== VISCOSITY NAN TRACE zone", i, " t =", st%TIME, "μsec ===="
+        print *, "  P_H =", P_H, "  P_v =", P_v
+        print *, "  R(i) =", st%R(i), "  R(i-1) =", st%R(i-1), " delta_R =", delta_R
+        print *, "  RO(i) =", st%RO(i), "  THETA(i) =", st%THETA(i)
+        print *, "  delta_V =", delta_V, "  compression_check =", compression_check
+        print *, "==== END VISCOSITY NAN TRACE ===="
+      end if
     end do
     
   end subroutine compute_viscous_pressure
@@ -250,24 +304,27 @@ contains
   ! ANL-5977 Order 9124-9150
   ! Iterates: P_H → θ → P_H until convergence
   ! ===========================================================================
-  subroutine update_thermo_1959(st, ctrl, i)
+  subroutine update_thermo_1959(st, ctrl, i, delta_e, energy_error)
     type(State_1959), intent(inout) :: st
     type(Control_1959), intent(in) :: ctrl
     integer, intent(in) :: i
+    real(rk), intent(in) :: delta_e
+    real(rk), intent(out) :: energy_error
     
     integer :: iter, imat
-    real(rk) :: P_guess, P_new, delta_P, theta_new
-    real(rk) :: E_specific, A_cv, B_cv
+    real(rk) :: P_guess, P_new, delta_P, theta_new, discriminant
+    real(rk) :: E_specific, A_cv, B_cv, energy_floor
     logical :: converged
     
     imat = st%K(i)
+    energy_error = 0._rk
     
     ! Get EOS and specific heat parameters
     A_cv = st%mat(imat)%ACV
     B_cv = st%mat(imat)%BCV
     
     ! Specific internal energy (per gram)
-    E_specific = st%HE(i)
+    E_specific = st%HE(i) + delta_e
     
     ! Modified Euler iteration
     ! Initial guess: P_new = P_old
@@ -280,7 +337,25 @@ contains
       ! E = A_cv·θ + 0.5·B_cv·θ²
       ! Quadratic formula: θ = (-A_cv + sqrt(A_cv² + 2·B_cv·E))/B_cv
       if (abs(B_cv) > 1.0e-12_rk) then
-        theta_new = (-A_cv + sqrt(A_cv**2 + 2._rk * B_cv * E_specific)) / B_cv
+        energy_floor = -0.5_rk * (A_cv**2) / max(B_cv, 1.0e-12_rk)
+        if (E_specific < energy_floor) then
+          print *, "==== ENERGY FLOOR TRACE zone", i, " t =", st%TIME, "μsec ===="
+          print *, "  A_cv =", A_cv, "  B_cv =", B_cv
+          print *, "  E_specific(before) =", E_specific, "  floor =", energy_floor
+          print *, "  delta_e =", delta_e
+          print *, "==== END ENERGY FLOOR TRACE ===="
+          E_specific = energy_floor
+        end if
+        discriminant = A_cv**2 + 2._rk * B_cv * E_specific
+        if (discriminant < 0._rk) then
+          print *, "==== THETA NAN TRACE zone", i, " t =", st%TIME, "μsec ===="
+          print *, "  A_cv =", A_cv, "  B_cv =", B_cv
+          print *, "  E_specific =", E_specific, "  delta_e =", delta_e
+          print *, "  discriminant =", discriminant
+          print *, "==== END THETA NAN TRACE ===="
+          discriminant = max(discriminant, 0._rk)
+        end if
+        theta_new = (-A_cv + sqrt(discriminant)) / B_cv
       else
         ! Linear case: E = A_cv·θ
         theta_new = E_specific / max(A_cv, 1.0e-12_rk)
@@ -317,6 +392,7 @@ contains
     
     ! Update internal energy
     st%HE(i) = A_cv * st%THETA(i) + 0.5_rk * B_cv * st%THETA(i)**2
+    energy_error = abs(st%HE(i) - E_specific)
     
   end subroutine update_thermo_1959
 
@@ -342,40 +418,85 @@ contains
       st%TOTIEN = st%TOTIEN + st%HMASS(i) * st%HE(i)
     end do
     
-    ! Total energy (lacking factor 4π/3 as in 1959 code)
-    st%Q = st%TOTKE + st%TOTIEN
-    
-    ! For output, multiply by 4π/3 = 4.18879
-    ! TOTKE and TOTIEN in units of 10¹² ergs
+    ! Energy balance check (Q from sums vs. integrated Q)
+    ! Apply 4π/3 factor since HMASS omits it
+    st%CHECK = (st%Q - 4.1887902047863909_rk * (st%TOTKE + st%TOTIEN)) / &
+               max(abs(st%Q), 1.0e-30_rk)
     
   end subroutine compute_total_energy
 
-  ! ===========================================================================
-  ! Add fission energy to internal energy
-  ! Q_bar = POWER·Δt / (12.56637·F_bar)
-  ! ANL-5977 Order 9060
-  ! ===========================================================================
-  subroutine add_fission_energy(st, ctrl, power, fbar)
-    type(State_1959), intent(inout) :: st
-    type(Control_1959), intent(in) :: ctrl
-    real(rk), intent(in) :: power, fbar
-    
+  subroutine diagnose_geometry_finiteness(st, context)
+    type(State_1959), intent(in) :: st
+    character(len=*), intent(in) :: context
     integer :: i
-    real(rk) :: Q_bar, energy_per_fission
-    
-    ! Total energy deposited this time step
-    Q_bar = power * ctrl%DELT / (12.56637_rk * max(fbar, 1.0e-30_rk))
-    
-    ! Distribute energy proportional to fission rate in each zone
-    ! For now, simplified: uniform distribution
-    ! Proper implementation needs fission rate per zone
+    logical :: header_printed
+    integer, save :: last_report_cycle = -1
+    real(rk), save :: last_report_time = -1._rk
+
+    if (st%NH == last_report_cycle .and. abs(st%TIME - last_report_time) < 1.0e-9_rk) return
+
+    header_printed = .false.
+
     do i = 2, st%IMAX
-      ! Add energy per unit mass
-      energy_per_fission = Q_bar / max(st%HMASS(i), 1.0e-30_rk)
-      st%HE(i) = st%HE(i) + energy_per_fission
+      if (.not. ieee_is_finite(st%R(i))) then
+        if (.not. header_printed) then
+          print *, "==== HYDRO NAN MONITOR (", trim(context), ")  t =", st%TIME, "μsec ===="
+          header_printed = .true.
+        end if
+        print *, "  R(", i, ") =", st%R(i)
+      end if
+      if (.not. ieee_is_finite(st%HMASS(i))) then
+        if (.not. header_printed) then
+          print *, "==== HYDRO NAN MONITOR (", trim(context), ")  t =", st%TIME, "μsec ===="
+          header_printed = .true.
+        end if
+        print *, "  HMASS(", i, ") =", st%HMASS(i)
+      end if
+      if (.not. ieee_is_finite(st%RO(i))) then
+        if (.not. header_printed) then
+          print *, "==== HYDRO NAN MONITOR (", trim(context), ")  t =", st%TIME, "μsec ===="
+          header_printed = .true.
+        end if
+        print *, "  RO(", i, ") =", st%RO(i)
+      end if
+      if (.not. ieee_is_finite(st%U(i))) then
+        if (.not. header_printed) then
+          print *, "==== HYDRO NAN MONITOR (", trim(context), ")  t =", st%TIME, "μsec ===="
+          header_printed = .true.
+        end if
+        print *, "  U(", i, ") =", st%U(i)
+      end if
+      if (.not. ieee_is_finite(st%RL(i))) then
+        if (.not. header_printed) then
+          print *, "==== HYDRO NAN MONITOR (", trim(context), ")  t =", st%TIME, "μsec ===="
+          header_printed = .true.
+        end if
+        print *, "  RL(", i, ") =", st%RL(i)
+      end if
     end do
-    
-  end subroutine add_fission_energy
+
+    if (header_printed) then
+      last_report_cycle = st%NH
+      last_report_time = st%TIME
+    end if
+
+  end subroutine diagnose_geometry_finiteness
+
+  subroutine compute_hydrodynamic_pressure(st)
+    type(State_1959), intent(inout) :: st
+    integer :: i, imat
+    real(rk) :: P_H
+
+    do i = 2, st%IMAX
+      imat = st%K(i)
+      P_H = st%mat(imat)%ALPHA * st%RO(i) + &
+            st%mat(imat)%BETA * st%THETA(i) + &
+            st%mat(imat)%TAU
+      if (P_H < 0._rk) P_H = 0._rk
+      st%HP(i) = P_H
+    end do
+
+  end subroutine compute_hydrodynamic_pressure
 
 end module hydro_vnr_1959
 
