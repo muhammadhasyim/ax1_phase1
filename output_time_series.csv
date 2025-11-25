@@ -1,0 +1,2 @@
+time_microsec,QP_1e12_erg,power_relative,alpha_1_microsec,delt_microsec,W_dimensionless,QBAR_1e12erg_per_g,DELQ_1e12_erg,TOTKE_1e12_erg,TOTIEN_1e12_erg,W_cfl,W_visc,NS4,DTMAX_microsec,FBAR_weighted,FBAR_geom,W_limit_flag,alpha_dt_flag,CHECK,ERRLCL
+  1.010000E+02,  3.835365E+03,  3.508653E+00,  1.294040E-02,  4.000000E+00,  2.185435E-01,  2.766561E-02,  6.166110E-01,  3.200350+128,  3.041564E+03,  2.087483E-01,  1.745074E-02,23,  1.600000E+01,  1.690982E+02,  4.036921E+01,  0.000000E+00,  0.000000E+00, -3.495260+125,  3.469447E-18

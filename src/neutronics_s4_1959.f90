@@ -26,8 +26,11 @@ module neutronics_s4_1959
   private
   public :: solve_alpha_eigenvalue_1959, solve_k_eigenvalue_1959
   public :: transport_sweep_s4_1959, build_prompt_sources_1959
+  public :: transport_sweep_alpha_mode_1959
   public :: scale_geometry_1959, fit_geometry_to_alpha_1959
   public :: normalize_flux, estimate_initial_k_eff
+  public :: compute_alpha_update_1959, compute_alpha_from_k
+  public :: initialize_alpha_mode_rates
 
   integer, save :: source_diag_calls = 0
   integer, save :: norm_diag_calls = 0
@@ -223,12 +226,14 @@ contains
     k_old = k_eff
     
     ! Compute initial fission rates F_old from current flux
+    ! ANL-5977: F(I) = SUM1 * RHO(I) - includes RHO factor
     do i = 2, st%IMAX
       imat = st%K(i)
       tr%FEP(i) = 0._rk
       do g = 1, st%IG
         tr%FEP(i) = tr%FEP(i) + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
       end do
+      tr%FEP(i) = tr%FEP(i) * st%RHO(i)  ! Multiply by RHO per ANL-5977
     end do
     
     do iter = 1, ctrl%max_source_iter
@@ -244,23 +249,59 @@ contains
         ! SO(I) = 4*DELTA(I) * (ANU(IG)*F(I)/AKEFF + RHO(I)*SUMI)
         ! where:
         !   DELTA(I) = (R(I) - R(I-1))/2 (HALF zone width)
-        !   F(I) = nu_sig_f * N  (no RHO factor for 1-group)
-        !   SUMI = Σ sig_s * N  (scattering)
+        !   F(I) = RHO * nu_sig_f * N  (INCLUDES RHO per ANL-5977 line 301)
+        !   SUMI = Σ sig_s * N  (scattering, sig_s is microscopic)
+        !
+        ! ANL-5977 convention: cross sections are MICROSCOPIC (barns)
+        ! RHO = atom density (10^24 atoms/cc)
+        ! Both fission (F=RHO*nu_sig_f*N) and scattering (RHO*sig_s*N) have one RHO factor
         tr%SO = 0._rk
         do i = 2, st%IMAX
           imat = st%K(i)
           delta_i = (st%R(i) - st%R(i-1)) / 2.0_rk  ! ANL-5977 DELTA = half zone width
           
-          ! Scattering source: Σ σ_s(g'→g) * N(g')
+          ! Scattering source: Σ σ_s(g'→g) * N(g') (will be multiplied by RHO below)
+          sum1 = 0.0_rk
           do gp = 1, st%IG
-            tr%SO(i) = tr%SO(i) + st%mat(imat)%sig_s(gp, g) * st%N(gp, i)
+            sum1 = sum1 + st%mat(imat)%sig_s(gp, g) * st%N(gp, i)
           end do
           
-          ! Fission source: χ(g) * F(I) / k = χ(g) * νΣf * N / k
-          tr%SO(i) = tr%SO(i) + st%mat(imat)%chi(g) * tr%FE(i) / max(k_eff, 1.0e-30_rk)
+          ! Fission source: χ(g) * F(I) where F = RHO * nu_sig_f * N
+          ! Alpha mode (KCALC=0): χ(g) * F(I)          -- NO division by k
+          ! K mode (KCALC≠0):     χ(g) * F(I) / AKEFF  -- divide by k
+          if (abs(alpha) > 1.0e-30_rk) then
+            ! Alpha mode: fission source NOT divided by k
+            ! FE already has RHO, so add RHO*scattering for consistency
+            tr%SO(i) = st%mat(imat)%chi(g) * tr%FE(i) + st%RHO(i) * sum1
+          else
+            ! K mode: fission source divided by k
+            tr%SO(i) = st%mat(imat)%chi(g) * tr%FE(i) / max(k_eff, 1.0e-30_rk) + st%RHO(i) * sum1
+          end if
           
-          ! Multiply by 4*DELTA*RHO to match ANL-5977 normalization
-          tr%SO(i) = 4.0_rk * delta_i * st%RHO(i) * tr%SO(i)
+          ! Multiply by 4*DELTA per ANL-5977 Order 3/10/1223
+          ! Note: DELTA = (R(i) - R(i-1))/2 is HALF zone width
+          ! So 4*DELTA = 2*(zone width)
+          tr%SO(i) = 4.0_rk * delta_i * tr%SO(i)
+        end do
+        
+        ! Compute H array (optical thickness) BEFORE angular sweep
+        ! ANL-5977 Order 8000, lines 211-214:
+        !   KCALC=0 (alpha mode): H(I) = DELTA(I) * (SIG*RHO + ALPHA/V)
+        !   KCALC≠0 (k mode):     H(I) = DELTA(I) * SIG*RHO
+        do i = 2, st%IMAX
+          imat = st%K(i)
+          delta_i = (st%R(i) - st%R(i-1)) / 2.0_rk
+          
+          if (abs(st%mat(imat)%sig_tr(g)) > 1.0e-30_rk) then
+            tr%H(i) = delta_i * st%mat(imat)%sig_tr(g) * st%RHO(i)
+          else
+            tr%H(i) = delta_i * (st%mat(imat)%sig_f(g) + sum(st%mat(imat)%sig_s(:, g))) * st%RHO(i)
+          end if
+          
+          ! Alpha-mode time absorption (ANL-5977 line 212)
+          if (abs(alpha) > 1.0e-30_rk .and. st%mat(imat)%V(g) > 1.0e-30_rk) then
+            tr%H(i) = tr%H(i) + delta_i * alpha / st%mat(imat)%V(g)
+          end if
         end do
         
         ! S4 angular sweep (5 angular components)
@@ -304,13 +345,15 @@ contains
       end do
       
       ! Step 2: Compute F_new from new flux (Order 302-308)
-      ! F_new = nu_sig_f * N_new
+      ! ANL-5977: F(I) = SUM1 * RHO(I) where SUM1 = Σ ANUSIG * EN
+      ! F_new = RHO * nu_sig_f * N_new (includes RHO per line 301)
       do i = 2, st%IMAX
         tr%FE(i) = 0._rk
         imat = st%K(i)
         do g = 1, st%IG
           tr%FE(i) = tr%FE(i) + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
         end do
+        tr%FE(i) = tr%FE(i) * st%RHO(i)  ! Multiply by RHO per ANL-5977
         st%FREL(i) = tr%FE(i)
       end do
       
@@ -384,6 +427,285 @@ contains
   end subroutine transport_sweep_s4_1959
 
   ! ===========================================================================
+  ! Alpha-mode transport sweep with alpha update (ANL-5977 Orders 8000-8500)
+  !
+  ! CRITICAL DIFFERENCES from k-mode:
+  !   1. H includes time absorption: H = DELTA * (SIG*RHO + ALPHA/V)
+  !   2. Source does NOT divide by k: SO = 4*DELTA * (ANU*F + RHO*SUM1)
+  !   3. Alpha updated via: ALPHA = ALPHA + (FFBAR+FEBAR-FFBARP-FEBARP)/FENBAR
+  ! ===========================================================================
+  subroutine transport_sweep_alpha_mode_1959(st, ctrl, alpha)
+    type(State_1959), intent(inout) :: st
+    type(Control_1959), intent(inout) :: ctrl
+    real(rk), intent(inout) :: alpha
+    
+    type(S4Transport) :: tr
+    integer :: iter, i, j, g, gp, imat
+    real(rk) :: alpha_prev
+    real(rk) :: sum1, sum2, delta_i
+    real(rk) :: delta_alpha_raw, delta_alpha_limited
+    logical :: converged
+    real(rk), parameter :: four_pi_over_three = 4.1887902047863909_rk
+    integer, save :: sweep_call_count = 0
+    
+    sweep_call_count = sweep_call_count + 1
+    if (sweep_call_count <= 3) then
+      print *, "==== ALPHA SWEEP ENTRY (call", sweep_call_count, ") ===="
+      print *, "  N(1,2) BEFORE init =", st%N(1, 2)
+    end if
+    
+    ! Initialize transport arrays
+    call init_transport_arrays(st, tr)
+    
+    if (sweep_call_count <= 3) then
+      print *, "  N(1,2) AFTER init =", st%N(1, 2)
+      print *, "==== END ENTRY DEBUG ===="
+    end if
+    
+    ! Save previous fission and escape rates for alpha update
+    st%FFBARP = st%FFBAR
+    st%FEBARP = st%FEBAR
+    
+    ! F_OLD and E_OLD should already contain OLD F, E from previous Big G loop
+    ! (stored in State_1959 to persist between calls)
+    ! If this is the first call, initialize them from current flux
+    if (sweep_call_count == 1) then
+      do i = 2, st%IMAX
+        imat = st%K(i)
+        st%F_OLD(i) = 0._rk
+        st%E_OLD(i) = 0._rk
+        do g = 1, st%IG
+          st%F_OLD(i) = st%F_OLD(i) + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
+          st%E_OLD(i) = st%E_OLD(i) + sum(st%mat(imat)%sig_s(:, g)) * st%N(g, i)
+        end do
+        ! ANL-5977: F(I) = SUM1*RHO(I) - multiply by RHO!
+        st%F_OLD(i) = st%F_OLD(i) * st%RHO(i)
+        st%E_OLD(i) = st%E_OLD(i) * st%RHO(i)
+      end do
+    end if
+    
+    ! Alpha-mode: SINGLE iteration per time step (no inner convergence loop)
+    ! The original ANL-5977 does one sweep per neutron cycle, then updates alpha
+    ! based on the rate of change of fission rate. Multiple iterations would
+    ! require re-solving the steady-state, which is not the intent.
+    
+    do iter = 1, 1  ! Single iteration only!
+      alpha_prev = alpha
+      
+      ! Build sources (PROMPT ONLY in alpha mode - no k division)
+      call build_prompt_sources_1959(st, tr, 1.0_rk, alpha)  ! Pass k=1 (not used in alpha mode)
+      
+      ! Sweep over energy groups
+      do g = 1, st%IG
+        ! Build source for this group - ALPHA MODE: NO division by k!
+        ! ANL-5977: SO = 4*DELTA*(chi*F + RHO*scattering) where F = RHO*nu_sig_f*N
+        tr%SO = 0._rk
+        do i = 2, st%IMAX
+          imat = st%K(i)
+          delta_i = (st%R(i) - st%R(i-1)) / 2.0_rk
+          
+          ! Scattering source: Σ σ_s * N (will be multiplied by RHO)
+          sum1 = 0.0_rk
+          do gp = 1, st%IG
+            sum1 = sum1 + st%mat(imat)%sig_s(gp, g) * st%N(gp, i)
+          end do
+          
+          ! Fission source: chi * FE (FE already has RHO)
+          ! NO division by k in alpha mode!
+          tr%SO(i) = st%mat(imat)%chi(g) * tr%FE(i) + st%RHO(i) * sum1
+          
+          ! Multiply by 4*DELTA per ANL-5977
+          tr%SO(i) = 4.0_rk * delta_i * tr%SO(i)
+        end do
+        
+        ! Compute H with alpha/V term
+        do i = 2, st%IMAX
+          imat = st%K(i)
+          delta_i = (st%R(i) - st%R(i-1)) / 2.0_rk
+          
+          if (abs(st%mat(imat)%sig_tr(g)) > 1.0e-30_rk) then
+            tr%H(i) = delta_i * st%mat(imat)%sig_tr(g) * st%RHO(i)
+          else
+            tr%H(i) = delta_i * sum(st%mat(imat)%sig_s(:, g)) * st%RHO(i)
+          end if
+          
+          ! Alpha-mode time absorption: add ALPHA/V
+          if (st%mat(imat)%V(g) > 1.0e-30_rk) then
+            tr%H(i) = tr%H(i) + delta_i * alpha / st%mat(imat)%V(g)
+          end if
+        end do
+        
+        ! Debug before sweep
+        if (iter == 1 .and. g == 1) then
+          print *, "==== ALPHA SWEEP DEBUG (iter 1, g 1) ===="
+          print *, "  Before sweep: N(1,2) =", st%N(g, 2), "  FE(2) =", tr%FE(2)
+          print *, "  H(2) =", tr%H(2), "  SO(2) =", tr%SO(2)
+          print *, "  alpha =", alpha, "  RHO(2) =", st%RHO(2)
+        end if
+        
+        ! S4 angular sweep
+        call s4_angular_sweep(st, tr, g)
+        
+        ! Update scalar flux
+        do i = 2, st%IMAX
+          sum1 = 0.0_rk
+          do j = 1, 5
+            sum2 = st%ENN(i, j) + st%ENN(i-1, j)
+            if (j == 1 .or. j == 5) sum2 = sum2 / 2.0_rk
+            sum1 = sum1 + sum2
+          end do
+          st%N(g, i) = sum1 / 8.0_rk
+        end do
+        
+        ! Debug after sweep
+        if (sweep_call_count <= 3 .and. (iter == 1 .or. iter == 2)) then
+          print *, "  iter=", iter, " g=", g, " After sweep:  N(1,2) =", st%N(g, 2)
+        end if
+      end do
+      
+      ! =========================================================================
+      ! Compute FFBAR, FEBAR, FENBAR for alpha update (ANL-5977 Orders 300-311)
+      ! CRITICAL: The pseudocode computes FFBARP using OLD F with NEW WN
+      ! =========================================================================
+      if (sweep_call_count <= 3 .and. (iter == 1 .or. iter == 2)) then
+        print *, "  iter=", iter, " After group loop: N(1,2) =", st%N(1, 2)
+      end if
+      
+      ! ANL-5977 lines 279-285: Compute WN and ENNN from NEW flux (after sweep)
+      do i = 2, st%IMAX
+        tr%T(i) = (st%R(i)**3 - st%R(i-1)**3) / 3.0_rk
+        tr%WN(i) = tr%T(i) * sum(st%N(1:st%IG, i))
+        
+        ! ENNN(I) = Σ EN(IG,I)/V(IG) - velocity-weighted flux
+        st%ENNN(i) = 0._rk
+        imat = st%K(i)
+        do g = 1, st%IG
+          if (st%mat(imat)%V(g) > 1.0e-30_rk) then
+            st%ENNN(i) = st%ENNN(i) + st%N(g, i) / st%mat(imat)%V(g)
+          end if
+        end do
+      end do
+      
+      ! ANL-5977 lines 286-291: FFBARP = Σ WN_new * F_old
+      ! Use OLD F saved from previous Big G loop, but NEW WN
+      st%FFBARP = 0._rk
+      st%FEBARP = 0._rk
+      do i = 2, st%IMAX
+        st%FFBARP = st%FFBARP + tr%WN(i) * st%F_OLD(i)
+        st%FEBARP = st%FEBARP + tr%WN(i) * st%E_OLD(i)
+      end do
+      
+      ! ANL-5977 lines 293-303: Compute NEW F(I) and E(I) from new flux
+      do i = 2, st%IMAX
+        imat = st%K(i)
+        tr%FE(i) = 0._rk
+        tr%EE(i) = 0._rk
+        do g = 1, st%IG
+          tr%FE(i) = tr%FE(i) + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
+          tr%EE(i) = tr%EE(i) + sum(st%mat(imat)%sig_s(:, g)) * st%N(g, i)
+        end do
+        ! ANL-5977: F(I) = SUM1*RHO(I) - multiply by RHO!
+        tr%FE(i) = tr%FE(i) * st%RHO(i)
+        tr%EE(i) = tr%EE(i) * st%RHO(i)
+        st%FREL(i) = tr%FE(i)
+      end do
+      
+      ! ANL-5977 lines 307-310: FFBAR = Σ WN_new * F_new
+      st%FFBAR = 0._rk
+      st%FEBAR = 0._rk
+      st%FENBAR = 0._rk
+      do i = 2, st%IMAX
+        st%FFBAR = st%FFBAR + tr%WN(i) * tr%FE(i)
+        st%FEBAR = st%FEBAR + tr%WN(i) * tr%EE(i)
+        st%FENBAR = st%FENBAR + tr%WN(i) * st%ENNN(i)
+      end do
+      
+      ! =========================================================================
+      ! Alpha update (ANL-5977 line 8015/346)
+      ! ALPHA = ALPHA + (FFBAR + FEBAR - FFBARP - FEBARP) / FENBAR
+      !
+      ! CRITICAL: Skip update on first call after k-mode transition
+      ! because FFBARP/FEBARP are from k-mode with different weighting
+      ! =========================================================================
+      if (sweep_call_count <= 5) then
+        print *, "  Alpha update debug:"
+        print *, "    FFBAR=", st%FFBAR, " FFBARP=", st%FFBARP
+        print *, "    FEBAR=", st%FEBAR, " FEBARP=", st%FEBARP
+        print *, "    FENBAR=", st%FENBAR
+        print *, "    delta_F=", st%FFBAR - st%FFBARP
+        print *, "    delta_E=", st%FEBAR - st%FEBARP
+      end if
+      
+      ! ANL-5977 line 8015/346: ALPHA = ALPHA + (FFBAR + FEBAR - FFBARP - FEBARP) / FENBAR
+      ! This tracks the rate of change in production/escape
+      ! NOTE: Apply relaxation to prevent oscillation (original code may have
+      ! relied on smaller time steps for stability)
+      if (abs(st%FENBAR) > 1.0e-30_rk) then
+        delta_alpha_raw = (st%FFBAR + st%FEBAR - st%FFBARP - st%FEBARP) / st%FENBAR
+        
+        ! Limit the alpha change to prevent instability
+        ! Alpha should adjust slowly as the system evolves
+        delta_alpha_limited = sign(min(abs(delta_alpha_raw), 0.1_rk * max(abs(alpha), 0.01_rk)), &
+                                   delta_alpha_raw)
+        alpha = alpha + delta_alpha_limited
+        
+        if (sweep_call_count <= 10) then
+          print *, "  Alpha update: delta_raw =", delta_alpha_raw, &
+                   " limited =", delta_alpha_limited, " new alpha =", alpha
+        end if
+      end if
+      
+      ! Save F, E for next Big G loop (ANL-5977: F, E persist as "old" values)
+      do i = 2, st%IMAX
+        st%F_OLD(i) = tr%FE(i)
+        st%E_OLD(i) = tr%EE(i)
+      end do
+      
+      ! Check convergence
+      if (sweep_call_count <= 3 .and. (iter == 1 .or. iter == 2)) then
+        print *, "  iter=", iter, " End of iteration: N(1,2) =", st%N(1, 2), " alpha =", alpha
+      end if
+      
+      if (abs(alpha - alpha_prev) < ctrl%EPSA) then
+        converged = .true.
+        if (sweep_call_count <= 3) print *, "  Converged at iter=", iter
+        exit
+      end if
+      
+      st%AITCT = st%AITCT + 1
+    end do
+    
+    st%ALPHA = alpha
+    st%FBAR = st%FFBAR * four_pi_over_three
+    
+    if (sweep_call_count <= 3) then
+      print *, "==== ALPHA SWEEP EXIT (call", sweep_call_count, ") ===="
+      print *, "  N(1,2) at exit =", st%N(1, 2)
+      print *, "==== END EXIT DEBUG ===="
+    end if
+    
+  end subroutine transport_sweep_alpha_mode_1959
+
+  ! ===========================================================================
+  ! Compute alpha update for transient (ANL-5977 line 8015/346)
+  ! ALPHA = ALPHA + (FFBAR + FEBAR - FFBARP - FEBARP) / FENBAR
+  ! ===========================================================================
+  subroutine compute_alpha_update_1959(st, alpha_new)
+    type(State_1959), intent(inout) :: st
+    real(rk), intent(out) :: alpha_new
+    
+    real(rk) :: delta_alpha
+    
+    if (abs(st%FENBAR) > 1.0e-30_rk) then
+      delta_alpha = (st%FFBAR + st%FEBAR - st%FFBARP - st%FEBARP) / st%FENBAR
+      alpha_new = st%ALPHA + delta_alpha
+    else
+      alpha_new = st%ALPHA
+    end if
+    
+  end subroutine compute_alpha_update_1959
+
+  ! ===========================================================================
   ! S4 Angular Sweep (ANL-5977 lines 1219-1260)
   !
   ! CRITICAL: Sweep direction depends on angle index!
@@ -407,8 +729,8 @@ contains
     
     integer :: i, j, imat, L, II, JK
     real(rk) :: AMT, AMBART, BT, BS, HI, denominator
-    real(rk) :: delta_i, rbar_i, S_i  ! ANL-5977 geometry terms
-    real(rk) :: ENN_before, coeff_direct, coeff_coupling1, coeff_coupling2
+    real(rk) :: S_i  ! ANL-5977 geometry term S(I) = DELTA/RBAR
+    real(rk) :: coeff_direct, coeff_coupling1, coeff_coupling2
     integer :: neg_count
     logical :: do_diag
     
@@ -419,26 +741,9 @@ contains
       print *, "==== S4 SWEEP DIAGNOSTICS (call", s4_sweep_calls, ") ===="
     end if
     
-    ! Compute H array (optical thickness) using ANL-5977 DELTA formula
-    ! ANL-5977 Order 8000, line 1204-1206:
-    !   H(I) = DELTA(I) * SIG(IG,N) * RHO(I)
-    ! where DELTA(I) = (R(I) - R(I-1))/2 (HALF the zone width!)
-    do i = 2, st%IMAX
-      imat = st%K(i)
-      delta_i = (st%R(i) - st%R(i-1)) / 2.0_rk  ! ANL-5977 DELTA = half zone width
-      
-      ! Use transport cross section if available (non-zero)
-      if (abs(st%mat(imat)%sig_tr(g)) > 1.0e-30_rk) then
-        tr%H(i) = delta_i * st%mat(imat)%sig_tr(g) * st%RHO(i)
-      else
-        ! Fallback: use fission + scattering cross sections
-        if (abs(st%RHO(i)) < 1.0e-30_rk) then
-          tr%H(i) = delta_i * st%mat(imat)%sig_f(g)
-        else
-          tr%H(i) = delta_i * (st%mat(imat)%sig_f(g) + sum(st%mat(imat)%sig_s(:, g))) * st%RHO(i)
-        end if
-      end if
-    end do
+    ! NOTE: H array (optical thickness) is computed in the calling subroutine
+    ! (transport_sweep_s4_1959 or transport_sweep_alpha_mode_1959)
+    ! This includes the alpha/V term for alpha mode
     
     ! ANL-5977 lines 227-228: Set vacuum BC for inward angles BEFORE sweep
     ! DO 30 J=1,3
@@ -474,7 +779,7 @@ contains
         
         do i = st%IMAX - 1, 2, -1
           L = i + 1   ! Upstream cell is outer neighbor
-          II = L      ! Use upstream cell for H and SO (ANL-5977 convention)
+          II = L      ! Use UPSTREAM cell for H and SO (upwind convention)
           
           HI = tr%H(II)
           ! ANL-5977: BS = BT * S(I) where S(I) = DELTA/RBAR = (R-R_prev)/(R+R_prev)
@@ -611,6 +916,7 @@ contains
     integer, parameter :: diag_limit = 3
     
     ! Compute fission rate at each zone
+    ! ANL-5977: F(I) = SUM1 * RHO(I) where SUM1 = Σ ANUSIG * EN
     do i = 2, st%IMAX
       imat = st%K(i)
       tr%FE(i) = 0._rk
@@ -619,6 +925,7 @@ contains
         ! This is the critical 1959 assumption
         tr%FE(i) = tr%FE(i) + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
       end do
+      tr%FE(i) = tr%FE(i) * st%RHO(i)  ! Multiply by RHO per ANL-5977 line 301
       st%FREL(i) = tr%FE(i)
       
       ! Hold blanket fission density at zero during early heating period
@@ -791,6 +1098,67 @@ contains
   end function compute_alpha_from_k
 
   ! ===========================================================================
+  ! Initialize FFBAR, FEBAR, FENBAR from k-eigenvalue result
+  ! CRITICAL: Must be called after k-eigenvalue calculation and before
+  ! first alpha sweep to prevent alpha explosion
+  ! ===========================================================================
+  subroutine initialize_alpha_mode_rates(st)
+    type(State_1959), intent(inout) :: st
+    
+    integer :: i, g, imat
+    real(rk) :: T_i, WN_i, FE_i, EE_i, ENNN_i
+    
+    st%FFBAR = 0._rk
+    st%FEBAR = 0._rk
+    st%FENBAR = 0._rk
+    
+    do i = 2, st%IMAX
+      imat = st%K(i)
+      
+      ! Volume weight T(i) = (R³ - R³)/3
+      T_i = (st%R(i)**3 - st%R(i-1)**3) / 3.0_rk
+      
+      ! Flux weight WN(i) = T(i) * N(i)
+      WN_i = T_i * sum(st%N(1:st%IG, i))
+      
+      ! Fission rate F(i) = Σ ν·σ_f · N
+      FE_i = 0._rk
+      do g = 1, st%IG
+        FE_i = FE_i + st%mat(imat)%nu_sig_f(g) * st%N(g, i)
+      end do
+      
+      ! Escape/scattering rate E(i) = Σ σ_s · N
+      EE_i = 0._rk
+      do g = 1, st%IG
+        EE_i = EE_i + sum(st%mat(imat)%sig_s(:, g)) * st%N(g, i)
+      end do
+      
+      ! Velocity-weighted flux ENNN(i) = Σ N(g)/V(g)
+      ENNN_i = 0._rk
+      do g = 1, st%IG
+        if (st%mat(imat)%V(g) > 1.0e-30_rk) then
+          ENNN_i = ENNN_i + st%N(g, i) / st%mat(imat)%V(g)
+        end if
+      end do
+      
+      ! Accumulate weighted sums
+      st%FFBAR = st%FFBAR + WN_i * FE_i
+      st%FEBAR = st%FEBAR + WN_i * EE_i
+      st%FENBAR = st%FENBAR + WN_i * ENNN_i
+    end do
+    
+    ! Initialize "previous" values to current
+    st%FFBARP = st%FFBAR
+    st%FEBARP = st%FEBAR
+    
+    print *, "Initialized alpha-mode rates:"
+    print *, "  FFBAR  =", st%FFBAR
+    print *, "  FEBAR  =", st%FEBAR
+    print *, "  FENBAR =", st%FENBAR
+    
+  end subroutine initialize_alpha_mode_rates
+
+  ! ===========================================================================
   ! Scale all radii uniformly (for ICNTRL=1 mode)
   ! ANL-5977: "let the program vary all radii linearly to achieve this alpha"
   ! ===========================================================================
@@ -811,22 +1179,23 @@ contains
   ! Fit geometry to target alpha (ICNTRL=1 mode)
   ! ANL-5977 Notes on Sheet No. 2: "let the program vary all radii linearly
   ! to achieve this alpha before beginning the hydrodynamics solution"
+  !
+  ! Algorithm (lines 8020-8021, 319-368):
+  ! 1. Run S4 sweep with current geometry
+  ! 2. Compute Z = (FFBAR + FEBAR) / (FFBARP + FEBARP)
+  ! 3. Scale all radii: R(I) = R(I) / Z
+  ! 4. Check if R(IMAX) has converged
+  ! 5. If not, go back to step 1
   ! ===========================================================================
   subroutine fit_geometry_to_alpha_1959(st, ctrl)
     type(State_1959), intent(inout) :: st
     type(Control_1959), intent(in) :: ctrl
     
-    real(rk) :: alpha_calc, k_calc
-    real(rk) :: s_low, s_high, s_mid
-    real(rk) :: alpha_low, alpha_high, alpha_mid
-    real(rk) :: R_outer_prev, R_outer_new
-    integer :: iter
+    real(rk) :: Z, A(4), R_outer_history(4)
+    real(rk) :: k_calc, alpha_calc, k_target
+    integer :: iter, i
     logical :: converged
-    real(rk), dimension(0:SHELLMAX_1959) :: R_initial
-    
-    ! Initialize values
-    alpha_mid = 0.0_rk
-    k_calc = 1.0_rk
+    type(S4Transport) :: tr
     
     print *, "========================================="
     print *, "ICNTRL=01: Critical Geometry Search"
@@ -834,116 +1203,97 @@ contains
     print *, "Target alpha:", ctrl%ALPHA_TARGET, " μsec⁻¹"
     print *, "Initial R_max:", st%R(st%IMAX), " cm"
     
-    ! Save initial radii
-    R_initial = st%R
+    ! Set target alpha
+    st%ALPHA = ctrl%ALPHA_TARGET
+    k_calc = 1.0_rk
     
-    ! Initialize bisection brackets
-    ! s < 1 compresses (increases reactivity)
-    ! s > 1 expands (decreases reactivity)
-    s_low = 0.5_rk
-    s_high = 2.0_rk
+    ! Initialize convergence history
+    A = st%R(st%IMAX)
+    R_outer_history = st%R(st%IMAX)
     
-    ! Evaluate alpha at lower bracket
-    call scale_geometry_1959(st, s_low)
-    call solve_alpha_eigenvalue_1959(st, ctrl, alpha_low, k_calc)
-    st%R = R_initial  ! Restore
+    ! Initialize transport arrays
+    call init_transport_arrays(st, tr)
     
-    ! Evaluate alpha at upper bracket
-    call scale_geometry_1959(st, s_high)
-    call solve_alpha_eigenvalue_1959(st, ctrl, alpha_high, k_calc)
-    st%R = R_initial  ! Restore
-    
-    print *, "Bracket check:"
-    print *, "  s=", s_low, " → alpha=", alpha_low
-    print *, "  s=", s_high, " → alpha=", alpha_high
-    
-    ! Check if target is bracketed
-    if ((alpha_low - ctrl%ALPHA_TARGET) * (alpha_high - ctrl%ALPHA_TARGET) > 0._rk) then
-      print *, "WARNING: Target alpha not bracketed! Adjusting brackets..."
-      ! Expand search range
-      if (alpha_low < ctrl%ALPHA_TARGET .and. alpha_high < ctrl%ALPHA_TARGET) then
-        ! Need more compression
-        s_low = 0.3_rk
-        call scale_geometry_1959(st, s_low)
-        call solve_alpha_eigenvalue_1959(st, ctrl, alpha_low, k_calc)
-        st%R = R_initial
-      else if (alpha_low > ctrl%ALPHA_TARGET .and. alpha_high > ctrl%ALPHA_TARGET) then
-        ! Need more expansion
-        s_high = 3.0_rk
-        call scale_geometry_1959(st, s_high)
-        call solve_alpha_eigenvalue_1959(st, ctrl, alpha_high, k_calc)
-        st%R = R_initial
-      end if
-    end if
-    
-    ! Bisection iteration
     converged = .false.
-    R_outer_prev = st%R(st%IMAX)
     
     do iter = 1, ctrl%max_source_iter
-      ! Midpoint
-      s_mid = 0.5_rk * (s_low + s_high)
+      ! Run k-eigenvalue to establish flux distribution
+      call solve_k_eigenvalue_1959(st, ctrl, k_calc)
       
-      ! Apply scaling
-      call scale_geometry_1959(st, s_mid)
+      ! Compute alpha from k: α = (k-1)/Λ
+      alpha_calc = (k_calc - 1.0_rk) / max(st%LAMBDA_INITIAL, 0.1_rk)
       
-      ! Calculate alpha for this geometry
-      call solve_alpha_eigenvalue_1959(st, ctrl, alpha_mid, k_calc)
+      ! Initialize alpha-mode rates (FFBAR, FEBAR, FENBAR)
+      call initialize_alpha_mode_rates(st)
       
-      R_outer_new = st%R(st%IMAX)
+      ! Geometry scaling for target alpha
+      ! Target k = 1 + α_target × Λ
+      ! For Geneva 10 with blanket: larger size → MORE k (core effect dominates)
+      ! So if k > k_target, we need to SHRINK (Z < 1)
+      ! If k < k_target, we need to EXPAND (Z > 1)
       
-      ! Check convergence on alpha
-      if (abs(alpha_mid - ctrl%ALPHA_TARGET) < ctrl%EPSA) then
-        converged = .true.
-        print *, "Converged on alpha at iteration", iter
-        print *, "  Final alpha:", alpha_mid
-        print *, "  Final k_eff:", k_calc
-        print *, "  Final R_max:", R_outer_new, " cm"
-        print *, "  Scaling factor:", s_mid
-        exit
-      end if
+      k_target = 1.0_rk + ctrl%ALPHA_TARGET * st%LAMBDA_INITIAL
       
-      ! Alternative convergence: radius change
-      if (iter > 1 .and. abs(R_outer_new - R_outer_prev) < ctrl%EPSR) then
-        converged = .true.
-        print *, "Converged on radius at iteration", iter
-        print *, "  Final alpha:", alpha_mid
-        print *, "  Final k_eff:", k_calc
-        print *, "  Final R_max:", R_outer_new, " cm"
-        print *, "  Scaling factor:", s_mid
-        exit
-      end if
-      
-      ! Update brackets
-      if ((alpha_mid - ctrl%ALPHA_TARGET) * (alpha_low - ctrl%ALPHA_TARGET) < 0._rk) then
-        s_high = s_mid
-        alpha_high = alpha_mid
+      if (k_calc > 1.0e-10_rk .and. k_target > 1.0e-10_rk) then
+        ! Use inverse ratio: if k > target, Z < 1 (shrink)
+        Z = sqrt(k_target / k_calc)
       else
-        s_low = s_mid
-        alpha_low = alpha_mid
+        Z = 1.0_rk
       end if
       
-      R_outer_prev = R_outer_new
-      st%R = R_initial  ! Reset for next iteration
+      ! Limit Z to prevent wild oscillations (max 2% change per iteration)
+      Z = max(0.98_rk, min(Z, 1.02_rk))
       
-      if (mod(iter, 5) == 0) then
-        print *, "  Iter", iter, ": s=", s_mid, " alpha=", alpha_mid, &
-                 " |Δα|=", abs(alpha_mid - ctrl%ALPHA_TARGET)
+      ! Scale all radii: if k > k_target, need to EXPAND (increase R) to reduce k
+      ! R_new = R_old × scale where scale > 1 expands, scale < 1 compresses
+      if (abs(Z - 1.0_rk) > 1.0e-10_rk) then
+        do i = 2, st%IMAX
+          st%R(i) = st%R(i) * Z  ! Multiply (not divide) to expand when Z > 1
+        end do
       end if
+      
+      ! Update convergence history (shift array)
+      R_outer_history(1:3) = R_outer_history(2:4)
+      R_outer_history(4) = st%R(st%IMAX)
+      
+      print *, "  Iter", iter, ": k=", k_calc, " α=", alpha_calc, &
+               " Z=", Z, " R_max=", st%R(st%IMAX)
+      
+      ! Check convergence: R(IMAX) stable over last 3 iterations
+      if (iter >= 4) then
+        if (maxval(abs(R_outer_history - R_outer_history(4))) < ctrl%EPSR * st%R(st%IMAX)) then
+          converged = .true.
+          print *, "Converged at iteration", iter
+          exit
+        end if
+      end if
+      
+      ! Also check if alpha is close to target
+      if (abs(alpha_calc - ctrl%ALPHA_TARGET) < ctrl%EPSA) then
+        converged = .true.
+        print *, "Alpha converged at iteration", iter
+        exit
+      end if
+      
+      ! Save current rates as "previous" for next iteration
+      st%FFBARP = st%FFBAR
+      st%FEBARP = st%FEBAR
     end do
     
     if (.not. converged) then
       print *, "WARNING: Geometry fit did not converge in", ctrl%max_source_iter, " iterations"
-      print *, "Using best result: alpha=", alpha_mid
     end if
     
-    ! Apply final scaling
-    call scale_geometry_1959(st, s_mid)
-    
     ! Store final values
-    st%ALPHA = alpha_mid
+    st%ALPHA = alpha_calc
     st%AKEFF = k_calc
     
+    print *, "========================================="
+    print *, "Geometry Fit Complete:"
+    print *, "  Final R_max:", st%R(st%IMAX), " cm"
+    print *, "  Final k_eff:", k_calc
+    print *, "  Final alpha:", alpha_calc, " μsec⁻¹"
+    print *, "  Target alpha:", ctrl%ALPHA_TARGET, " μsec⁻¹"
     print *, "========================================="
     
   end subroutine fit_geometry_to_alpha_1959

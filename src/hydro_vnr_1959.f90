@@ -103,6 +103,17 @@ contains
       st%Q = st%Q + delq * st%HMASS(i)
       st%DELQ_TOTAL = st%DELQ_TOTAL + delq * st%HMASS(i)
       
+      ! Debug trace for NaN origin
+      if (i == 2 .and. (.not. ieee_is_finite(z_term) .or. st%NH < 3)) then
+        print *, "==== HYDRO DEBUG zone 2, t =", st%TIME, "μsec ===="
+        print *, "  qbar =", qbar, "  FREL =", st%FREL(i), "  ROSN =", st%ROSN(i)
+        print *, "  delq =", delq, "  delta_v_eff =", delta_v_eff
+        print *, "  dele =", dele, "  z_term =", z_term
+        print *, "  HP(i) =", st%HP(i), "  HP_PREV(i) =", st%HP_PREV(i)
+        print *, "  HE(i) =", st%HE(i), "  THETA(i) =", st%THETA(i)
+        print *, "==== END HYDRO DEBUG ===="
+      end if
+      
       ! Update thermodynamics with energy source
       call update_thermo_1959(st, ctrl, i, z_term, energy_error)
       st%ERRLCL = max(st%ERRLCL, energy_error)
@@ -149,6 +160,13 @@ contains
       
       ! Velocity update (leapfrog scheme)
       st%U(i) = st%U(i) + ctrl%DELT * accel
+      
+      ! Debug first few steps
+      if (st%TIME < 5.0_rk .and. i == 2) then
+        print *, "VELOCITY DEBUG: t =", st%TIME, " U(2) =", st%U(2), " accel =", accel
+        print *, "  dP_dRL =", dP_dRL, " R_ratio_sq =", R_ratio_sq
+        print *, "  HP(2) =", st%HP(2), " HP(3) =", st%HP(3)
+      end if
     end do
     
   end subroutine update_velocities_lagrangian

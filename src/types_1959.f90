@@ -42,6 +42,7 @@ module types_1959
      real(rk) :: sig_s(GMAX_1959, GMAX_1959) = 0._rk  ! Scattering g'→g (barns)
      real(rk) :: sig_tr(GMAX_1959) = 0._rk      ! Transport cross section (barns)
      real(rk) :: chi(GMAX_1959) = 0._rk         ! Fission spectrum
+     real(rk) :: V(GMAX_1959) = 169.5_rk        ! Neutron velocity (cm/μsec) per group
      
      ! -----------------------------------------------------------------------
      ! Equation of State: P_H = ALPHA * rho + BETA * theta + TAU
@@ -76,7 +77,8 @@ module types_1959
      ! -----------------------------------------------------------------------
      character(len=8) :: eigmode = "alpha"   ! "alpha" or "k"
      integer :: ICNTRL = 0                   ! 0: calc alpha, 1: fit radii to alpha
-     integer :: KCNTRL = 0                   ! 0: alpha mode, 1: k-eff mode
+     integer :: KCNTRL = 0                   ! 0: alpha mode after init, 1: k-eff mode first
+     integer :: KCALC = 0                    ! 0: alpha mode (transient), 1: k mode (initial)
      real(rk) :: ALPHA_TARGET = 0.0_rk      ! Target alpha for ICNTRL=1 (μsec⁻¹)
      
      ! -----------------------------------------------------------------------
@@ -107,7 +109,7 @@ module types_1959
      real(rk) :: DELTP = 1.0e-3_rk  ! Previous time step for velocity
      real(rk) :: DT_MAX = 0.1_rk    ! Maximum time step (μsec)
      real(rk) :: T_END = 1.0_rk     ! Simulation end time (μsec)
-     real(rk) :: R_MAX_DISASSEMBLY = 100.0_rk  ! Max radius for termination (cm)
+     real(rk) :: R_MAX_DISASSEMBLY = 200.0_rk  ! Max radius for termination (cm)
      real(rk) :: DELT_min = 1.0e-8_rk  ! Minimum time step
      real(rk) :: DELT_max = 1.0_rk     ! Maximum time step
      
@@ -206,11 +208,23 @@ module types_1959
     real(rk) :: TOTAL_POWER = 0._rk  ! Total system power
     real(rk) :: POWER_PREV = 0._rk   ! Previous power for change detection
     real(rk) :: LAMBDA_INITIAL = 0._rk  ! Initial generation time (μsec) - cached
-     real(rk) :: Q = 0._rk          ! Total energy (10¹² ergs, lacking 4π/3)
-     real(rk) :: QPRIME = 0._rk     ! Previous Q
+    real(rk) :: Q = 0._rk          ! Total energy (10¹² ergs, lacking 4π/3)
+    real(rk) :: QPRIME = 0._rk     ! Previous Q
     real(rk) :: QBAR = 0._rk       ! Energy increment per cycle (10¹² ergs)
     real(rk) :: QBAR_LAST = 0._rk   ! Cached QBAR for diagnostics
     real(rk) :: DELQ_TOTAL = 0._rk  ! Total fission energy deposited this cycle
+    
+    ! -----------------------------------------------------------------------
+    ! Alpha-mode iteration variables (ANL-5977 lines 277-311)
+    ! -----------------------------------------------------------------------
+    real(rk) :: FFBAR = 0._rk      ! Σ WN(I)*F(I) - current fission rate
+    real(rk) :: FFBARP = 0._rk     ! Previous FFBAR
+    real(rk) :: FEBAR = 0._rk      ! Σ WN(I)*E(I) - current escape rate
+    real(rk) :: FEBARP = 0._rk     ! Previous FEBAR  
+    real(rk) :: FENBAR = 0._rk     ! Σ WN(I)*ENNN(I) for alpha update
+    real(rk) :: ENNN(SHELLMAX_1959) = 0._rk  ! ENNN(I) = Σ EN(IG,I)/V(IG)
+    real(rk) :: F_OLD(SHELLMAX_1959) = 0._rk  ! F(I) from previous Big G loop
+    real(rk) :: E_OLD(SHELLMAX_1959) = 0._rk  ! E(I) from previous Big G loop
      
      ! -----------------------------------------------------------------------
      ! Energetics
@@ -251,8 +265,10 @@ module types_1959
      real(rk) :: SO(SHELLMAX_1959) = 0._rk        ! Source array
      real(rk) :: T(SHELLMAX_1959) = 0._rk         ! Volume array (1/3 * ΔR³)
      real(rk) :: WN(SHELLMAX_1959) = 0._rk        ! Weight function
-     real(rk) :: FE(SHELLMAX_1959) = 0._rk        ! Fission rate
+     real(rk) :: FE(SHELLMAX_1959) = 0._rk        ! Fission rate F(I) = ν·Σf · φ
      real(rk) :: FEP(SHELLMAX_1959) = 0._rk       ! Previous fission rate
+     real(rk) :: EE(SHELLMAX_1959) = 0._rk        ! Escape/absorption rate E(I) = Σ_s→g · φ
+     real(rk) :: EEP(SHELLMAX_1959) = 0._rk       ! Previous escape rate
   end type S4Transport
 
 contains

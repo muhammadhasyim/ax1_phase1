@@ -84,10 +84,25 @@ contains
     read(unit, '(A)') ctrl%eigmode
     ctrl%eigmode = trim(adjustl(ctrl%eigmode))
     
-    ! Default ICNTRL (no geometry search by default)
-    ctrl%ICNTRL = 0
-    ctrl%ALPHA_TARGET = 0.0_rk
+    ! ANL-5977: ICNTRL and ALPHA_TARGET for geometry fitting
+    ! ICNTRL=0: Calculate alpha from geometry
+    ! ICNTRL=1: Fit geometry to achieve target alpha (Geneva 10 mode)
+    read(unit, *) ctrl%ICNTRL
+    read(unit, *) ctrl%ALPHA_TARGET
     ctrl%EPSR = 1.0e-4_rk
+    
+    print *, "ICNTRL =", ctrl%ICNTRL
+    print *, "ALPHA_TARGET =", ctrl%ALPHA_TARGET, " μsec⁻¹"
+    
+    ! Set KCNTRL=1 for alpha mode (k-calc first, then alpha mode)
+    ! This is the standard Geneva 10 transient mode (ANL-5977)
+    if (trim(ctrl%eigmode) == "alpha") then
+      ctrl%KCNTRL = 1
+      ctrl%KCALC = 1  ! Start with k-calc
+    else
+      ctrl%KCNTRL = 0
+      ctrl%KCALC = 1  ! K-mode only
+    end if
     
     ! Time parameters
     read(unit, *) ctrl%DELT
@@ -102,6 +117,9 @@ contains
     ! Convergence
     read(unit, *) ctrl%EPSA
     read(unit, *) ctrl%EPSK
+    
+    ! Minimum time step
+    read(unit, *) ctrl%DELT_min
     
     ! Hydro subcycling
     read(unit, *) ctrl%HYDRO_PER_NEUT
@@ -128,12 +146,12 @@ contains
     st%IMAX = nzones
     
     ! Zone boundaries (radii in cm)
-    ! R(I) is outer boundary of zone I. We read IMAX values: R(1) to R(IMAX)
+    ! R(I) is outer boundary of zone I. We read IMAX+1 values: R(0) to R(IMAX)
+    ! where R(0)=0 is the center and R(IMAX) is the outer boundary
     read(unit, '(A)') line  ! Skip "RADII"
-    do i = 1, st%IMAX
+    do i = 0, st%IMAX
       read(unit, *) st%R(i)
     end do
-    st%R(0) = 0._rk  ! Center always at r=0
     
     ! Material assignment per zone
     read(unit, '(A)') line  ! Skip "MATERIALS"
@@ -243,9 +261,18 @@ contains
       
       ! Conversion factor
       read(unit, *) st%mat(imat)%ROLAB
+      
+      ! Optional: Neutron velocity (defaults to 169.5 cm/μsec for fast neutrons)
+      ! ANL-5977: V(IG) = 1/VLOC where VLOC is inverse velocity
+      ! For 1 MeV neutrons: v ≈ 1.4e9 cm/sec = 1.4e3 cm/μsec
+      ! But ANL-5977 uses V = 169.5 cm/μsec (appears to be scaled units)
+      do g = 1, st%IG
+        st%mat(imat)%V(g) = 169.5_rk  ! Default from ANL-5977 sample problem
+      end do
     end do
     
     print *, "Materials read: ", nmat, " materials,", st%IG, " groups"
+    print *, "  Neutron velocity V(1) =", st%mat(1)%V(1), " cm/μsec"
     
   end subroutine read_materials_block
 
@@ -263,10 +290,15 @@ contains
     st%U = 0._rk
     
     ! Compute neutronic densities from hydrodynamic densities
+    ! RHO = RO / ROLAB where RO is g/cm³ and ROLAB is 10⁻²⁴ g/atom
+    ! Result: RHO in 10²⁴ atoms/cm³
     do i = 2, st%IMAX
       imat = st%K(i)
       st%RHO(i) = st%RO(i) / st%mat(imat)%ROLAB
     end do
+    print *, "Neutronic density RHO(2) =", st%RHO(2), " (10^24 atoms/cm³)"
+    print *, "  RO(2) =", st%RO(2), " g/cm³"
+    print *, "  ROLAB =", st%mat(st%K(2))%ROLAB, " (10^-24 g/atom)"
     
     ! Compute internal energy from temperature
     do i = 2, st%IMAX

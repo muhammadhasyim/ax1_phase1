@@ -361,7 +361,7 @@ contains
     
     ! Termination criteria
     if (ctrl%T_END < 1.0e-12_rk) ctrl%T_END = 1.0_rk  ! 1 μsec default
-    if (ctrl%R_MAX_DISASSEMBLY < 1.0_rk) ctrl%R_MAX_DISASSEMBLY = 100.0_rk  ! 100 cm
+    if (ctrl%R_MAX_DISASSEMBLY < 1.0_rk) ctrl%R_MAX_DISASSEMBLY = 200.0_rk  ! 200 cm
     
     ! Convergence tolerances
     if (ctrl%EPSA < 1.0e-12_rk) ctrl%EPSA = 1.0e-6_rk

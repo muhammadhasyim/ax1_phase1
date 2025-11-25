@@ -38,8 +38,22 @@ OBJ := $(SRC:.f90=.o)
 ax1: $(OBJ)
 	$(FC) $(SYSROOT_FLAG) $(FFLAGS) $(LDFLAGS) -o $@ $(OBJ)
 
+# 1959 AX-1 faithful reproduction build
+SRC_1959 := \
+	src/kinds.f90 \
+	src/types_1959.f90 \
+	src/io_1959.f90 \
+	src/neutronics_s4_1959.f90 \
+	src/hydro_vnr_1959.f90 \
+	src/time_control_1959.f90 \
+	src/main_1959.f90
+OBJ_1959 := $(SRC_1959:.f90=.o)
+
+ax1_1959: $(OBJ_1959)
+	$(FC) $(SYSROOT_FLAG) $(FFLAGS) $(LDFLAGS) -o $@ $(OBJ_1959)
+
 %.o: %.f90
 	$(FC) $(SYSROOT_FLAG) $(FFLAGS) -c $< -o $@
 
 clean:
-	rm -f src/*.o src/*.mod ax1 *.mod
+	rm -f src/*.o src/*.mod ax1 ax1_1959 *.mod
