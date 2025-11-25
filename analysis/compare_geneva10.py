@@ -328,8 +328,8 @@ def plot_combined_comparison(ref_time, ref_QP, ref_power, ref_alpha, ref_W,
     print(f"Saved: {output_file}")
 
 def create_comparison_table(ref_time, ref_QP, ref_power, ref_alpha,
-                            sim_data, output_file):
-    """Create a comparison table at key time points."""
+                            sim_time, sim_QP, sim_power, sim_alpha, output_file):
+    """Create a comparison table at key time points using filtered data."""
     
     # Key time points for comparison
     key_times = [0, 50, 100, 150, 200, 250, 300]
@@ -340,17 +340,17 @@ def create_comparison_table(ref_time, ref_QP, ref_power, ref_alpha,
         ref_idx = np.argmin(np.abs(ref_time - t))
         
         # Find closest simulation point
-        sim_idx = np.argmin(np.abs(sim_data['time_microsec'].values - t))
+        sim_idx = np.argmin(np.abs(sim_time - t))
         
-        if ref_idx < len(ref_time) and sim_idx < len(sim_data):
+        if ref_idx < len(ref_time) and sim_idx < len(sim_time):
             row = {
                 'Time (μsec)': t,
                 'Ref QP': f"{ref_QP[ref_idx]:.1f}",
-                'Sim QP': f"{sim_data['QP_1e12_erg'].iloc[sim_idx]:.1f}",
+                'Sim QP': f"{sim_QP[sim_idx]:.1f}",
                 'Ref Power': f"{ref_power[ref_idx]:.2f}",
-                'Sim Power': f"{sim_data['power_relative'].iloc[sim_idx]:.2f}",
+                'Sim Power': f"{sim_power[sim_idx]:.2f}",
                 'Ref α (10^-3)': f"{ref_alpha[ref_idx]*1000:.3f}",
-                'Sim α (10^-3)': f"{sim_data['alpha_1_microsec'].iloc[sim_idx]*1000:.3f}",
+                'Sim α (10^-3)': f"{sim_alpha[sim_idx]*1000:.3f}",
             }
             rows.append(row)
     
@@ -381,12 +381,12 @@ def create_comparison_table(ref_time, ref_QP, ref_power, ref_alpha,
 # =============================================================================
 
 if __name__ == "__main__":
-    # Create output directory
-    output_dir = Path("analysis/figures")
+    # Create output directory (relative to script location)
+    output_dir = Path(__file__).parent / "figures"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Load simulation data
-    csv_file = Path("output_time_series.csv")
+    csv_file = Path(__file__).parent.parent / "output_time_series.csv"
     if csv_file.exists():
         sim_data = load_simulation_data(csv_file)
         print(f"Loaded simulation data: {len(sim_data)} time points")
@@ -428,9 +428,10 @@ if __name__ == "__main__":
                                 sim_time, sim_QP, sim_power, sim_alpha, sim_W_plot,
                                 output_dir / "geneva10_combined_comparison.png")
         
-        # Create comparison table
+        # Create comparison table (using filtered data)
         create_comparison_table(ref_1959_time, ref_1959_QP, ref_1959_power, ref_1959_alpha,
-                               sim_data, output_dir / "geneva10_comparison_table.txt")
+                               sim_time, sim_QP, sim_power, sim_alpha,
+                               output_dir / "geneva10_comparison_table.txt")
         
         print("\nAll comparison plots and tables generated!")
         

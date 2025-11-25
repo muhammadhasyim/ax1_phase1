@@ -229,27 +229,36 @@ contains
   ! ===========================================================================
   ! Compute Lagrangian coordinates from current density
   ! ANL-5977 line 1400 (Order 6818)
-  ! RL(I)³ = RL(I-1)³ + ρ(I)·[R(I)³ - R(I-1)³]
+  !
+  ! CRITICAL FIX: RL must have units of [cm] for the momentum equation
+  !   dU/dt = -(R²/RL²) × ∂P/∂RL
+  ! to be dimensionally consistent.
+  !
+  ! The Lagrangian coordinate RL is defined such that RL = R at t=0.
+  ! During the transient, RL stays FIXED while R changes.
+  ! This labels each material particle by its initial position.
+  !
+  ! HMASS = ρ₀ × (R³ - R_prev³) = mass of each zone (lacking 4π/3 factor)
   ! ===========================================================================
   subroutine compute_lagrangian_coords(st)
     type(State_1959), intent(inout) :: st
     
     integer :: i
-    real(rk) :: delta_volume
     
     ! Central Lagrangian coordinate
     st%RL(1) = 0._rk
     
-    ! Compute RL from mass conservation
+    ! At t=0, Lagrangian coordinate equals Eulerian position
+    ! RL(I) = R(I) ensures R²/RL² is dimensionless in momentum equation
     do i = 2, st%IMAX + 1
-      delta_volume = st%RO(min(i, st%IMAX)) * (st%R(i)**3 - st%R(i-1)**3)
-      st%RL(i) = (st%RL(i-1)**3 + delta_volume)**(1._rk/3._rk)
+      st%RL(i) = st%R(i)
     end do
     
-    ! Compute zone masses HMASS(I) = RL(I)³ - RL(I-1)³
-    ! (factor 4π/3 omitted as in 1959 code)
+    ! Compute zone masses HMASS(I) = ρ(I) × (R(I)³ - R(I-1)³)
+    ! This is the actual mass of the zone (lacking 4π/3 factor)
+    ! HMASS stays constant during the transient (mass conservation)
     do i = 2, st%IMAX
-      st%HMASS(i) = st%RL(i)**3 - st%RL(i-1)**3
+      st%HMASS(i) = st%RO(i) * (st%R(i)**3 - st%R(i-1)**3)
     end do
     
   end subroutine compute_lagrangian_coords
@@ -435,8 +444,9 @@ contains
     end do
     
     ! Energy balance check (Q from sums vs. integrated Q)
-    ! Apply 4π/3 factor since HMASS omits it
-    st%CHECK = (st%Q - 4.1887902047863909_rk * (st%TOTKE + st%TOTIEN)) / &
+    ! Q, TOTKE, and TOTIEN all use HMASS (which lacks 4π/3)
+    ! so they are directly comparable - no 4π/3 factor needed
+    st%CHECK = (st%Q - (st%TOTKE + st%TOTIEN)) / &
                max(abs(st%Q), 1.0e-30_rk)
     
   end subroutine compute_total_energy

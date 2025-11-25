@@ -1,0 +1,11 @@
+# Geneve 10 Rerun March 20, 1959 - Energy Balance Data (Long Print-outs)
+# Reference: ANL-5977 (1959), extracted from anotherversion.tex
+# TOTAL_ENERGY = QP (10^12 ergs), includes 4π/3 factor
+# KINETIC_ENERGY = Total kinetic energy (10^12 ergs)
+# CHECK = (Q - 4π/3*(KE+IE))/Q - energy balance error (should be small)
+# ERROR_LOCAL = Maximum local energy error per zone
+time_microsec,total_energy_1e12_erg,kinetic_energy_1e12_erg,CHECK,error_local
+200.0,4.466130e+03,0.0,-1.378316e-04,2.656016e-06
+295.0,7.079975e+03,1.350323e+01,-4.988344e-04,9.519630e-06
+300.0,7.283048e+03,2.097754e+01,-4.672505e-04,9.519164e-06
+

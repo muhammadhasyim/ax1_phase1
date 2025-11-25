@@ -654,8 +654,10 @@ contains
         ! Limit the alpha change per time step
         ! From 1959 data: alpha changes from 0.013 to -0.001 over 30 μsec
         ! That's 0.014 / 15 time steps = ~0.00093 per 2 μsec time step
-        ! Use 0.0006 to match the 1959 rate of change
-        delta_alpha_limited = sign(min(abs(delta_alpha_raw), 0.0006_rk), delta_alpha_raw)
+        ! CRITICAL: Scale the limiter with the time step!
+        ! At Δt=2 μsec, max change is 0.0012 per step (0.0006 * 2)
+        ! At smaller Δt, proportionally smaller changes
+        delta_alpha_limited = sign(min(abs(delta_alpha_raw), 0.0006_rk * ctrl%DELT), delta_alpha_raw)
         alpha = alpha + delta_alpha_limited
         
         if (sweep_call_count <= 10) then
@@ -1143,6 +1145,16 @@ contains
       do g = 1, st%IG
         EE_i = EE_i + sum(st%mat(imat)%sig_s(:, g)) * st%N(g, i)
       end do
+      
+      ! ANL-5977 lines 301-303: F(I) = SUM1*RHO(I), E(I) = SUM2*RHO(I)
+      ! CRITICAL: Must multiply by RHO to match the transport sweep calculations
+      FE_i = FE_i * st%RHO(i)
+      EE_i = EE_i * st%RHO(i)
+      
+      ! Store F_OLD and E_OLD for consistent initialization
+      ! This ensures FFBARP/FEBARP match the F_OLD/E_OLD values
+      st%F_OLD(i) = FE_i
+      st%E_OLD(i) = EE_i
       
       ! Velocity-weighted flux ENNN(i) = Σ N(g)/V(g)
       ENNN_i = 0._rk

@@ -553,7 +553,7 @@ contains
     do i = 2, st%IMAX
       write(unit, '(I5,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6,A,ES14.6)') &
         i, ',', &
-        st%RHO(i), ',', &
+        st%RO(i), ',', &     ! RO = mass density (g/cm³), not RHO = atomic density
         st%R(i), ',', &
         st%U(i), ',', &
         st%HP(i), ',', &
