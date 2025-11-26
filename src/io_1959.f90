@@ -301,10 +301,19 @@ contains
     print *, "  ROLAB =", st%mat(st%K(2))%ROLAB, " (10^-24 g/atom)"
     
     ! Compute internal energy from temperature
+    ! ANL-5977 Order 6835: HE(I) = ACV*THETA + 0.5*BCV*THETA^2
     do i = 2, st%IMAX
       imat = st%K(i)
       st%HE(i) = st%mat(imat)%ACV * st%THETA(i) + &
                  0.5_rk * st%mat(imat)%BCV * st%THETA(i)**2
+    end do
+    
+    ! Compute cold internal energy reference
+    ! ANL-5977 Order 6812: HEO(I) = TAU(M)/RO(I) - ALPH(M)*LOG(RO(I))
+    do i = 2, st%IMAX
+      imat = st%K(i)
+      st%HEO(i) = st%mat(imat)%TAU / max(st%RO(i), 1.0e-30_rk) - &
+                  st%mat(imat)%ALPHA * log(max(st%RO(i), 1.0e-30_rk))
     end do
     
     ! Compute initial pressure

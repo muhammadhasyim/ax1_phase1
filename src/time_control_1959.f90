@@ -89,6 +89,26 @@ contains
     st%W_CFL = W_cfl_max
     st%W_VISC = W_visc_max
     
+    ! Diagnostic: identify which zone causes W explosion
+    if (W_cfl_max > 1.0e6_rk) then
+      do i = 2, st%IMAX
+        delta_R = st%R(i) - st%R(i-1)
+        if (delta_R < 1.0e-12_rk) cycle
+        W_cfl = ctrl%CSC * abs(st%HE(i)) * (ctrl%DELT / delta_R)**2
+        if (W_cfl > 0.5_rk * W_cfl_max) then
+          print *, "=== W_CFL EXPLOSION DIAGNOSTIC t=", st%TIME, "==="
+          print *, "  Zone", i, ": W_cfl =", W_cfl
+          print *, "  delta_R =", delta_R, " cm"
+          print *, "  HE(i) =", st%HE(i), " (10^12 erg/g)"
+          print *, "  DELT =", ctrl%DELT, " μsec"
+          print *, "  R(i) =", st%R(i), "  R(i-1) =", st%R(i-1)
+          print *, "  RO(i) =", st%RO(i), " g/cm³"
+          print *, "  U(i) =", st%U(i), "  U(i-1) =", st%U(i-1), " cm/μsec"
+          exit  ! Only print first problematic zone
+        end if
+      end do
+    end if
+    
   end subroutine compute_w_stability
 
   ! ===========================================================================
@@ -293,12 +313,9 @@ contains
       return
     end if
     
-    ! Power termination criterion
-    if (st%FLAG1 > 0._rk) then
-      terminate = .true.
-      reason = "Power termination flag set"
-      return
-    end if
+    ! Power termination criterion:
+    ! NOTE: FLAG1 > 0 just marks that alpha was positive before (for shutdown detection)
+    ! NOT a termination condition. Could add late-time shutdown termination here.
     
     ! System disassembly (outer radius too large)
     if (st%R(st%IMAX) > ctrl%R_MAX_DISASSEMBLY) then

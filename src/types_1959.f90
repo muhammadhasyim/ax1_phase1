@@ -168,6 +168,7 @@ module types_1959
      real(rk) :: HP(0:SHELLMAX_1959) = 0._rk      ! Total pressure P_H + P_v (megabars)
      real(rk) :: THETA(SHELLMAX_1959) = 0._rk     ! Temperature (keV)
      real(rk) :: HE(SHELLMAX_1959) = 0._rk        ! Specific internal energy (10¹² ergs/g)
+     real(rk) :: HEO(SHELLMAX_1959) = 0._rk       ! Cold internal energy reference (ANL-5977 6812)
      real(rk) :: HMASS(SHELLMAX_1959) = 0._rk     ! Zone mass (factor 4π/3 omitted)
      real(rk) :: FREL(SHELLMAX_1959) = 0._rk      ! Relative fission density F(I)
      
@@ -209,7 +210,7 @@ module types_1959
     real(rk) :: POWER_PREV = 0._rk   ! Previous power for change detection
     real(rk) :: LAMBDA_INITIAL = 0._rk  ! Initial generation time (μsec) - cached
     real(rk) :: Q = 0._rk          ! Total energy (10¹² ergs, lacking 4π/3)
-    real(rk) :: QPRIME = 0._rk     ! Previous Q
+    real(rk) :: QPRIME = -1._rk    ! Previous Q (init to -1 so Q>QPRIME initially)
     real(rk) :: QBAR = 0._rk       ! Energy increment per cycle (10¹² ergs)
     real(rk) :: QBAR_LAST = 0._rk   ! Cached QBAR for diagnostics
     real(rk) :: DELQ_TOTAL = 0._rk  ! Total fission energy deposited this cycle
@@ -250,6 +251,7 @@ module types_1959
      real(rk) :: ERRLCL = 0._rk     ! Local energy error
      real(rk) :: CHECK = 0._rk      ! Energy balance check
      real(rk) :: FLAG1 = 0._rk      ! Power termination flag
+     logical :: RHO_DELV_LARGE = .false.  ! ANL-5977 line 9068: density change too large
      
      ! -----------------------------------------------------------------------
      ! Iteration counters
@@ -300,6 +302,7 @@ contains
     st%HP = 0._rk
     st%THETA = 0._rk
     st%HE = 0._rk
+    st%HEO = 0._rk
     st%HMASS = 0._rk
     st%FREL = 0._rk
     st%N = 0._rk

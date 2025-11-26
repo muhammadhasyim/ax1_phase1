@@ -400,7 +400,8 @@ if __name__ == "__main__":
         
         # Filter out blowup points (where values become unphysical)
         # Keep only points where QP < 1e6 (reasonable range)
-        valid_mask = (sim_QP < 1e6) & (np.abs(sim_alpha) < 1.0) & (sim_W < 10)
+        # Also skip the first data point (t < 1 μsec) which has initialization artifacts
+        valid_mask = (sim_time > 1.0) & (sim_QP < 1e6) & (np.abs(sim_alpha) < 1.0) & (sim_W < 10)
         sim_time = sim_time[valid_mask]
         sim_QP = sim_QP[valid_mask]
         sim_power = sim_power[valid_mask]

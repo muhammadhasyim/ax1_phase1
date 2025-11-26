@@ -136,6 +136,16 @@ program ax1_1959
   end if
   
   ! ============================================================================
+  ! ANL-5977 Order 6820-6830: Initial DELT check
+  ! Halve DELT before first hydro cycle if α×Δt > 4×ETA2
+  ! ============================================================================
+  do while (abs(state%ALPHA) * control%DELT > 4._rk * control%ETA2)
+    control%DELT = 0.5_rk * control%DELT
+    print *, "HALVE DELT INITIALLY:", control%DELT
+  end do
+  control%DELTP = control%DELT
+  
+  ! ============================================================================
   ! BIG G LOOP (ANL-5977 Order 8000)
   ! ============================================================================
   big_g_iter = 0
@@ -231,6 +241,13 @@ program ax1_1959
         end if
       end if
       
+      ! ANL-5977 Order 9014-9017: Update ALPHAO and FLAG1
+      ! FLAG1 is set when alpha was ever positive (for shutdown detection)
+      state%ALPHAO = max(abs(state%ALPHA), state%ALPHAO)
+      if (state%ALPHA > 0._rk) then
+        state%FLAG1 = 1.0_rk  ! Mark that alpha was positive
+      end if
+      
       ! Compute total power
       ! ANL-5977: Initial power is normalized to 1.0 (10¹² ergs/μsec)
       ! Power grows exponentially: P(t) = P₀ × exp(α×t)
@@ -272,6 +289,18 @@ program ax1_1959
       state%QBAR = state%QBAR * control%W_LIMIT / max(state%W, control%W_LIMIT)
     end if
     state%QBAR_LAST = state%QBAR
+    
+    ! ==========================================================================
+    ! ANL-5977 Order 9061-9066: Q<QPRIME shutdown detection
+    ! During shutdown (Q decreasing, α<0, after α was positive), force high NS4
+    ! ==========================================================================
+    if (state%Q < state%QPRIME .and. state%ALPHA < 0._rk .and. state%FLAG1 > 0._rk) then
+      control%NS4 = 30000  ! Force fine resolution during shutdown
+      if (control%verbose) then
+        print *, "Q<QPRIME shutdown: NS4 set to 30000"
+      end if
+    end if
+    state%QPRIME = state%Q  ! Store for next cycle
     
     ! ==========================================================================
     ! STEP 2: HYDRO SUB-LOOP (Order 9050-9200, NS4 times)
@@ -330,11 +359,16 @@ program ax1_1959
     end if
     
     ! Adjust time step based on stability
+    ! ANL-5977 Order 9281/9290: Proper DELTP centering for power update
     call adjust_timestep_1959(state, control, halve_dt, double_dt)
     if (halve_dt) then
+      ! ANL-5977 Order 9290: When halving, DELTP = 0.75*DELT for time-centering
+      control%DELTP = 0.75_rk * control%DELT
       control%DELT = control%DELT * 0.5_rk
       control%DELT = max(control%DELT, control%DELT_min)
     else if (double_dt) then
+      ! ANL-5977 Order 9281: When doubling, DELTP = 1.5*DELT for time-centering
+      control%DELTP = 1.5_rk * control%DELT
       control%DELT = min(control%DELT * 2.0_rk, control%DT_MAX)
     end if
     
