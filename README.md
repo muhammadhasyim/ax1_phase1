@@ -1,26 +1,44 @@
 # AX-1 (1959)
 
-This is a reproduction of the 1959 AX-1 coupled neutronics-hydrodynamics code
-documented in Argonne National Laboratory report ANL-5977. The code solves
-prompt supercritical reactor transients using S4 discrete ordinates transport,
-Lagrangian hydrodynamics with von Neumann-Richtmyer artificial viscosity, and
-a linear equation of state. It was written in modern Fortran 90+ while
-preserving the original algorithms.
+A reproduction of the 1959 AX-1 coupled neutronics-hydrodynamics code from
+Argonne National Laboratory report ANL-5977. The code simulates prompt
+supercritical reactor transients, computing how nuclear heating causes
+material expansion that eventually shuts down the chain reaction.
+
+## The Physics
+
+The simulation couples two physical processes. The neutronics module solves
+the transport equation using S4 discrete ordinates to find the neutron flux
+and the alpha-eigenvalue (inverse reactor period). The hydrodynamics module
+uses Lagrangian coordinates where the mesh moves with the material, with
+von Neumann-Richtmyer artificial viscosity to capture shocks. A linear
+equation of state relates pressure to density and temperature.
+
+## Source Files
+
+    src/kinds.f90             Precision definitions
+    src/types_1959.f90        Data structures for state and control variables
+    src/neutronics_s4_1959.f90  S4 transport solver and alpha-eigenvalue iteration
+    src/hydro_vnr_1959.f90    Lagrangian hydrodynamics with artificial viscosity
+    src/time_control_1959.f90 Adaptive time stepping (W stability, NS4 adjustment)
+    src/io_1959.f90           Input parsing and output formatting
+    src/main_1959.f90         Main program and simulation loop
 
 ## Requirements
 
-The code requires a Fortran compiler supporting Fortran 2008 and GNU Make.
-On Debian or Ubuntu systems, install these with:
+A Fortran compiler (gfortran recommended) and Make. On Ubuntu or Debian:
 
     sudo apt install gfortran make
 
-On macOS with Homebrew:
+For plotting, Python 3 with numpy, pandas, and matplotlib:
 
-    brew install gcc make
+    pip install numpy pandas matplotlib
+
+For the LaTeX document, a TeX distribution with pdflatex:
+
+    sudo apt install texlive-latex-recommended texlive-fonts-recommended
 
 ## Building
-
-To compile the 1959 reproduction:
 
     make -f Makefile.1959
 
@@ -28,32 +46,39 @@ This produces the executable `ax1_1959`.
 
 ## Running
 
-Run the Geneva 10 benchmark with:
-
     ./ax1_1959 inputs/geneve10_transient.inp
 
-The simulation writes time series data to `output_time_series.csv` and spatial
-profiles to files named `output_spatial_t*.csv`. A summary is printed to
-standard output.
+The Geneva 10 benchmark runs a 300 microsecond transient. Output files:
 
-To generate comparison plots against the 1959 reference data, run:
+    output_time_series.csv      Time history of energy, power, alpha, k-eff
+    output_spatial_t*.csv       Spatial profiles at selected times
+
+To generate comparison plots against the 1959 reference data:
 
     python3 analysis/compare_geneva10.py
 
-This reads the simulation output and the digitized reference data from
-`validation/reference_data/` and produces figures in `analysis/figures/`.
+Figures are saved to `analysis/figures/`.
 
 ## Documentation
 
-The LaTeX document `AX1_Code_Analysis.tex` describes the physics, the
-correspondence between the modern code and the original 1959 order numbers,
-and the validation results. Compile it with:
+The report `AX1_Code_Analysis.tex` describes the implementation, the mapping
+between modern code and original 1959 order numbers, and validation results.
+Compile with:
 
     pdflatex AX1_Code_Analysis.tex
+
+A pre-compiled PDF is included as `AX1_Code_Analysis.pdf`.
+
+## Reference Materials
+
+The `docs/` directory contains:
+
+    ANL-5977_original.pdf       Original 1959 report (scanned)
+    anl5977_scans/              OCR'd flow diagrams and Fortran listing
+    all_pseudocode.txt          Extracted pseudocode from flow diagrams
 
 ## References
 
 H. H. Hummel et al., "AX-1, A Computing Program for Coupled
 Neutronics-Hydrodynamics Calculations on the IBM-704," ANL-5977,
 Argonne National Laboratory, January 1959.
-

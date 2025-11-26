@@ -17,10 +17,11 @@ build/
 *.fls
 *.synctex.gz
 
-# Output files
-*.csv
+# Simulation output files
+output_*.csv
 run_*.txt
 *_output.txt
+*.bib
 
 # Editor/IDE
 .vscode/
