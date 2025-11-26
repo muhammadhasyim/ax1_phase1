@@ -42,6 +42,7 @@ program ax1_1959
   character(len=256) :: term_reason, input_file
   real(rk) :: alpha_out, k_out
   real(rk) :: delt_outer, delt_sub, qbar_cycle, ns4_real
+  real(rk) :: Z_alpha  ! Alpha change rate for NS4 adjustment (Order 9018)
   
   ! ============================================================================
   ! Initialization
@@ -163,6 +164,16 @@ program ax1_1959
     end if
     
     ! ==========================================================================
+    ! ANL-5977 Order 8009: Pre-neutronics geometry update
+    ! Store ROSN snapshot and update RHO before Big G loop
+    ! This must happen BEFORE neutronics to ensure consistent densities
+    ! ==========================================================================
+    do iz = 2, state%IMAX
+      state%ROSN(iz) = state%RO(iz)  ! Snapshot density for fission heating
+      state%RHO(iz) = state%RO(iz) / state%mat(state%K(iz))%ROLAB  ! Neutronics density
+    end do
+    
+    ! ==========================================================================
     ! STEP 1: NEUTRONICS CALCULATION (Order 8000-8800)
     !
     ! ANL-5977 KCNTRL logic:
@@ -248,6 +259,40 @@ program ax1_1959
         state%FLAG1 = 1.0_rk  ! Mark that alpha was positive
       end if
       
+      ! =========================================================================
+      ! ANL-5977 Order 9018-9045: NS4 adjustment based on alpha change rate
+      ! Z = |ALPHAP - ALPHA| / (ALPHAO + 3*EPSA)
+      ! - If Z < ETA3: NS4++ (alpha stable, can afford more hydro cycles)
+      ! - If Z > 3*ETA3: NS4-- (alpha changing fast, need more neutronics)  
+      ! - If Z > 6*ETA3: NS4=1 (alpha changing very fast, immediate neutronics)
+      ! - If NS4=1 and alpha>0 and changing too fast: set halve_delt_flag
+      ! =========================================================================
+      if (big_g_iter > 1) then
+        Z_alpha = abs(state%ALPHAP - state%ALPHA) / &
+                  (state%ALPHAO + 3.0_rk * control%EPSA)
+        
+        if (Z_alpha < control%ETA3) then
+          ! Alpha stable - can afford more hydro cycles per neutronics
+          control%NS4 = control%NS4 + 1
+          if (control%verbose) print *, "NS4++: alpha stable, Z =", Z_alpha
+        else if (Z_alpha > 3.0_rk * control%ETA3) then
+          ! Alpha changing fast - need more frequent neutronics
+          if (control%NS4 > 1) then
+            control%NS4 = control%NS4 - 1
+            if (control%verbose) print *, "NS4--: alpha changing fast, Z =", Z_alpha
+            ! If alpha changing VERY fast, reset NS4 to 1
+            if (Z_alpha > 6.0_rk * control%ETA3) then
+              control%NS4 = 1
+              if (control%verbose) print *, "NS4=1: alpha changing very fast, Z =", Z_alpha
+            end if
+          else if (state%ALPHA > 0._rk) then
+            ! NS4 already 1, alpha positive and changing fast → halve DELT (SENSE LIGHT 3)
+            control%halve_delt_flag = .true.
+            if (control%verbose) print *, "HALVE DELT FLAG: alpha>0, changing too fast"
+          end if
+        end if
+      end if
+      
       ! Compute total power
       ! ANL-5977: Initial power is normalized to 1.0 (10¹² ergs/μsec)
       ! Power grows exponentially: P(t) = P₀ × exp(α×t)
@@ -274,8 +319,7 @@ program ax1_1959
       control%DELTP = control%DELT
     end if
     
-    ! Store ROSN snapshot for this neutron cycle (Order 1190)
-    state%ROSN(2:state%IMAX) = state%RO(2:state%IMAX)
+    ! NOTE: ROSN snapshot is now done in Order 8009 (before neutronics)
     
     ! Compute QBAR = POWER · Δt / (4π · FBAR)
     ! ANL-5977 Order 9060: QBAR = POWER * DELT / (12.56637 * FBAR)
@@ -362,14 +406,24 @@ program ax1_1959
     ! ANL-5977 Order 9281/9290: Proper DELTP centering for power update
     call adjust_timestep_1959(state, control, halve_dt, double_dt)
     if (halve_dt) then
-      ! ANL-5977 Order 9290: When halving, DELTP = 0.75*DELT for time-centering
+      ! ANL-5977 Order 9290: When halving:
+      ! - DELTP = 0.75*DELT for time-centering
+      ! - NH = 2*NH to maintain proper time tracking
       control%DELTP = 0.75_rk * control%DELT
       control%DELT = control%DELT * 0.5_rk
       control%DELT = max(control%DELT, control%DELT_min)
+      state%NH = 2 * state%NH  ! Order 9290: Double NH when halving DELT
+      if (control%verbose) print *, "HALVE DELT: NH doubled to", state%NH
     else if (double_dt) then
-      ! ANL-5977 Order 9281: When doubling, DELTP = 1.5*DELT for time-centering
+      ! ANL-5977 Order 9281: When doubling:
+      ! - DELTP = 1.5*DELT for time-centering
+      ! - NH = NH/2 to maintain proper time tracking
+      ! - NS4 = (NS4+1)/2 to maintain hydro/neutron ratio
       control%DELTP = 1.5_rk * control%DELT
       control%DELT = min(control%DELT * 2.0_rk, control%DT_MAX)
+      state%NH = state%NH / 2  ! Order 9281: Halve NH when doubling DELT
+      control%NS4 = (control%NS4 + 1) / 2  ! Order 9281: Halve NS4 when doubling
+      if (control%verbose) print *, "DOUBLE DELT: NH halved to", state%NH, ", NS4 halved to", control%NS4
     end if
     
     ! ==========================================================================
@@ -393,6 +447,26 @@ program ax1_1959
         flush(csv_spatial_unit)
         write_spatial_at_200 = .true.
         print *, "Wrote spatial profile at t =", state%TIME, " μsec"
+      end if
+    end if
+    
+    ! ==========================================================================
+    ! ANL-5977 Order 9332-9336: Low power NS4 boost
+    ! If alpha < 0 and NH >= 50 and alpha decreasing and power low:
+    !   - Relax ETA3 by 10×
+    !   - Boost NS4 by +4
+    ! This helps capture shutdown dynamics when power is very low
+    ! ==========================================================================
+    if (.not. control%low_power_boosted) then
+      if (state%ALPHA < 0._rk .and. state%NH >= 50) then
+        if (state%ALPHA < state%ALPHAP + control%EPSA) then
+          if (state%TOTAL_POWER < control%POWNGL) then
+            control%ETA3 = 10._rk * control%ETA3
+            control%NS4 = control%NS4 + 4
+            control%low_power_boosted = .true.  ! SENSE LIGHT 4 equivalent
+            print *, "LOW POWER NS4 BOOST: ETA3 relaxed, NS4 boosted to", control%NS4
+          end if
+        end if
       end if
     end if
     

@@ -118,16 +118,21 @@ module types_1959
      ! -----------------------------------------------------------------------
      integer :: NS4 = 1             ! Hydro cycles per neutronics calculation
      integer :: NS4R = 0            ! Hydro cycle counter
-     integer :: NLMax = 10          ! Max hydro cycles before DELT doubling
+     integer :: NL = 64             ! NL countdown counter for DELT doubling (Order 9270)
+     integer :: NLMax = 64          ! Max hydro cycles before DELT doubling (NLMAX)
      integer :: HYDRO_PER_NEUT = 1  ! Hydro steps per neutron step
      integer :: HYDRO_PER_NEUT_MAX = 200  ! Maximum NS4
+     logical :: halve_delt_flag = .false.  ! SENSE LIGHT 3 equivalent (force halve)
      
      ! -----------------------------------------------------------------------
      ! VJ-OK-1 test parameters (ANL-5977 Appendix A)
      ! -----------------------------------------------------------------------
      real(rk) :: VJ = 0._rk         ! Jankus reactivity coefficient
-     real(rk) :: OK1 = 0.01_rk      ! VJ-OK-1 threshold
+     real(rk) :: OK1 = 0.01_rk      ! VJ-OK-1 threshold (CONST < OK1: skip)
+     real(rk) :: OK2 = 0.1_rk       ! VJ-OK-2 threshold (CONST > OK2: NS4=1)
      real(rk) :: PTEST = 0._rk      ! Pressure test threshold (megabars)
+     real(rk) :: POWNGL = 1.0e-10_rk  ! Low power threshold for NS4 boost (Order 9335)
+     logical :: low_power_boosted = .false.  ! SENSE LIGHT 4 equivalent (prevent repeat boost)
      
      ! -----------------------------------------------------------------------
      ! Iteration limits

@@ -126,6 +126,19 @@ contains
     double = .false.
     
     ! =========================================================================
+    ! CRITERION 0: SENSE LIGHT 3 equivalent (halve_delt_flag)
+    ! ANL-5977 Order 9025/9283: Force halve if flag set by NS4 logic
+    ! =========================================================================
+    if (ctrl%halve_delt_flag) then
+      halve = .true.
+      ctrl%halve_delt_flag = .false.  ! Clear the flag after use
+      if (ctrl%verbose) then
+        print *, "TIME CONTROL: halve_delt_flag set → HALVING Δt"
+      end if
+      return
+    end if
+    
+    ! =========================================================================
     ! CRITERION 1: W stability function
     ! ANL-5977 Order 9285
     ! If W > W_limit, halve time step
@@ -173,31 +186,51 @@ contains
     end if
     
     ! =========================================================================
-    ! CRITERION 4: Consider doubling if all criteria well-satisfied
-    ! ANL-5977 Order 9290
-    ! CONSERVATIVE: Since W ∝ Δt², doubling Δt quadruples W.
-    ! Only double if W < 0.1*W_limit (so after doubling, W < 0.4*W_limit)
-    ! This prevents oscillation between halving and doubling.
+    ! CRITERION 4: Consider doubling (Order 9269-9280)
+    ! ANL-5977: Doubling requires NL countdown to reach 0
+    !   9270 NL = NL - 1
+    !   9272 IF(NL > 0) skip doubling
+    !   9274 IF(α·Δt >= ETA2) skip doubling
+    !   9278 IF(2*DELT > DTMAX) skip doubling
     ! =========================================================================
+    
+    ! Decrement NL counter (Order 9270)
+    ctrl%NL = ctrl%NL - 1
+    
+    ! Can only double if W is well below limit
     if (st%W < 0.1_rk * ctrl%W_LIMIT) then
-      if (trim(ctrl%EIGMODE) == "k" .or. &
-          abs(st%ALPHA * ctrl%DELT) < 0.25_rk * ctrl%ALPHA_DELTA_LIMIT) then
-        ! Also check we're not at maximum time step
-        if (ctrl%DELT < ctrl%DT_MAX) then
-          double = .true.
-          if (ctrl%verbose) then
-            print *, "TIME CONTROL: All criteria satisfied → DOUBLING Δt"
+      ! Check NL counter (Order 9272)
+      if (ctrl%NL <= 0) then
+        ! Check alpha stability (Order 9274)
+        if (abs(st%ALPHA * ctrl%DELT) < ctrl%ETA2) then
+          ! Check DTMAX limit (Order 9278)
+          if (2.0_rk * ctrl%DELT <= ctrl%DT_MAX) then
+            double = .true.
+            if (ctrl%verbose) then
+              print *, "TIME CONTROL: NL=", ctrl%NL, ", all criteria satisfied → DOUBLING Δt"
+            end if
           end if
         end if
       end if
     end if
     
+    ! Reset NL counter after halving or doubling (Order 9310)
+    if (halve .or. double) then
+      ctrl%NL = ctrl%NLMax
+    end if
+    
   end subroutine adjust_timestep_1959
 
   ! ===========================================================================
-  ! VJ-OK-1 test: Adjust NS4 (number of hydro steps per neutron step)
-  ! ANL-5977 Order 9220
-  ! VJ·(Δt)²·(NS4)²·∫P dV < OK1
+  ! VJ-OK test: Full NS4 adjustment per ANL-5977 Order 9201-9212
+  ! 
+  ! Logic:
+  !   9201-9202: Skip if NS4 <= 1 or ALPHA <= 0
+  !   9203-9204: Skip if max pressure < PTEST
+  !   9205-9206: Compute CONST = VJ·Δt²·NS4²·PBAR
+  !   9210: Skip if CONST <= OK1
+  !   9208: If CONST >= OK2, set NS4 = 1
+  !   9209-9212: If OK1 < CONST < OK2, halve NS4
   ! ===========================================================================
   subroutine check_vj_ok1_test(st, ctrl, increase_ns4)
     type(State_1959), intent(in) :: st
@@ -205,30 +238,60 @@ contains
     logical, intent(out) :: increase_ns4
     
     integer :: i
-    real(rk) :: PdV_integral, VJ_test, R_mid, V_zone
+    real(rk) :: HPBAR, PBAR, CONST, T_i
     
     increase_ns4 = .false.
     
-    ! Compute ∫P dV over entire system
-    PdV_integral = 0._rk
+    ! Order 9201: Skip if NS4 <= 1
+    if (ctrl%NS4 <= 1) return
+    
+    ! Order 9202: Skip if ALPHA <= 0
+    if (st%ALPHA <= 0._rk) return
+    
+    ! Order 9203-9204: Find max pressure
+    HPBAR = 0._rk
     do i = 2, st%IMAX
-      ! Zone volume
-      V_zone = (4._rk/3._rk) * 3.14159265_rk * (st%R(i)**3 - st%R(i-1)**3)
-      
-      ! Add pressure × volume
-      PdV_integral = PdV_integral + st%HP(i) * V_zone
+      HPBAR = max(HPBAR, st%HP(i))
     end do
     
-    ! VJ test: VJ·(Δt)²·(NS4)²·∫P dV
-    VJ_test = ctrl%VJ * (ctrl%DELT**2) * (real(ctrl%NS4, rk)**2) * PdV_integral
+    ! Skip if max pressure < PTEST
+    if (HPBAR < ctrl%PTEST) return
     
-    ! Check against OK1 limit
-    if (VJ_test > ctrl%OK1) then
-      increase_ns4 = .true.
+    ! Order 9205-9206: Compute volume-weighted average pressure
+    ! PBAR = Σ HP(I) * T(I) * 4π
+    PBAR = 0._rk
+    do i = 2, st%IMAX
+      T_i = (st%R(i)**3 - st%R(i-1)**3) / 3._rk
+      PBAR = PBAR + st%HP(i) * T_i
+    end do
+    PBAR = PBAR * 12.566370614359172_rk  ! 4π factor
+    
+    ! Compute CONST = VJ * Δt² * NS4² * PBAR
+    CONST = ctrl%VJ * (ctrl%DELT**2) * (real(ctrl%NS4, rk)**2) * PBAR
+    
+    ! Order 9210: Skip if CONST <= OK1
+    if (CONST <= ctrl%OK1) return
+    
+    ! Order 9207-9208: If CONST >= OK2, reset NS4 to 1
+    if (CONST >= ctrl%OK2) then
       if (ctrl%verbose) then
-        print *, "VJ-OK-1 TEST: VJ_test =", VJ_test, " > ", ctrl%OK1
-        print *, "               → INCREASING NS4 from", ctrl%NS4, "to", ctrl%NS4 + 1
+        print *, "VJ-OK-2: CONST =", CONST, " >= OK2 =", ctrl%OK2, " → NS4=1"
       end if
+      ctrl%NS4 = 1
+      return
+    end if
+    
+    ! Order 9209-9212: OK1 < CONST < OK2 → halve NS4
+    if (mod(ctrl%NS4, 2) == 1) then
+      ! NS4 odd: halve with rounding
+      ctrl%NS4 = (ctrl%NS4 - 1) / 2
+    else
+      ! NS4 even: simple halve
+      ctrl%NS4 = ctrl%NS4 / 2
+    end if
+    
+    if (ctrl%verbose) then
+      print *, "VJ-OK: CONST =", CONST, " (OK1 < CONST < OK2) → NS4 halved to", ctrl%NS4
     end if
     
   end subroutine check_vj_ok1_test
